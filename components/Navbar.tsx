@@ -1,44 +1,74 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { useUser } from '@/hooks/useUser'
-import { useAuth } from '@/hooks/useAuth'
-import { useRouter } from 'next/navigation'
+import { useAuth } from "@/hooks/useAuth";
+import { useUser } from "@/hooks/useUser";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export function Navbar() {
-  const { user, loading } = useUser()
-  const { signOut } = useAuth()
-  const router = useRouter()
+  const { user, loading } = useUser();
+  const { signOut } = useAuth();
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSignOut = async () => {
-    await signOut()
-    router.push('/')
+    await signOut();
+    router.push("/");
+  };
+
+  // Prevent hydration mismatch by not rendering user-dependent content until mounted
+  if (!mounted) {
+    return (
+      <nav className="bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex">
+              <div className="flex-shrink-0 flex items-center">
+                <Link href="/" className="flex items-center space-x-2">
+                  <Image
+                    src="/logo.svg"
+                    alt="Waffle logo"
+                    height={39}
+                    width={130}
+                  />
+                </Link>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    );
   }
 
   return (
-    <nav className="bg-white dark:bg-gray-800 shadow">
+    <nav className="bg-white shadow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link
-                href="/"
-                className="text-xl font-bold text-gray-900 dark:text-white"
-              >
-                Waffle
+              <Link href="/" className="flex items-center space-x-2">
+                <Image
+                  src="/logo.svg"
+                  alt="Waffle logo"
+                  height={39}
+                  width={130}
+                />
               </Link>
             </div>
             <div className="ml-6 flex space-x-8">
-              <Link
-                href="/"
-                className="border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors"
-              >
-                Home
-              </Link>
               {user && (
                 <Link
                   href="/profile"
-                  className="border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors"
+                  className="border-transparent text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors"
                 >
                   Profile
                 </Link>
@@ -47,11 +77,13 @@ export function Navbar() {
           </div>
           <div className="flex items-center">
             {loading ? (
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 dark:border-white"></div>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
             ) : user ? (
               <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-700 dark:text-gray-300">
-                  {user.user_metadata?.full_name || user.user_metadata?.name || user.email}
+                <span className="text-sm text-gray-700">
+                  {user.user_metadata?.full_name ||
+                    user.user_metadata?.name ||
+                    user.email}
                 </span>
                 <button
                   onClick={handleSignOut}
@@ -64,7 +96,7 @@ export function Navbar() {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/login"
-                  className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
                   Sign In
                 </Link>
@@ -80,5 +112,5 @@ export function Navbar() {
         </div>
       </div>
     </nav>
-  )
+  );
 }

@@ -1,45 +1,45 @@
-'use client'
+"use client";
 
-import { useUser } from '@/hooks/useUser'
-import { useAuth } from '@/hooks/useAuth'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import Image from 'next/image'
+import { useAuth } from "@/hooks/useAuth";
+import { useUser } from "@/hooks/useUser";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function ProfilePage() {
-  const { user, loading } = useUser()
-  const { signOut } = useAuth()
-  const router = useRouter()
+  const { user, loading } = useUser();
+  const { signOut } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (!user && !loading) {
-      router.push('/login')
+      router.push("/login");
     }
-  }, [user, loading, router])
+  }, [user, loading, router]);
 
   const handleSignOut = async () => {
-    await signOut()
-    router.push('/')
-  }
+    await signOut();
+    router.push("/");
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg">Loading...</div>
       </div>
-    )
+    );
   }
 
   if (!user) {
-    return null // Will redirect via useEffect
+    return null; // Will redirect via useEffect
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
+    <div className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           {/* Profile Header */}
-          <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
+          <div className="bg-white shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -52,7 +52,7 @@ export default function ProfilePage() {
                       height={80}
                     />
                   ) : (
-                    <div className="h-20 w-20 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
+                    <div className="h-20 w-20 rounded-full bg-gray-300 flex items-center justify-center">
                       <svg
                         className="h-12 w-12 text-gray-400"
                         fill="currentColor"
@@ -64,12 +64,12 @@ export default function ProfilePage() {
                   )}
                 </div>
                 <div className="ml-5 flex-1">
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {user.user_metadata?.full_name || user.user_metadata?.name || 'User'}
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    {user.user_metadata?.full_name ||
+                      user.user_metadata?.name ||
+                      "User"}
                   </h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {user.email}
-                  </p>
+                  <p className="text-sm text-gray-500">{user.email}</p>
                 </div>
                 <div className="ml-5">
                   <button
@@ -84,63 +84,57 @@ export default function ProfilePage() {
           </div>
 
           {/* Profile Details */}
-          <div className="mt-6 bg-white dark:bg-gray-800 shadow rounded-lg">
+          <div className="mt-6 bg-white shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
-              <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">
                 Profile Information
               </h2>
               <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
                 <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    User ID
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900 dark:text-white font-mono">
-                    {user.id}
-                  </dd>
+                  <dt className="text-sm font-medium text-gray-500">User ID</dt>
+                  <dd className="mt-1 text-sm text-gray-900">{user.id}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    Email
-                  </dt>
-                  <dd className="mt-1 text-sm text-gray-900 dark:text-white">
-                    {user.email}
-                  </dd>
+                  <dt className="text-sm font-medium text-gray-500">Email</dt>
+                  <dd className="mt-1 text-sm text-gray-900">{user.email}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <dt className="text-sm font-medium text-gray-500">
                     Provider
                   </dt>
-                  <dd className="mt-1 text-sm text-gray-900 dark:text-white capitalize">
-                    {user.app_metadata?.provider || 'Unknown'}
+                  <dd className="mt-1 text-sm text-gray-900">
+                    {user.app_metadata?.provider || "Unknown"}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <dt className="text-sm font-medium text-gray-500">
                     Last Sign In
                   </dt>
-                  <dd className="mt-1 text-sm text-gray-900 dark:text-white">
-                    {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : 'Never'}
+                  <dd className="mt-1 text-sm text-gray-900">
+                    {user.last_sign_in_at
+                      ? new Date(user.last_sign_in_at).toLocaleDateString()
+                      : "Never"}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <dt className="text-sm font-medium text-gray-500">
                     Account Created
                   </dt>
-                  <dd className="mt-1 text-sm text-gray-900 dark:text-white">
+                  <dd className="mt-1 text-sm text-gray-900">
                     {new Date(user.created_at).toLocaleDateString()}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <dt className="text-sm font-medium text-gray-500">
                     Email Verified
                   </dt>
-                  <dd className="mt-1 text-sm text-gray-900 dark:text-white">
+                  <dd className="mt-1 text-sm text-gray-900">
                     {user.email_confirmed_at ? (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                         Verified
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                         Unverified
                       </span>
                     )}
@@ -152,5 +146,5 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
