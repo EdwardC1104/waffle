@@ -2,30 +2,15 @@ export interface User {
   id: string;
   name: string;
   username: string;
-  avatar: string;
-  wordCount: number;
-  followers: number;
-  following: number;
+  email: string;
+  profilePictureUrl: string;
 }
 
 export interface Post {
-  id: string;
+  id: number;
   title: string;
   content: string;
-  image?: string;
+  coverImageUrl: string;
   author: User;
-  likes: number;
-  replies: number;
-  bookmarks: number;
   createdAt: Date;
-}
-
-export interface SuggestedUser {
-  id: string;
-  name: string;
-  username: string;
-  avatar: string;
-  wordCount: number;
-  followers: number;
-  following: number;
 }

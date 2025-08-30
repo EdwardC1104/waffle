@@ -11,9 +11,9 @@ export default function PostCard({ post }: PostCardProps) {
   return (
     <article className="p-4 sm:p-6 bg-white/95 rounded-2xl shadow-md flex flex-col gap-4 sm:gap-6 hover:shadow-lg transition-shadow">
       <Link href={`/post/${post.id}`} className="flex flex-col gap-4 sm:gap-6">
-        {post.image && (
+        {post.coverImageUrl && (
           <Image
-            src={post.image}
+            src={post.coverImageUrl}
             alt=""
             width={552}
             height={206}
@@ -34,7 +34,7 @@ export default function PostCard({ post }: PostCardProps) {
 
         <div className="flex items-center gap-1.5">
           <Image
-            src={post.author.avatar}
+            src={post.author.profilePictureUrl}
             alt={post.author.name}
             width={36}
             height={36}
@@ -51,12 +51,7 @@ export default function PostCard({ post }: PostCardProps) {
         </div>
       </Link>
 
-      {/* Action buttons outside the link to prevent nested interactive elements */}
-      <PostActions
-        likes={post.likes}
-        replies={post.replies}
-        bookmarks={post.bookmarks}
-      />
+      <PostActions likes={0} replies={0} bookmarks={0} />
     </article>
   );
 }

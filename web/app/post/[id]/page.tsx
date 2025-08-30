@@ -1,10 +1,11 @@
 "use client";
 
 import PostActions from "@/components/PostActions";
-import { mockPosts } from "@/data/mockData";
+import { Post } from "@/types";
+import { getPostById } from "@/utils/api";
 import Image from "next/image";
 import { notFound, useRouter } from "next/navigation";
-import { use } from "react";
+import { use, useEffect, useState } from "react";
 
 interface PostPageProps {
   params: Promise<{
@@ -15,10 +16,56 @@ interface PostPageProps {
 export default function PostPage({ params }: PostPageProps) {
   const router = useRouter();
   const resolvedParams = use(params);
-  const post = mockPosts.find((p) => p.id === resolvedParams.id);
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!post) {
-    notFound();
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const postData = await getPostById(parseInt(resolvedParams.id));
+        setPost(postData);
+      } catch (err) {
+        console.error("Failed to fetch post:", err);
+        setError(err instanceof Error ? err.message : "Failed to load post");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [resolvedParams.id]);
+
+  if (loading) {
+    return (
+      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading post...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !post) {
+    if (error?.includes("404") || !post) {
+      notFound();
+    }
+    return (
+      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Error loading post: {error}</p>
+          <button
+            onClick={() => router.back()}
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -44,10 +91,10 @@ export default function PostPage({ params }: PostPageProps) {
       </button>
 
       <article className="flex flex-col gap-8">
-        {post.image && (
+        {post.coverImageUrl && (
           <div>
             <Image
-              src={post.image}
+              src={post.coverImageUrl}
               alt=""
               width={800}
               height={400}
@@ -63,7 +110,7 @@ export default function PostPage({ params }: PostPageProps) {
 
           <div className="flex items-center gap-3 mb-4">
             <Image
-              src={post.author.avatar}
+              src={post.author.profilePictureUrl}
               alt={post.author.name}
               width={48}
               height={48}
@@ -97,11 +144,7 @@ export default function PostPage({ params }: PostPageProps) {
         </div>
 
         <div className="pt-6 border-t border-gray-200">
-          <PostActions
-            likes={post.likes}
-            replies={post.replies}
-            bookmarks={post.bookmarks}
-          />
+          <PostActions likes={0} replies={0} bookmarks={0} />
         </div>
       </article>
     </div>
