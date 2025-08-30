@@ -33,3 +33,8 @@ body::before {
 .font-serif {
   font-family: "PT Serif", Georgia, serif;
 }
+
+button,
+a {
+  cursor: pointer;
+}

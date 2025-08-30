@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface WritePostCTAProps {
   todayWordCount: number;
 }
@@ -22,9 +24,11 @@ export default function WritePostCTA({ todayWordCount }: WritePostCTAProps) {
         </div>
       </div>
 
-      <button className="px-6 py-2 bg-stone-900 rounded-full shadow-lg flex justify-center items-center transition-opacity hover:opacity-90">
-        <span className="text-white text-xs font-semibold">Write Post</span>
-      </button>
+      <Link href="/create/post" className="w-fit">
+        <button className="px-6 py-2 bg-stone-900 rounded-full shadow-lg flex justify-center items-center transition-opacity hover:opacity-90">
+          <span className="text-white text-xs font-semibold">Write Post</span>
+        </button>
+      </Link>
     </div>
   );
 }
