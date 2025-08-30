@@ -5,6 +5,7 @@ import { useState } from "react";
 interface TextInputProps {
   icon?: React.ReactNode;
   placeholder?: string;
+  type?: "text" | "email" | "password" | "username";
   onTextChange?: (text: string) => void;
   containerClassName?: string;
   inputClassName?: string;
@@ -13,6 +14,7 @@ interface TextInputProps {
 export default function TextInput({
   icon,
   placeholder = "Search",
+  type = "text",
   onTextChange,
   containerClassName = "",
   inputClassName = "",
@@ -35,7 +37,7 @@ export default function TextInput({
         </div>
       )}
       <input
-        type="text"
+        type={type}
         value={value}
         onChange={handleChange}
         placeholder={placeholder}
