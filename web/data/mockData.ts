@@ -99,6 +99,25 @@ export const suggestedUsers: SuggestedUser[] = [
     following: 234,
   },
   {
+    id: "3",
+    name: "Sarah Chen",
+    username: "sarahtech",
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+    wordCount: 28500,
+    followers: 45000,
+    following: 567,
+  },{
+    id: "4",
+    name: "Marcus Rodriguez",
+    username: "urbanfuture",
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+    wordCount: 67800,
+    followers: 89000,
+    following: 1200,
+  },
+  {
     id: "5",
     name: "Victoria Derbyshire",
     username: "vderb",

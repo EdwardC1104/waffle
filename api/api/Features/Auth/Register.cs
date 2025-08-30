@@ -6,10 +6,12 @@ namespace api.Features.Auth;
 public class Register
 {
     private readonly UserManager<api.Models.User> _userManager;
+    private readonly SignInManager<api.Models.User> _signInManager;
 
-    public Register(UserManager<api.Models.User> userManager)
+    public Register(UserManager<api.Models.User> userManager, SignInManager<api.Models.User> signInManager)
     {
         _userManager = userManager;
+        _signInManager = signInManager;
     }
 
     public class Request
@@ -34,8 +36,10 @@ public class Register
     public class Response
     {
         public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        public string ProfilePictureUrl { get; set; } = string.Empty;
     }
 
     public async Task<(Response? response, IEnumerable<IdentityError>? errors)> Handle(Request request)
@@ -54,11 +58,16 @@ public class Register
             return (null, result.Errors);
         }
 
+        // Automatically sign in the user after successful registration
+        await _signInManager.SignInAsync(newUser, isPersistent: false);
+
         return (new Response
         {
             Id = newUser.Id,
+            Name = newUser.Name,
             Username = newUser.UserName ?? string.Empty,
-            Email = newUser.Email ?? string.Empty
+            Email = newUser.Email ?? string.Empty,
+            ProfilePictureUrl = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
         }, null);
     }
 }

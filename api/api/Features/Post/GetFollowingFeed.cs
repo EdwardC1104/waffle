@@ -16,11 +16,13 @@ public class GetFollowingFeed
     public class PostDto
     {
         public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public string AuthorId { get; set; } = string.Empty;
         public string AuthorName { get; set; } = string.Empty;
         public string AuthorUsername { get; set; } = string.Empty;
+        public string CoverImageUrl { get; set; } = string.Empty;
     }
 
     public class Response

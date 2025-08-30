@@ -31,8 +31,17 @@ public class CreatePost
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
-        public string AuthorName { get; set; } = string.Empty;
-        public string AuthorUsername { get; set; } = string.Empty;
+        public AuthorDto Author { get; set; } = new AuthorDto();
+        public string CoverImageUrl { get; set; } = string.Empty;
+    }
+
+    public class AuthorDto
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string ProfilePictureUrl { get; set; } = string.Empty;
     }
 
     public async Task<Response?> Handle(Request request, string username)
@@ -65,8 +74,15 @@ public class CreatePost
             Title = newPost.Title,
             Content = newPost.Content,
             CreatedAt = newPost.CreatedAt,
-            AuthorName = user.Name,
-            AuthorUsername = user.UserName ?? string.Empty
+            Author = new AuthorDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Username = user.UserName ?? string.Empty,
+                Email = user.Email ?? string.Empty,
+                ProfilePictureUrl = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+            },
+            CoverImageUrl = "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=300&fit=crop"
         };
     }
 }

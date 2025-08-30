@@ -89,7 +89,7 @@ public class PostController : ControllerBase
         return Ok(posts);
     }
 
-    [HttpGet("/feed/popular")]
+    [HttpGet("/api/feed/popular")]
     public async Task<IActionResult> GetPopularFeed()
     {
         var posts = await _getPopularFeed.Handle();
