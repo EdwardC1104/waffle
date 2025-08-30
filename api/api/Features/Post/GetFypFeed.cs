@@ -18,11 +18,20 @@ public class GetFypFeed
     public class PostDto
     {
         public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
-        public string AuthorId { get; set; } = string.Empty;
-        public string AuthorName { get; set; } = string.Empty;
-        public string AuthorUsername { get; set; } = string.Empty;
+        public AuthorDto Author { get; set; } = new AuthorDto();
+        public string CoverImageUrl { get; set; } = string.Empty;
+    }
+
+    public class AuthorDto
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string ProfilePictureUrl { get; set; } = string.Empty;
     }
 
     public class Response

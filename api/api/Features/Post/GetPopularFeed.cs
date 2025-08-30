@@ -20,12 +20,20 @@ public class GetPopularFeed
     public class PostDto
     {
         public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
-        public string AuthorId { get; set; } = string.Empty;
-        public string AuthorName { get; set; } = string.Empty;
-        public string AuthorUsername { get; set; } = string.Empty;
-        public int PopularityScore { get; set; } // Could be based on likes, comments, shares, etc.
+        public AuthorDto Author { get; set; } = new AuthorDto();
+        public string CoverImageUrl { get; set; } = string.Empty;
+    }
+
+    public class AuthorDto
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string ProfilePictureUrl { get; set; } = string.Empty;
     }
 
     public class Response
@@ -41,12 +49,18 @@ public class GetPopularFeed
             .Select(p => new PostDto
             {
                 Id = p.Id,
+                Title = p.Title,
                 Content = p.Content,
                 CreatedAt = p.CreatedAt,
-                AuthorId = p.UserId,
-                AuthorName = p.User.Name,
-                AuthorUsername = p.User.UserName ?? string.Empty,
-                PopularityScore = 0 // For now, set to 0 - can be calculated later
+                Author = new AuthorDto
+                {
+                    Id = p.User.Id,
+                    Name = p.User.Name,
+                    Username = p.User.UserName ?? string.Empty,
+                    Email = p.User.Email ?? string.Empty,
+                    ProfilePictureUrl = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+                },
+                CoverImageUrl = "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=300&fit=crop"
             })
             .ToListAsync();
 

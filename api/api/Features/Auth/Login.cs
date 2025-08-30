@@ -35,6 +35,8 @@ public class Login
         public string Name { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        public string ProfilePictureUrl { get; set; } = string.Empty;
+
     }
 
     public async Task<Response?> Handle(Request request)
@@ -57,7 +59,8 @@ public class Login
             Id = user.Id,
             Name = user.Name,
             Username = user.UserName ?? string.Empty,
-            Email = user.Email ?? string.Empty
+            Email = user.Email ?? string.Empty,
+            ProfilePictureUrl = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
         };
     }
 }

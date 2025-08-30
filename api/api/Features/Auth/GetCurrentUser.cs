@@ -18,6 +18,7 @@ public class GetCurrentUser
         public string Name { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        public string ProfilePictureUrl { get; set; } = string.Empty;
     }
 
     public async Task<Response?> Handle(ClaimsPrincipal user)
@@ -31,7 +32,8 @@ public class GetCurrentUser
             Id = appUser.Id,
             Name = appUser.Name,
             Username = appUser.UserName ?? string.Empty,
-            Email = appUser.Email ?? string.Empty
+            Email = appUser.Email ?? string.Empty,
+            ProfilePictureUrl = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
         };
     }
 }
