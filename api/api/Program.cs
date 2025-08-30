@@ -1,5 +1,6 @@
 using System.Text;
 using api.Data;
+using api.Features.Auth;
 using api.Features.Post;
 using api.Features.User;
 using api.Models;
@@ -44,6 +45,8 @@ builder.Services.AddScoped<GetPosts>();
 builder.Services.AddScoped<CreatePost>();
 builder.Services.AddScoped<GetPost>();
 builder.Services.AddScoped<GetUser>();
+builder.Services.AddScoped<Login>();
+builder.Services.AddScoped<Register>();
 
 var app = builder.Build();
 
