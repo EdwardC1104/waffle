@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function CreatePostPage() {
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -52,9 +53,9 @@ export default function CreatePostPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
-          <Link
-            href="/feed/following"
-            className="text-zinc-600 hover:text-zinc-800 transition-colors"
+          <button
+            onClick={() => router.back()}
+            className="text-zinc-600 hover:text-zinc-800 transition-colors cursor-pointer"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path
@@ -65,7 +66,7 @@ export default function CreatePostPage() {
                 strokeLinejoin="round"
               />
             </svg>
-          </Link>
+          </button>
           <h1 className="text-2xl sm:text-3xl font-bold text-zinc-700 font-serif">
             Write a Post
           </h1>
