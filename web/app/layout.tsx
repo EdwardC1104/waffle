@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/Navbar";
+import { AuthProvider } from "@/contexts/AuthContext";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -15,8 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased min-h-screen">
-        <Navbar />
-        <main className="px-2 sm:px-4 lg:px-8 py-6">{children}</main>
+        <AuthProvider>
+          <Navbar />
+          <main className="px-2 sm:px-4 lg:px-8 py-6">{children}</main>
+        </AuthProvider>
       </body>
     </html>
   );
