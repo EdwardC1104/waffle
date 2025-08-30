@@ -45,7 +45,7 @@ export default function UserProfile({
       padding: 'py-6'
     },
     lg: {
-      container: 'py-12 rounded-2xl flex flex-col gap-10',
+      container: 'py-8 px-8 rounded-2xl flex flex-col gap-12',
       userSection: 'flex justify-between items-center',
       avatar: 'w-20 h-20',
       avatarSize: 80,
@@ -54,7 +54,7 @@ export default function UserProfile({
       statsNumber: 'text-4xl font-bold',
       statsLabel: 'text-base font-medium',
       showStats: true,
-      padding: 'py-12'
+      padding: 'py-16'
     }
   };
 
@@ -161,7 +161,7 @@ export default function UserProfile({
             </div>
           </div>
           <button className="p-1">
-            <MoreIcon size={16} className="text-stone-900" />
+            <MoreIcon size={32} className="text-stone-900" />
           </button>
         </div>
 
