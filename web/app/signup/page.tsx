@@ -1,41 +1,6 @@
 "use client";
 
-import { useAuth } from "@/hooks/useAuth";
-import { useUser } from "@/hooks/useUser";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
 export default function SignupPage() {
-  const { signInWithProvider } = useAuth();
-  const { user, loading } = useUser();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (user && !loading) {
-      router.push("/");
-    }
-  }, [user, loading, router]);
-
-  const handleGoogleSignIn = async () => {
-    await signInWithProvider("google");
-  };
-
-  const handleGitHubSignIn = async () => {
-    await signInWithProvider("github");
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Loading...</div>
-      </div>
-    );
-  }
-
-  if (user) {
-    return null; // Will redirect via useEffect
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8">
@@ -49,7 +14,7 @@ export default function SignupPage() {
         </div>
         <div className="mt-8 space-y-4">
           <button
-            onClick={handleGoogleSignIn}
+            onClick={() => null}
             className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -74,7 +39,7 @@ export default function SignupPage() {
           </button>
 
           <button
-            onClick={handleGitHubSignIn}
+            onClick={() => null}
             className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
           >
             <svg
