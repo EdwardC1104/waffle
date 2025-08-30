@@ -19,9 +19,8 @@ export function Navbar() {
     <nav className="bg-white border-b border-gray-100 sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center space-x-2">
+          <div className="flex-shrink-0 flex-1">
+            <Link href="/" className="flex items-center space-x-2 flex-1">
               <Image
                 src="/logo.svg"
                 alt="Waffle logo"
@@ -32,15 +31,13 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Centered Feed tabs on desktop */}
           {isFeedPage && (
             <div className="hidden lg:flex flex-1 justify-center">
               <FeedTabs />
             </div>
           )}
 
-          {/* Desktop search bar */}
-          <div className="hidden lg:flex flex-shrink-0">
+          <div className="hidden lg:flex flex-shrink-0 flex-1 justify-end">
             <TextInput
               icon={<SearchIcon className="text-gray-600" />}
               placeholder="Search"
