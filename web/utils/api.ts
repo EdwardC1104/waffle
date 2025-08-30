@@ -1,6 +1,6 @@
 import { Post, User } from "../types";
 
-async function apiRequest<T>(endpoint: string): Promise<T> {
+async function get<T>(endpoint: string): Promise<T> {
   const response = await fetch(`${endpoint}`, {
     method: "GET",
     headers: {
@@ -15,36 +15,68 @@ async function apiRequest<T>(endpoint: string): Promise<T> {
     );
   }
 
-  const data = await response.json();
-  return data;
+  return await response.json();
+}
+
+async function post<T, U>(endpoint: string, body: U): Promise<T> {
+  const response = await fetch(`${endpoint}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `API request failed: ${response.status} ${response.statusText}`
+    );
+  }
+
+  return await response.json();
 }
 
 export async function getUserByUsername(
   username: string
 ): Promise<User | null> {
-  return await apiRequest<User>(`/api/user/${username}`);
+  return await get<User>(`/api/user/${username}`);
 }
 
 export async function getUserPosts(username: string): Promise<Post[]> {
-  return await apiRequest<Post[]>(`/api/user/${username}/post`);
+  return await get<Post[]>(`/api/user/${username}/post`);
 }
 
 export async function getPostById(id: number): Promise<Post> {
-  return await apiRequest<Post>(`/api/post/${id}`);
+  return await get<Post>(`/api/post/${id}`);
 }
 
 export async function getPopularFeed(): Promise<Post[]> {
-  return await apiRequest<Post[]>(`/api/feed/popular`);
+  return await get<Post[]>(`/api/feed/popular`);
 }
 
 export async function getFypFeed(username: string): Promise<Post[]> {
-  return await apiRequest<Post[]>(`/api/user/${username}/feed/fyp`);
+  return await get<Post[]>(`/api/user/${username}/feed/fyp`);
 }
 
 export async function getFollowingFeed(username: string): Promise<Post[]> {
-  return await apiRequest<Post[]>(`/api/user/${username}/feed/following`);
+  return await get<Post[]>(`/api/user/${username}/feed/following`);
 }
 
-export async function getSuggestedUsers(): Promise<User[]> {
-  return [];
+export async function getSuggestedUsers(username: string): Promise<User[]> {
+  return await get<User[]>(`/api/user/${username}/follow/suggestions`);
+}
+
+export async function postNewPost(
+  username: string,
+  title: string,
+  content: string
+): Promise<Post> {
+  return await post<Post, { title: string; content: string }>(
+    `/api/user/${username}/post`,
+    {
+      title,
+      content,
+    }
+  );
 }

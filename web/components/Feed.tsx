@@ -32,26 +32,29 @@ export default function Feed({ feedType = "fyp" }: FeedProps) {
         setLoading(true);
         setError(null);
 
-        // Fetch posts based on feed type
-        let feedPosts: Post[];
+        let feedPosts: Post[] = [];
         switch (feedType) {
           case "popular":
             feedPosts = await getPopularFeed();
             break;
           case "following":
-            feedPosts = await getFollowingFeed(user?.username || "");
+            if (user) {
+              feedPosts = await getFollowingFeed(user.username);
+            }
             break;
           case "fyp":
           default:
-            feedPosts = await getFypFeed(user?.username || "");
+            if (user) {
+              feedPosts = await getFypFeed(user.username);
+            }
             break;
         }
 
-        // Fetch suggested users
-        const users = await getSuggestedUsers();
-
         setPosts(feedPosts);
-        setSuggestedUsers(users);
+        if (user) {
+          const suggested = await getSuggestedUsers(user.username);
+          setSuggestedUsers(suggested);
+        }
       } catch (err) {
         console.error("Failed to fetch feed data:", err);
         setError(err instanceof Error ? err.message : "Failed to load feed");

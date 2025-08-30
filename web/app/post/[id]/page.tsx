@@ -127,7 +127,8 @@ export default function PostPage({ params }: PostPageProps) {
           </div>
 
           <p className="text-zinc-500 text-sm">
-            {post.createdAt.toLocaleDateString("en-US", {
+            {new Date(post.createdAt).toLocaleDateString("en-GB", {
+              weekday: "long",
               year: "numeric",
               month: "long",
               day: "numeric",

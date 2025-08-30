@@ -38,7 +38,7 @@ export default function UserProfilePage() {
         const [userData, userPosts, users] = await Promise.all([
           getUserByUsername(username),
           getUserPosts(username),
-          getSuggestedUsers(),
+          getSuggestedUsers(username),
         ]);
 
         setUser(userData);
@@ -86,7 +86,7 @@ export default function UserProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="w-full max-w-[1476px] mx-auto flex justify-center items-start gap-4 lg:gap-8 xl:gap-16 px-4 sm:px-6 lg:px-8 py-6">
         {/* Left sidebar - hidden on mobile and tablet */}
         <div className="hidden xl:flex w-60 flex-col gap-8 flex-shrink-0">
