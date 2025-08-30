@@ -30,13 +30,8 @@ public class GetPosts
         public string Email { get; set; } = string.Empty;
         public string ProfilePictureUrl { get; set; } = string.Empty;
     }
-
-    public class Response
-    {
-        public IEnumerable<PostDto> Posts { get; set; } = new List<PostDto>();
-    }
     
-    public async Task<Response> Handle(string username)
+    public async Task<IEnumerable<PostDto>> Handle(string username)
     {
         // Get all posts for the user
         var posts = await _dbContext.Posts
@@ -61,6 +56,6 @@ public class GetPosts
             })
             .ToListAsync();
             
-        return new Response { Posts = posts };
+        return posts;
     }
 }

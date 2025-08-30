@@ -36,12 +36,7 @@ public class GetPopularFeed
         public string ProfilePictureUrl { get; set; } = string.Empty;
     }
 
-    public class Response
-    {
-        public IEnumerable<PostDto> Posts { get; set; } = new List<PostDto>();
-    }
-
-    public async Task<Response> Handle()
+    public async Task<IEnumerable<PostDto>> Handle()
     {
         var posts = await _context.Posts
             .Include(p => p.User)
@@ -64,6 +59,6 @@ public class GetPopularFeed
             })
             .ToListAsync();
 
-        return new Response { Posts = posts };
+        return posts;
     }
 }
