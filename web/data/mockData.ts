@@ -94,6 +94,9 @@ export const suggestedUsers: SuggestedUser[] = [
     username: "maitlis",
     avatar:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+    wordCount: 45000,
+    followers: 125000,
+    following: 234,
   },
   {
     id: "5",
@@ -101,6 +104,9 @@ export const suggestedUsers: SuggestedUser[] = [
     username: "vderb",
     avatar:
       "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=150&h=150&fit=crop&crop=face",
+    wordCount: 32800,
+    followers: 78500,
+    following: 156,
   },
   {
     id: "6",
@@ -108,6 +114,9 @@ export const suggestedUsers: SuggestedUser[] = [
     username: "presidentmacron",
     avatar:
       "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
+    wordCount: 89200,
+    followers: 2400000,
+    following: 89,
   },
   {
     id: "7",
@@ -115,6 +124,9 @@ export const suggestedUsers: SuggestedUser[] = [
     username: "tall",
     avatar:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+    wordCount: 54300,
+    followers: 186000,
+    following: 432,
   },
   {
     id: "8",
@@ -122,6 +134,9 @@ export const suggestedUsers: SuggestedUser[] = [
     username: "theking",
     avatar:
       "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&h=150&fit=crop&crop=face",
+    wordCount: 12600,
+    followers: 5600000,
+    following: 23,
   },
 ];
 

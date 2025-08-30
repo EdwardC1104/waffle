@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { SuggestedUser } from "../types";
+import UserProfile from "./UserProfile";
 
 interface WhoToFollowProps {
   users: SuggestedUser[];
@@ -14,21 +15,7 @@ export default function WhoToFollow({ users }: WhoToFollowProps) {
         {users.map((user) => (
           <div key={user.id} className="flex justify-between items-center">
             <div className="flex items-center gap-2.5">
-              <Image
-                src={user.avatar}
-                alt={user.name}
-                width={36}
-                height={36}
-                className="w-9 h-9 rounded-full object-cover"
-              />
-              <div>
-                <p className="text-stone-900 text-xs font-medium">
-                  {user.name}
-                </p>
-                <p className="text-zinc-600 text-xs font-normal">
-                  @{user.username}
-                </p>
-              </div>
+              <UserProfile user={user} size="sm" />
             </div>
 
             <button className="px-3.5 py-1 bg-stone-900 rounded-full shadow-lg flex justify-center items-center transition-opacity hover:opacity-90">

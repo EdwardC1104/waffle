@@ -25,4 +25,7 @@ export interface SuggestedUser {
   name: string;
   username: string;
   avatar: string;
+  wordCount: number;
+  followers: number;
+  following: number;
 }
