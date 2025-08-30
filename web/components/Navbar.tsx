@@ -2,26 +2,21 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import FeedTabs from "./FeedTabs";
+import { SearchIcon } from "./Icons";
 import TextInput from "./TextInput";
 
-const SearchIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={17} height={17} fill="none">
-    <path
-      stroke="#707070"
-      strokeLinecap="square"
-      strokeWidth={1.5}
-      d="m11.71 12.227 3.604 3.596M13.728 7.54A6.364 6.364 0 1 1 1 7.541a6.364 6.364 0 0 1 12.728 0Z"
-    />
-  </svg>
-);
-
 export function Navbar() {
+  const pathname = usePathname();
+  const isFeedPage = pathname?.startsWith("/feed");
+
   const handleSearchChange = (text: string) => {
     console.log("Search text:", text);
   };
 
   return (
-    <nav className="bg-white">
+    <nav className="bg-white border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0 flex items-center">
@@ -35,6 +30,13 @@ export function Navbar() {
             </Link>
           </div>
 
+          {/* Feed tabs - desktop: center, mobile: hidden (shown below navbar) */}
+          {isFeedPage && (
+            <div className="hidden md:flex">
+              <FeedTabs />
+            </div>
+          )}
+
           <div className="hidden md:flex">
             <TextInput
               icon={<SearchIcon />}
@@ -44,6 +46,15 @@ export function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Feed tabs for mobile - shown below main navbar */}
+      {isFeedPage && (
+        <div className="md:hidden border-t border-gray-100 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <FeedTabs />
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
