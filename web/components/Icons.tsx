@@ -86,7 +86,7 @@ export const SearchIcon = ({ size = 17, className = "" }: IconProps) => (
   <svg
     width={size}
     height={size}
-    viewBox="0 0 20 20"
+    viewBox="0 0 17 17"
     fill="none"
     className={className}
   >

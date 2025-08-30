@@ -47,7 +47,7 @@ export function Navbar() {
 
           <div className="flex lg:hidden flex-1 justify-end items-center space-x-3 sm:space-x-4">
             <Link
-              href="/profile"
+              href="/profile/edward"
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <svg
