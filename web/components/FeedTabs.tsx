@@ -13,12 +13,12 @@ export default function FeedTabs() {
   ];
 
   return (
-    <div className="flex justify-center items-center gap-6">
+    <div className="flex justify-center items-center gap-4 md:gap-6">
       {tabs.map((tab) => (
         <Link
           key={tab.href}
           href={tab.href}
-          className={`px-6 py-2.5 rounded-full flex justify-center items-center transition-colors ${
+          className={`px-4 md:px-6 py-2 md:py-2.5 rounded-full flex justify-center items-center transition-colors text-sm ${
             pathname === tab.href
               ? "bg-stone-900 text-white font-bold"
               : "bg-transparent text-stone-900 font-semibold hover:bg-stone-100"

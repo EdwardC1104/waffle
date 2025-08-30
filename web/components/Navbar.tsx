@@ -18,39 +18,76 @@ export function Navbar() {
   return (
     <nav className="bg-white border-b border-gray-100 sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex-shrink-0 flex items-center">
+        <div className="flex items-center h-16">
+          {/* Logo */}
+          <div className="flex-shrink-0">
             <Link href="/" className="flex items-center space-x-2">
               <Image
                 src="/logo.svg"
                 alt="Waffle logo"
                 height={39}
                 width={130}
+                className="h-8 w-auto sm:h-10"
               />
             </Link>
           </div>
 
-          {/* Feed tabs - desktop: center, mobile: hidden (shown below navbar) */}
+          {/* Centered Feed tabs on desktop */}
           {isFeedPage && (
-            <div className="hidden md:flex">
+            <div className="hidden lg:flex flex-1 justify-center">
               <FeedTabs />
             </div>
           )}
 
-          <div className="hidden md:flex">
+          {/* Desktop search bar */}
+          <div className="hidden lg:flex flex-shrink-0">
             <TextInput
-              icon={<SearchIcon />}
+              icon={<SearchIcon className="text-gray-600" />}
               placeholder="Search"
               onTextChange={handleSearchChange}
             />
           </div>
+
+          <div className="flex lg:hidden flex-1 justify-end items-center space-x-3 sm:space-x-4">
+            <Link
+              href="/profile"
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                className="text-gray-600"
+              >
+                <path
+                  d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="7"
+                  r="4"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+              <SearchIcon size={24} className="text-gray-600" />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Feed tabs for mobile - shown below main navbar */}
       {isFeedPage && (
-        <div className="md:hidden border-t border-gray-100 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="lg:hidden border-t border-gray-100 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
             <FeedTabs />
           </div>
         </div>

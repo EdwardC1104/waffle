@@ -12,6 +12,8 @@ body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;
   position: relative;
+  overflow-x: hidden;
+  min-height: 100vh;
 }
 
 body::before {

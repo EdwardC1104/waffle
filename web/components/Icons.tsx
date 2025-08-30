@@ -91,7 +91,7 @@ export const SearchIcon = ({ size = 17, className = "" }: IconProps) => (
     className={className}
   >
     <path
-      stroke="#707070"
+      stroke="currentColor"
       strokeLinecap="square"
       strokeWidth={1.5}
       d="m11.71 12.227 3.604 3.596M13.728 7.54A6.364 6.364 0 1 1 1 7.541a6.364 6.364 0 0 1 12.728 0Z"
