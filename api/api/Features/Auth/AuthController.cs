@@ -1,8 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.Auth;
@@ -11,62 +6,74 @@ namespace api.Features.Auth;
 [Route("/api/auth")]
 public class AuthController : ControllerBase
 {
-    private readonly UserManager<Models.User> _userManager;
-    private readonly SignInManager<Models.User> _signInManager;
+    private readonly Login _loginHandler;
+    private readonly Register _registerHandler;
+    private readonly GetCurrentUser _getCurrentUserHandler;
+    private readonly Logout _logoutHandler;
 
-    public AuthController(SignInManager<Models.User> signInManager, UserManager<Models.User> userManager)
+    public AuthController(Login loginHandler, Register registerHandler, GetCurrentUser getCurrentUserHandler, Logout logoutHandler)
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
-    }
-    
-    public class LoginRequest
-    {
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
-    
-        
-    public class RegisterRequest
-    {
-        public string Name { get; set; } = string.Empty;
-        
-        public string Username { get; set; } = string.Empty;
-        
-        public string Email { get; set; } = string.Empty;
-        
-        public string Password { get; set; } = string.Empty;
+        _loginHandler = loginHandler;
+        _registerHandler = registerHandler;
+        _getCurrentUserHandler = getCurrentUserHandler;
+        _logoutHandler = logoutHandler;
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] Login.Request request)
     {
-        var result = await _signInManager.PasswordSignInAsync(request.Username, request.Password, false, false);
-        
-        if (!result.Succeeded)
+        if (!ModelState.IsValid)
         {
-            return BadRequest(result);
+            return BadRequest(ModelState);
         }
 
-        return Ok();
+        var response = await _loginHandler.Handle(request);
+        
+        if (response == null)
+        {
+            return Unauthorized("Invalid username or password");
+        }
+
+        return Ok(response);
     }
-    [HttpPost("register")]
-    public async Task<IActionResult> Signup([FromBody] RegisterRequest request)
-    {
-        var newUser = new api.Models.User
-        {
-            Name = request.Name,
-            UserName = request.Username,
-            Email = request.Email,
-        };
 
-        var result = await _userManager.CreateAsync(newUser, request.Password);
-        
-        if (!result.Succeeded)
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] Register.Request request)
+    {
+        if (!ModelState.IsValid)
         {
-            return BadRequest(result.Errors);
+            return BadRequest(ModelState);
         }
 
-        return Ok(new { Id = newUser.Id });
+        var (response, errors) = await _registerHandler.Handle(request);
+        
+        if (response == null)
+        {
+            return BadRequest(errors);
+        }
+
+        return Created($"/api/user/{response.Username}", response);
+    }
+
+    [HttpGet("me")]
+    public async Task<IActionResult> Me()
+    {
+        if (!User.Identity?.IsAuthenticated ?? true)
+        {
+            return Unauthorized();
+        }
+        var response = await _getCurrentUserHandler.Handle(User);
+        if (response == null)
+        {
+            return NotFound("User not found");
+        }
+        return Ok(response);
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await _logoutHandler.Handle();
+        return NoContent();
     }
 }

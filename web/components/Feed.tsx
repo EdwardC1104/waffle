@@ -44,3 +44,4 @@ export default function Feed({ feedType = "fyp" }: FeedProps) {
     </div>
   );
 }
+
