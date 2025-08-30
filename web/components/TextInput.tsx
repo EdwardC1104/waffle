@@ -17,7 +17,7 @@ export default function TextInput({
   onTextChange,
   containerClassName = "",
   inputClassName = "",
-  className
+  className = "",
 }: TextInputProps) {
   const [value, setValue] = useState("");
 
