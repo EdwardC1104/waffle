@@ -20,7 +20,7 @@ public class GetFollowingFeed
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
-        public GetPopularFeed.AuthorDto Author { get; set; } = new GetPopularFeed.AuthorDto();
+        public AuthorDto Author { get; set; } = new AuthorDto();
         public string CoverImageUrl { get; set; } = string.Empty;
     }
 
@@ -33,23 +33,18 @@ public class GetFollowingFeed
         public string ProfilePictureUrl { get; set; } = string.Empty;
     }
 
-    public class Response
-    {
-        public IEnumerable<GetPopularFeed.PostDto> Posts { get; set; } = new List<GetPopularFeed.PostDto>();
-    }
-
-    public async Task<GetPopularFeed.Response> Handle(string username)
+    public async Task<IEnumerable<PostDto>> Handle(string username)
     {
         var posts = await _context.Posts
             .Include(p => p.User)
             .OrderByDescending(p => p.CreatedAt)
-            .Select(p => new GetPopularFeed.PostDto
+            .Select(p => new PostDto
             {
                 Id = p.Id,
                 Title = p.Title,
                 Content = p.Content,
                 CreatedAt = p.CreatedAt,
-                Author = new GetPopularFeed.AuthorDto
+                Author = new AuthorDto
                 {
                     Id = p.User.Id,
                     Name = p.User.Name,
@@ -61,6 +56,6 @@ public class GetFollowingFeed
             })
             .ToListAsync();
 
-        return new GetPopularFeed.Response { Posts = posts };
+        return posts;
     }
 }
