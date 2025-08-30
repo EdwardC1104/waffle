@@ -1,9 +1,8 @@
-import Image from "next/image";
-import { SuggestedUser } from "../types";
+import { User } from "../types";
 import UserProfile from "./UserProfile";
 
 interface WhoToFollowProps {
-  users: SuggestedUser[];
+  users: User[];
 }
 
 export default function WhoToFollow({ users }: WhoToFollowProps) {
