@@ -1,5 +1,6 @@
 using api.Data;
 using api.Features.Auth;
+using api.Features.Follow;
 using api.Features.Post;
 using api.Features.User;
 using api.Models;
@@ -30,6 +31,7 @@ builder.Services.AddScoped<Logout>();
 builder.Services.AddScoped<GetFollowingFeed>();
 builder.Services.AddScoped<GetFypFeed>();
 builder.Services.AddScoped<GetPopularFeed>();
+builder.Services.AddScoped<GetSuggestions>();
 
 var app = builder.Build();
 
