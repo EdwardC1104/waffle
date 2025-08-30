@@ -12,12 +12,6 @@ public class GetSuggestions
         _context = context;
     }
 
-    
-    public class Response
-    {
-        public IEnumerable<UserDto> Users { get; set; } = new List<UserDto>();
-    }
-
     public class UserDto
     {
         public string Id { get; set; } = string.Empty;
@@ -27,7 +21,7 @@ public class GetSuggestions
         public string ProfilePictureUrl { get; set; } = string.Empty;
     }
 
-    public async Task<Response> Handle(string username)
+    public async Task<IEnumerable<UserDto>> Handle(string username)
     {
         // For now, get all users except the current user
         var users = await _context.Users
@@ -42,6 +36,6 @@ public class GetSuggestions
             })
             .ToListAsync();
 
-        return new Response { Users = users };
+        return users;
     }
 }
