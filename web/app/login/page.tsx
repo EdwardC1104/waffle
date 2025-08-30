@@ -1,9 +1,36 @@
 "use client";
 
 import TextInput from "@/components/TextInput";
+import useAuth from "@/hooks/useAuth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function LoginPage() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { login, isLoading } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (!username || !password) {
+      setError("Please fill in all fields");
+      return;
+    }
+
+    const result = await login(username, password);
+
+    if (result.success) {
+      router.push("/feed/following");
+    } else {
+      setError(result.error || "Login failed");
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-white relative">
       <div className="max-w-md w-full space-y-8 relative z-10">
@@ -16,27 +43,34 @@ export default function LoginPage() {
           </p>
         </div>
         <div className="mt-8 space-y-4">
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            {error && (
+              <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+
             <TextInput
               placeholder="Username"
-              type="username"
+              type="text"
+              onTextChange={setUsername}
               containerClassName="w-full"
             />
             <TextInput
               placeholder="Password"
               type="password"
+              onTextChange={setPassword}
               inputClassName="[text-security:disc] [-webkit-text-security:disc] font-bold"
               containerClassName="w-full"
             />
 
-            <Link href="/feed/following" className="w-full">
-              <button
-                type="button"
-                className="w-full py-3 px-6 bg-stone-900 rounded-full shadow-lg text-white text-sm font-semibold transition-opacity hover:opacity-90"
-              >
-                Sign In
-              </button>
-            </Link>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 px-6 bg-stone-900 rounded-full shadow-lg text-white text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? "Signing In..." : "Sign In"}
+            </button>
           </form>
 
           <div className="flex justify-end">

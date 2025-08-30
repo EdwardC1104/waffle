@@ -1,9 +1,43 @@
 "use client";
 
 import TextInput from "@/components/TextInput";
+import useAuth from "@/hooks/useAuth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function SignupPage() {
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const { register, isLoading } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (!name || !username || !password || !confirmPassword) {
+      setError("Please fill in all fields");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    const result = await register(name, username, password);
+
+    if (result.success) {
+      router.push("/feed/following");
+    } else {
+      setError(result.error || "Registration failed");
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-white relative">
       <div className="max-w-md w-full space-y-8 relative z-10">
@@ -16,32 +50,44 @@ export default function SignupPage() {
           </p>
         </div>
         <div className="mt-8 space-y-4">
-          <form className="space-y-4">
-            <TextInput placeholder="Full Name" containerClassName="w-full" />
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            {error && (
+              <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+
             <TextInput
-              placeholder="Email address"
-              type="email"
+              placeholder="Full Name"
+              onTextChange={setName}
               containerClassName="w-full"
             />
-            <TextInput placeholder="Username" containerClassName="w-full" />
+            <TextInput
+              placeholder="Username"
+              onTextChange={setUsername}
+              containerClassName="w-full"
+            />
             <TextInput
               placeholder="Password"
               type="password"
+              onTextChange={setPassword}
               inputClassName="[text-security:disc] [-webkit-text-security:disc] font-bold"
               containerClassName="w-full"
             />
             <TextInput
               placeholder="Confirm Password"
               type="password"
+              onTextChange={setConfirmPassword}
               inputClassName="[text-security:disc] [-webkit-text-security:disc] font-bold"
               containerClassName="w-full"
             />
 
             <button
-              type="button"
-              className="w-full py-3 px-6 bg-stone-900 rounded-full shadow-lg text-white text-sm font-semibold transition-opacity hover:opacity-90"
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 px-6 bg-stone-900 rounded-full shadow-lg text-white text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign Up
+              {isLoading ? "Creating Account..." : "Sign Up"}
             </button>
           </form>
 

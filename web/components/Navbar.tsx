@@ -1,5 +1,6 @@
 "use client";
 
+import useAuth from "@/hooks/useAuth";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -10,9 +11,14 @@ import TextInput from "./TextInput";
 export function Navbar() {
   const pathname = usePathname();
   const isFeedPage = pathname?.startsWith("/feed");
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
 
   const handleSearchChange = (text: string) => {
     console.log("Search text:", text);
+  };
+
+  const handleLogout = async () => {
+    await logout();
   };
 
   return (
@@ -37,47 +43,106 @@ export function Navbar() {
             </div>
           )}
 
-          <div className="hidden lg:flex flex-shrink-0 flex-1 justify-end">
-            <TextInput
-              icon={<SearchIcon className="text-gray-600" />}
-              placeholder="Search"
-              onTextChange={handleSearchChange}
-            />
+          <div className="hidden lg:flex flex-shrink-0 flex-1 justify-end items-center space-x-4">
+            {isAuthenticated && (
+              <TextInput
+                icon={<SearchIcon className="text-gray-600" />}
+                placeholder="Search"
+                onTextChange={handleSearchChange}
+              />
+            )}
+
+            {!isLoading && (
+              <div className="flex items-center space-x-4">
+                {isAuthenticated ? (
+                  <>
+                    <Link
+                      href={`/profile/${user?.username}`}
+                      className="text-sm font-medium text-gray-700 hover:text-gray-900"
+                    >
+                      {user?.name}
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="text-sm font-medium text-gray-500 hover:text-gray-700"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="text-sm font-medium text-gray-700 hover:text-gray-900"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="bg-stone-900 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-stone-800"
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="flex lg:hidden flex-1 justify-end items-center space-x-3 sm:space-x-4">
-            <Link
-              href="/profile/edward"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                className="text-gray-600"
-              >
-                <path
-                  d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <circle
-                  cx="12"
-                  cy="7"
-                  r="4"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </Link>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-              <SearchIcon size={24} className="text-gray-600" />
-            </button>
+            {isAuthenticated && (
+              <>
+                <Link
+                  href={`/profile/${user?.username || "edward"}`}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="text-gray-600"
+                  >
+                    <path
+                      d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <circle
+                      cx="12"
+                      cy="7"
+                      r="4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </Link>
+                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                  <SearchIcon size={24} className="text-gray-600" />
+                </button>
+              </>
+            )}
+
+            {!isAuthenticated && !isLoading && (
+              <div className="flex items-center space-x-2">
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-gray-700 hover:text-gray-900"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="bg-stone-900 text-white px-3 py-1.5 rounded-full text-sm font-medium hover:bg-stone-800"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
