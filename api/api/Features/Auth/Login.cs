@@ -31,7 +31,6 @@ public class Login
 
     public class Response
     {
-        public string Token { get; set; } = string.Empty;
         public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
@@ -52,40 +51,13 @@ public class Login
         {
             return null;
         }
-
-        var token = GenerateJwtToken(user);
         
         return new Response
         {
-            Token = token,
             Id = user.Id,
             Name = user.Name,
             Username = user.UserName ?? string.Empty,
             Email = user.Email ?? string.Empty
         };
-    }
-
-    private string GenerateJwtToken(api.Models.User user)
-    {
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName ?? string.Empty),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
-            new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
-        };
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:ExpiryMinutes"]!)),
-            signingCredentials: creds);
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
