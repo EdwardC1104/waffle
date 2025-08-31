@@ -10,6 +10,7 @@ import { useState } from "react";
 export default function SignupPage() {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,7 +21,7 @@ export default function SignupPage() {
     e.preventDefault();
     setError("");
 
-    if (!name || !username || !password || !confirmPassword) {
+    if (!name || !username || !email || !password || !confirmPassword) {
       setError("Please fill in all fields");
       return;
     }
@@ -30,7 +31,7 @@ export default function SignupPage() {
       return;
     }
 
-    const result = await register(name, username, password);
+    const result = await register(name, username, email, password);
 
     if (result.success) {
       router.push("/feed/following");
@@ -69,6 +70,12 @@ export default function SignupPage() {
             <TextInput
               placeholder="Username"
               onTextChange={setUsername}
+              containerClassName="w-full"
+            />
+            <TextInput
+              placeholder="Email"
+              type="email"
+              onTextChange={setEmail}
               containerClassName="w-full"
             />
             <TextInput

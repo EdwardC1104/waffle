@@ -4,6 +4,8 @@ export interface User {
   username: string;
   email: string;
   profilePictureUrl: string;
+  followerCount: number;
+  followingCount: number;
 }
 
 export interface Post {

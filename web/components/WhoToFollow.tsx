@@ -1,22 +1,18 @@
+import useAuth from "@/hooks/useAuth";
+import { fetchFollowSuggestions } from "@/utils/api";
+import { useCallback, useEffect, useState } from "react";
 import { User } from "../types";
 import UserProfile from "./UserProfile";
-import useAuth from "@/hooks/useAuth";
-import { useCallback,
-          useState,
-          useEffect
-        } from "react";
-import { getSuggestedUsers } from "@/utils/api";
 
 export default function WhoToFollow() {
-  
   const [suggestedUsers, setSuggestedUsers] = useState<User[]>([]);
   const [followStates, setFollowStates] = useState<boolean[]>([]);
   const { user: currentUser } = useAuth();
 
-const fetchSuggestedUsers = useCallback(async () => {
+  const fetchSuggestedUsers = useCallback(async () => {
     if (currentUser) {
       try {
-        const users = await getSuggestedUsers(currentUser.username);
+        const users = await fetchFollowSuggestions(currentUser.username);
         setSuggestedUsers(users);
         // Initialize follow states array with false for each user
         setFollowStates(new Array(users.length).fill(false));
@@ -29,7 +25,7 @@ const fetchSuggestedUsers = useCallback(async () => {
   }, [currentUser]);
 
   const toggleFollowState = (index: number) => {
-    setFollowStates(prev => {
+    setFollowStates((prev) => {
       const newStates = [...prev];
       newStates[index] = !newStates[index];
       return newStates;
@@ -53,20 +49,20 @@ const fetchSuggestedUsers = useCallback(async () => {
                 <UserProfile user={user} size="sm" />
               </div>
 
-              <button 
+              <button
                 onClick={() => toggleFollowState(index)}
                 className={`px-3.5 py-1 rounded-full shadow-lg flex justify-center items-center transition-all hover:opacity-90 ${
-                  isFollowing 
-                    ? 'bg-gray-200 border border-stone-900' 
-                    : 'bg-stone-900'
+                  isFollowing
+                    ? "bg-gray-200 border border-stone-900"
+                    : "bg-stone-900"
                 }`}
               >
-                <span className={`text-xs font-semibold ${
-                  isFollowing 
-                    ? 'text-stone-900' 
-                    : 'text-white'
-                }`}>
-                  {isFollowing ? 'Following' : 'Follow'}
+                <span
+                  className={`text-xs font-semibold ${
+                    isFollowing ? "text-stone-900" : "text-white"
+                  }`}
+                >
+                  {isFollowing ? "Following" : "Follow"}
                 </span>
               </button>
             </div>

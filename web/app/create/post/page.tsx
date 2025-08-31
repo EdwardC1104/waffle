@@ -1,8 +1,9 @@
 "use client";
 
 import { AuthenticatedRoute } from "@/components/AuthenticatedRoute";
+import BackButton from "@/components/BackButton";
 import ErrorMessage from "@/components/ErrorMessage";
-import { postNewPost } from "@/utils/api";
+import { createNewPost } from "@/utils/api";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -47,7 +48,7 @@ function CreatePostForm({ user }: { user: { username: string } }) {
     setIsSubmitting(true);
 
     try {
-      await postNewPost(user.username, title, content);
+      await createNewPost(user.username, title, content);
       router.push(`/profile/${user.username}`);
     } catch (err) {
       console.error("Failed to create post:", err);
@@ -79,20 +80,7 @@ function CreatePostForm({ user }: { user: { username: string } }) {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => router.back()}
-            className="text-zinc-600 hover:text-zinc-800 transition-colors cursor-pointer"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M19 12H5M5 12L12 19M5 12L12 5"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
+          <BackButton text="" className="text-zinc-600 hover:text-zinc-800" />
           <h1 className="text-2xl sm:text-3xl font-bold text-zinc-700 font-serif">
             Write a Post
           </h1>

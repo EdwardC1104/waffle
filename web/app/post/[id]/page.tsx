@@ -1,14 +1,15 @@
 "use client";
 
+import BackButton from "@/components/BackButton";
 import ErrorMessage from "@/components/ErrorMessage";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostActions from "@/components/PostActions";
+import UserProfile from "@/components/UserProfile";
 import { Post } from "@/types";
-import { getPostById } from "@/utils/api";
+import { fetchPost } from "@/utils/api";
 import Image from "next/image";
 import { notFound, useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
-import UserProfile from "@/components/UserProfile";
 
 interface PostPageProps {
   params: Promise<{
@@ -24,11 +25,11 @@ export default function PostPage({ params }: PostPageProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPost = async () => {
+    const get = async () => {
       try {
         setLoading(true);
         setError(null);
-        const postData = await getPostById(parseInt(resolvedParams.id));
+        const postData = await fetchPost(parseInt(resolvedParams.id));
         setPost(postData);
       } catch (err) {
         console.error("Failed to fetch post:", err);
@@ -38,7 +39,7 @@ export default function PostPage({ params }: PostPageProps) {
       }
     };
 
-    fetchPost();
+    get();
   }, [resolvedParams.id]);
 
   if (loading) {
@@ -63,25 +64,7 @@ export default function PostPage({ params }: PostPageProps) {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <button
-        onClick={() => router.back()}
-        className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-6"
-      >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="m12 19-7-7 7-7" />
-          <path d="M19 12H5" />
-        </svg>
-        <span className="text-sm font-medium">Back</span>
-      </button>
+      <BackButton className="mb-6" />
 
       <article className="flex flex-col gap-8">
         {post.coverImageUrl && (

@@ -1,6 +1,12 @@
 "use client";
 
 import { User } from "@/types";
+import {
+  fetchCurrentUser,
+  loginUser,
+  logoutUser,
+  registerUser,
+} from "@/utils/api";
 import { createContext, ReactNode, useEffect, useState } from "react";
 
 interface AuthContextType {
@@ -15,6 +21,7 @@ interface AuthContextType {
   register: (
     name: string,
     username: string,
+    email: string,
     password: string
   ) => Promise<{ success: boolean; error?: string }>;
   refetchUser: () => Promise<void>;
@@ -35,28 +42,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const isAuthenticated = !!user;
 
   // Fetch current user from the API
-  const fetchCurrentUser = async () => {
+  const fetchUser = async () => {
     try {
-      const response = await fetch("/api/auth/me", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
-
-      if (response.status === 401) {
-        // User is not authenticated
-        setUser(null);
-        return;
-      }
-
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-      } else {
-        setUser(null);
-      }
+      const userData = await fetchCurrentUser();
+      setUser(userData);
     } catch (error) {
       console.error("Failed to fetch current user:", error);
       setUser(null);
@@ -67,90 +56,48 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Login function
   const login = async (username: string, password: string) => {
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ username, password }),
-      });
+    const result = await loginUser(username, password);
 
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-        return { success: true };
-      } else {
-        const errorData = await response.json();
-        return { success: false, error: errorData.message || "Login failed" };
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      return { success: false, error: "Network error occurred" };
+    if (result.success && result.user) {
+      setUser(result.user);
+      return { success: true };
+    } else {
+      return { success: false, error: result.error };
     }
   };
 
   // Logout function
   const logout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
-    } catch (error) {
-      console.error("Logout error:", error);
-    } finally {
-      setUser(null);
-    }
+    await logoutUser();
+    setUser(null);
   };
 
   // Register function
-  const register = async (name: string, username: string, password: string) => {
-    try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          name,
-          username,
-          password,
-          email: "email@example.com",
-        }),
-      });
+  const register = async (
+    name: string,
+    username: string,
+    email: string,
+    password: string
+  ) => {
+    const result = await registerUser(name, username, email, password);
 
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-        return { success: true };
-      } else {
-        const errorData = await response.json();
-        return {
-          success: false,
-          error: errorData.message || "Registration failed",
-        };
-      }
-    } catch (error) {
-      console.error("Registration error:", error);
-      return { success: false, error: "Network error occurred" };
+    if (result.success && result.user) {
+      setUser(result.user);
+      return { success: true };
+    } else {
+      return { success: false, error: result.error };
     }
   };
 
   // Refetch user function
   const refetchUser = async () => {
     setIsLoading(true);
-    await fetchCurrentUser();
+    await fetchUser();
   };
 
   // Check authentication status on mount
   useEffect(() => {
-    fetchCurrentUser();
+    fetchUser();
   }, []);
 
   const value: AuthContextType = {
