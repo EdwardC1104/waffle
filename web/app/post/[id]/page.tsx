@@ -1,5 +1,6 @@
 "use client";
 
+import ErrorMessage from "@/components/ErrorMessage";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostActions from "@/components/PostActions";
 import { Post } from "@/types";
@@ -49,15 +50,12 @@ export default function PostPage({ params }: PostPageProps) {
     }
     return (
       <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">Error loading post: {error}</p>
-          <button
-            onClick={() => router.back()}
-            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800"
-          >
-            Go Back
-          </button>
-        </div>
+        <ErrorMessage
+          title="Failed to Load Post"
+          message={error || "Post not found"}
+          onRetry={() => router.back()}
+          showRetryButton={true}
+        />
       </div>
     );
   }

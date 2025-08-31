@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Post } from "../types";
 import { getFollowingFeed, getFypFeed, getPopularFeed } from "../utils/api";
+import ErrorMessage from "./ErrorMessage";
 import LoadingSpinner from "./LoadingSpinner";
 import PostCard from "./PostCard";
 
@@ -56,15 +57,12 @@ export default function Feed({ feedType, username }: FeedProps) {
 
   if (error) {
     return (
-      <div className="text-center">
-        <p className="text-red-600 mb-4">Error loading feed: {error}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800"
-        >
-          Retry
-        </button>
-      </div>
+      <ErrorMessage
+        title="Failed to Load Feed"
+        message={error}
+        onRetry={() => window.location.reload()}
+        showRetryButton={true}
+      />
     );
   }
 

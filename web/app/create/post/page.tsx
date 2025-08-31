@@ -1,6 +1,7 @@
 "use client";
 
 import { AuthenticatedRoute } from "@/components/AuthenticatedRoute";
+import ErrorMessage from "@/components/ErrorMessage";
 import { postNewPost } from "@/utils/api";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -20,6 +21,8 @@ function CreatePostForm({ user }: { user: { username: string } }) {
   const [content, setContent] = useState("");
   const [, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -40,8 +43,18 @@ function CreatePostForm({ user }: { user: { username: string } }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await postNewPost(user.username, title, content);
-    router.push(`/profile/${user.username}`);
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      await postNewPost(user.username, title, content);
+      router.push(`/profile/${user.username}`);
+    } catch (err) {
+      console.error("Failed to create post:", err);
+      setError(err instanceof Error ? err.message : "Failed to create post");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const minChars = 2000;
@@ -49,6 +62,9 @@ function CreatePostForm({ user }: { user: { username: string } }) {
 
   const canPublish = title.trim() && content.trim().length >= minChars;
   const getButtonText = () => {
+    if (isSubmitting) {
+      return "Publishing...";
+    }
     if (canPublish) {
       return "Publish";
     }
@@ -84,10 +100,10 @@ function CreatePostForm({ user }: { user: { username: string } }) {
 
         <button
           onClick={handleSubmit}
-          disabled={!canPublish}
+          disabled={!canPublish || isSubmitting}
           className="relative overflow-hidden px-6 py-2.5 rounded-full font-medium text-sm transition-all shadow-md"
           style={{
-            color: canPublish ? "#fff" : "#374151",
+            color: canPublish && !isSubmitting ? "#fff" : "#374151",
             background: "none",
             border: "none",
           }}
@@ -106,6 +122,15 @@ function CreatePostForm({ user }: { user: { username: string } }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {error && (
+          <ErrorMessage
+            title="Failed to Create Post"
+            message={error}
+            onRetry={() => setError(null)}
+            showRetryButton={false}
+            className="mb-4"
+          />
+        )}
         <div>
           <textarea
             value={title}
