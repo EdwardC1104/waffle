@@ -20,7 +20,6 @@ function CreatePostForm({ user }: { user: { username: string } }) {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,7 +27,6 @@ function CreatePostForm({ user }: { user: { username: string } }) {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedImage(file);
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target?.result as string);
@@ -38,7 +36,6 @@ function CreatePostForm({ user }: { user: { username: string } }) {
   };
 
   const removeImage = () => {
-    setSelectedImage(null);
     setImagePreview(null);
   };
 
@@ -48,7 +45,12 @@ function CreatePostForm({ user }: { user: { username: string } }) {
     setIsSubmitting(true);
 
     try {
-      await createNewPost(user.username, title, content);
+      await createNewPost(
+        user.username,
+        title,
+        content,
+        imagePreview || undefined
+      );
       router.push(`/profile/${user.username}`);
     } catch (err) {
       console.error("Failed to create post:", err);

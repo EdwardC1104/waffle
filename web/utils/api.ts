@@ -104,16 +104,18 @@ export async function unlikePost(postId: number): Promise<Post> {
 export async function createNewPost(
   username: string,
   title: string,
-  content: string
+  content: string,
+  coverImageUrl?: string
 ): Promise<Post> {
-  return await post<Post, { username: string; title: string; content: string }>(
-    `/api/post/create`,
-    {
-      username,
-      title,
-      content,
-    }
-  );
+  return await post<
+    Post,
+    { username: string; title: string; content: string; coverImageUrl?: string }
+  >(`/api/post/create`, {
+    username,
+    title,
+    content,
+    ...(coverImageUrl && { coverImageUrl }),
+  });
 }
 
 // Auth functions with custom error handling

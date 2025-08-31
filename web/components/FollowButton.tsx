@@ -46,7 +46,7 @@ export default function FollowButton({
 
   const handleFollowToggle = async () => {
     if (!currentUser) {
-      router.push("/login");
+      router.replace("/login");
       return;
     }
 
