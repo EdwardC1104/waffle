@@ -14,18 +14,9 @@ interface UseProfileReturn {
   handlePostUpdate: (updatedPost: Post) => void;
 }
 
-interface UseProfileOptions {
-  includePosts?: boolean;
-  includeFollowers?: boolean;
-  includeFollowing?: boolean;
-}
+type ProfileDataType = 'posts' | 'followers' | 'following';
 
-export default function useProfile(options: UseProfileOptions = {}): UseProfileReturn {
-  const { 
-    includePosts = true, 
-    includeFollowers = false, 
-    includeFollowing = false 
-  } = options;
+export default function useProfile(dataType: ProfileDataType = 'posts'): UseProfileReturn {
   
   const username = useParams().username;
   const [user, setUser] = useState<User | null>(null);
@@ -52,39 +43,35 @@ export default function useProfile(options: UseProfileOptions = {}): UseProfileR
         return;
       }
 
-      // Build array of promises based on options
+      // Build array of promises based on dataType
       const promises: Promise<any>[] = [fetchUser(username)];
       
-      if (includePosts) {
+      if (dataType === 'posts') {
         promises.push(fetchUserPosts(username));
       }
       
-      if (includeFollowers) {
+      if (dataType === 'followers') {
         promises.push(fetchFollowers(username));
       }
       
-      if (includeFollowing) {
+      if (dataType === 'following') {
         promises.push(fetchFollowing(username));
       }
 
       const results = await Promise.all(promises);
       
-      let resultIndex = 1; // Start after user data
       setUser(results[0]);
       
-      if (includePosts) {
-        setPosts(results[resultIndex]);
-        resultIndex++;
+      if (dataType === 'posts') {
+        setPosts(results[1]);
       }
       
-      if (includeFollowers) {
-        setFollowers(results[resultIndex]);
-        resultIndex++;
+      if (dataType === 'followers') {
+        setFollowers(results[1]);
       }
       
-      if (includeFollowing) {
-        setFollowing(results[resultIndex]);
-        resultIndex++;
+      if (dataType === 'following') {
+        setFollowing(results[1]);
       }
 
     } catch (err) {
@@ -96,7 +83,7 @@ export default function useProfile(options: UseProfileOptions = {}): UseProfileR
     } finally {
       setLoading(false);
     }
-  }, [username, includePosts, includeFollowers, includeFollowing]);
+  }, [username, dataType]);
 
   useEffect(() => {
     fetchUserData();
