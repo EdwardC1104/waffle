@@ -4,6 +4,8 @@ import Image from "next/image";
 import { User } from "../types";
 import { MoreIcon } from "./Icons";
 import useAuth from "@/hooks/useAuth";
+import DropDown from "./DropDown";
+import FollowButton from "./FollowButton";
 
 
 
@@ -36,6 +38,7 @@ export default function UserProfile({
       usernameText: "text-xs font-normal",
       statsNumber: "text-2xl font-bold", // Not used but needed for type consistency
       statsLabel: "text-xs font-medium", // Not used but needed for type consistency
+      iconSize: 16,                      // Not used but needed for type consistency
       showStats: false,
       padding: "py-4",
     },
@@ -48,6 +51,7 @@ export default function UserProfile({
       usernameText: "text-xs font-normal",
       statsNumber: "text-2xl font-bold",
       statsLabel: "text-xs font-medium",
+      iconSize: 16,
       showStats: true,
       padding: "py-6",
     },
@@ -60,8 +64,9 @@ export default function UserProfile({
       usernameText: "text-lg font-normal",
       statsNumber: "text-4xl font-bold",
       statsLabel: "text-base font-medium",
+      iconSize: 24,
       showStats: true,
-      padding: "py-16",
+      padding: "py-16"
     },
   };
 
@@ -120,9 +125,11 @@ export default function UserProfile({
               </div>
             </button>
           </Link>
-          <button className="p-1">
-            <MoreIcon size={16} className="text-stone-900" />
-          </button>
+          <DropDown
+            userId={user.id}
+            showForCurrentUserOnly={true}
+            iconSize={config.iconSize}
+          />
         </div>
 
         {config.showStats && (
@@ -189,9 +196,15 @@ export default function UserProfile({
               </p>
             </div>
           </div>
-          <button className="p-1">
-            <MoreIcon size={32} className="text-stone-900" />
-          </button>
+          {!isCurrentUser ? (
+            <FollowButton userId={user.id} initialFollowState={false} size="lg" /> // temp hardcoded false follow
+          ) : (
+            <DropDown
+              userId={user.id}
+              showForCurrentUserOnly={true}
+              iconSize={config.iconSize}
+            />
+          )}
         </div>
 
         {config.showStats && (
