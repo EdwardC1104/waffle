@@ -1,4 +1,4 @@
-import { Post, User } from "../types";
+import { Post, SearchResult, User } from "../types";
 
 async function post<T, U>(endpoint: string, body: U): Promise<T> {
   const response = await fetch(`${endpoint}`, {
@@ -97,8 +97,18 @@ export async function unfollow(
 export async function likePost(postId: number): Promise<Post> {
   return await post<Post, { postId: number }>(`/api/like/create`, { postId });
 }
+
 export async function unlikePost(postId: number): Promise<Post> {
   return await post<Post, { postId: number }>(`/api/like/delete`, { postId });
+}
+
+export async function search(query: string): Promise<SearchResult[]> {
+  return await post<SearchResult[], { query: string }>(
+    `/api/search/search-users-and-posts`,
+    {
+      query,
+    }
+  );
 }
 
 export async function createNewPost(

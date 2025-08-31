@@ -11,6 +11,8 @@ interface TextInputProps {
   inputClassName?: string;
   value?: string;
   defaultValue?: string;
+  onFocus?: () => void;
+  autoFocus?: boolean;
 }
 
 export default function TextInput({
@@ -20,15 +22,18 @@ export default function TextInput({
   onTextChange,
   containerClassName = "",
   inputClassName = "",
-  value,
+  value: controlledValue,
+  onFocus,
+  autoFocus = false,
   defaultValue = "",
 }: TextInputProps) {
   const [internalValue, setInternalValue] = useState(defaultValue);
-  const displayValue = value !== undefined ? value : internalValue;
+  const isControlled = controlledValue !== undefined;
+  const value = isControlled ? controlledValue : internalValue;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    if (value === undefined) {
+    if (!isControlled) {
       setInternalValue(newValue);
     }
     onTextChange?.(newValue);
@@ -45,10 +50,12 @@ export default function TextInput({
       )}
       <input
         type={type}
-        value={displayValue}
+        value={value}
         onChange={handleChange}
+        onFocus={onFocus}
         placeholder={placeholder}
-        className={`bg-transparent border-none outline-none text-zinc-800/50 text-base font-semibold placeholder:text-zinc-800/50 flex-1 ${inputClassName}`}
+        autoFocus={autoFocus}
+        className={`bg-transparent border-none outline-none text-[#1C1C19] text-base font-semibold placeholder:text-[#1C1C19]/50 flex-1 ${inputClassName}`}
       />
     </div>
   );
