@@ -7,57 +7,12 @@ import UserProfile from "@/components/UserProfile";
 import WhoToFollow from "@/components/WhoToFollow";
 import WritePostCTA from "@/components/WritePostCTA";
 import useAuth from "@/hooks/useAuth";
-import { Post, User } from "@/types";
-import { fetchUser, fetchUserPosts } from "@/utils/api";
-import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import useProfile from "@/hooks/useProfile";
 
 export default function UserProfilePage() {
-  const username = useParams().username;
-  const [user, setUser] = useState<User | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { user, posts, loading, error, refetch, handlePostUpdate } =
+    useProfile("posts");
   const { user: currentUser } = useAuth();
-
-  const handlePostUpdate = (updatedPost: Post) => {
-    setPosts((prevPosts) =>
-      prevPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
-    );
-  };
-
-  const fetchUserData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      if (!username || typeof username !== "string") {
-        setError("No username provided in URL");
-        setUser(null);
-        return;
-      }
-
-      const [userData, userPosts] = await Promise.all([
-        fetchUser(username),
-        fetchUserPosts(username),
-      ]);
-
-      setUser(userData);
-      setPosts(userPosts);
-    } catch (err) {
-      console.error("Failed to fetch user data:", err);
-      setError(
-        err instanceof Error ? err.message : "Failed to load user profile"
-      );
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [username, currentUser]); // eslint-disable-line
-
-  useEffect(() => {
-    fetchUserData();
-  }, [fetchUserData]);
 
   if (loading) {
     return <LoadingSpinner text="Loading profile..." fullPage center />;
@@ -69,13 +24,8 @@ export default function UserProfilePage() {
         <div className="w-full max-w-[1476px] mx-auto flex justify-center items-center px-4 sm:px-6 lg:px-8 py-6">
           <ErrorMessage
             title={error ? "Failed to load profile" : "User not found"}
-            message={
-              error ||
-              (username && typeof username === "string"
-                ? `The user "${username}" could not be found.`
-                : "Invalid username provided.")
-            }
-            onRetry={fetchUserData}
+            message={error || "The user could not be found."}
+            onRetry={refetch}
             showRetryButton={!!error}
           />
         </div>
@@ -86,7 +36,7 @@ export default function UserProfilePage() {
   return (
     <div className="min-h-screen">
       <div className="w-full max-w-[1476px] mx-auto flex justify-center items-start gap-4 lg:gap-8 xl:gap-16 px-4 sm:px-6 lg:px-8 py-6">
-        <div className="hidden xl:flex w-60 flex-col gap-8 flex-shrink-0">
+        <div className="hidden xl:flex w-60 flex-col gap-8 flex-shrink-0 sticky top-16">
           <WritePostCTA todayWordCount={0} />
         </div>
 
@@ -118,7 +68,7 @@ export default function UserProfilePage() {
           </div>
         </div>
 
-        <div className="hidden lg:flex w-60 flex-col gap-8 flex-shrink-0">
+        <div className="hidden lg:flex w-60 flex-col gap-8 flex-shrink-0 sticky top-16">
           <WhoToFollow />
         </div>
       </div>

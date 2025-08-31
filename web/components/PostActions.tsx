@@ -79,7 +79,7 @@ export default function PostActions({
   };
 
   return (
-    <div className="flex items-center gap-4 sm:gap-8 lg:gap-12">
+    <div className="flex items-center justify-between sm:justify-start gap-4 sm:gap-8 lg:gap-12 w-full sm:w-auto max-w-md sm:max-w-none">
       <button
         onClick={handleLikeToggle}
         disabled={isLiking || !isAuthenticated}

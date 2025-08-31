@@ -5,17 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import FeedTabs from "./FeedTabs";
-import { SearchIcon } from "./Icons";
-import TextInput from "./TextInput";
+import Search from "./Search";
 
 export function Navbar() {
   const pathname = usePathname();
   const isFeedPage = pathname?.startsWith("/feed");
   const { user, isAuthenticated, isLoading } = useAuth();
-
-  const handleSearchChange = (text: string) => {
-    console.log("Search text:", text);
-  };
 
   return (
     <nav className="bg-white border-b border-gray-100 sticky top-0 z-10">
@@ -40,13 +35,7 @@ export function Navbar() {
           )}
 
           <div className="hidden lg:flex flex-shrink-0 flex-1 justify-end items-center space-x-4">
-            {isAuthenticated && (
-              <TextInput
-                icon={<SearchIcon className="text-gray-600" />}
-                placeholder="Search"
-                onTextChange={handleSearchChange}
-              />
-            )}
+            {isAuthenticated && <Search />}
 
             {!isLoading && !isAuthenticated && (
               <div className="flex items-center space-x-4">
@@ -99,9 +88,7 @@ export function Navbar() {
                     />
                   </svg>
                 </Link>
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                  <SearchIcon size={24} className="text-gray-600" />
-                </button>
+                <Search />
               </>
             )}
 

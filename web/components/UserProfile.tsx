@@ -2,9 +2,11 @@ import useAuth from "@/hooks/useAuth";
 import formatNumber from "@/utils/formatNumber";
 import Link from "next/dist/client/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { User } from "../types";
 import DropDown from "./DropDown";
 import FollowButton from "./FollowButton";
+import { EditIcon, LogoutIcon } from "./Icons";
 
 interface UserProfileProps {
   user: User;
@@ -19,8 +21,11 @@ export default function UserProfile({
   size = "md",
   containerClassName = "",
 }: UserProfileProps) {
+  const router = useRouter();
+  const { user: currentUser, logout } = useAuth();
+  
   // Check for currentUser
-  const isCurrentUser = useAuth().user?.id === user.id;
+  const isCurrentUser = currentUser?.id === user.id;
 
   // Size configurations
   const sizeConfig = {
@@ -66,6 +71,27 @@ export default function UserProfile({
   };
 
   const config = sizeConfig[size];
+
+  // Dropdown items for current user
+  const dropdownItems = isCurrentUser ? [
+    {
+      label: 'Edit Profile',
+      onClick: () => router.push('/profile/edit'),
+      icon: <EditIcon size={16} />
+    },
+    {
+      label: 'Logout',
+      onClick: async () => {
+        try {
+          await logout();
+          router.push('/login');
+        } catch (error) {
+          console.error('Failed to logout:', error);
+        }
+      },
+      icon: <LogoutIcon size={16} />
+    }
+  ] : [];
 
   // Small size layout (like WhoToFollow)
   if (size === "sm") {
@@ -124,6 +150,7 @@ export default function UserProfile({
             userId={user.id}
             showForCurrentUserOnly={true}
             iconSize={config.iconSize}
+            items={dropdownItems}
           />
         </div>
 
@@ -206,6 +233,7 @@ export default function UserProfile({
               userId={user.id}
               showForCurrentUserOnly={true}
               iconSize={config.iconSize}
+              items={dropdownItems}
             />
           )}
         </div>
