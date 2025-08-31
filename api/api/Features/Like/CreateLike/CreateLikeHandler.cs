@@ -51,6 +51,6 @@ public class CreateLikeHandler
         await _dbContext.SaveChangesAsync();
 
         // Return the updated post with the user's like status
-        return await post.ToDtoAsync(user.Id, _dbContext);
+        return await post.ToDtoAsync(username, _dbContext);
     }
 }
