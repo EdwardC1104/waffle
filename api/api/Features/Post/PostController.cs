@@ -28,7 +28,7 @@ public class PostController : ControllerBase
     }
     
     [HttpPost("create")]
-    public async Task<IActionResult> CreatePost(string username, [FromBody] CreatePostCommand request)
+    public async Task<IActionResult> CreatePost([FromBody] CreatePostCommand request)
     {
         if (!User.Identity?.IsAuthenticated ?? true)
         {
@@ -36,7 +36,7 @@ public class PostController : ControllerBase
         }
 
         var authenticatedUsername = User.Identity?.Name;
-        if (!string.Equals(authenticatedUsername, username, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(authenticatedUsername, request.Username, StringComparison.OrdinalIgnoreCase))
         {
             return StatusCode(403, new { message = "Forbidden: You can only create posts for your own account" });
         }
@@ -45,10 +45,10 @@ public class PostController : ControllerBase
         
         if (response == null)
         {
-            return NotFound(new { message = $"User with username '{username}' not found" });
+            return NotFound(new { message = $"User with username '{request.Username}' not found" });
         }
         
-        return Created($"/api/user/{username}/post/{response.Id}", response);
+        return Created($"/api/post/get", response);
     }
 
     [HttpPost("get")]

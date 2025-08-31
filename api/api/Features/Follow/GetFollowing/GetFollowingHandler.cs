@@ -16,19 +16,19 @@ public class GetFollowingHandler
     public async Task<IEnumerable<UserDto>> Handle(GetFollowingQuery query)
     {
         // Get all users who the specified user is following
-        var following = await _context.Follows
+        var followedUsers = await _context.Follows
             .Where(f => f.Follower.UserName == query.Username)
             .Include(f => f.Followee)
-            .Select(f => new UserDto
-            {
-                Id = f.Followee.Id,
-                Name = f.Followee.Name,
-                Username = f.Followee.UserName ?? string.Empty,
-                Email = f.Followee.Email ?? string.Empty,
-                ProfilePictureUrl = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-            })
+            .Select(f => f.Followee)
             .ToListAsync();
 
-        return following;
+        var userDtos = new List<UserDto>();
+        foreach (var user in followedUsers)
+        {
+            var userDto = await user.ToDtoAsync(_context);
+            userDtos.Add(userDto);
+        }
+
+        return userDtos;
     }
 }

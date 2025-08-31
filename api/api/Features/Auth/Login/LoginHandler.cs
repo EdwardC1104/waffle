@@ -1,3 +1,4 @@
+using api.Data;
 using Microsoft.AspNetCore.Identity;
 using api.Features.User;
 
@@ -7,11 +8,13 @@ public class LoginHandler
 {
     private readonly SignInManager<api.Models.User> _signInManager;
     private readonly UserManager<api.Models.User> _userManager;
+    private readonly AppDbContext _dbContext;
 
-    public LoginHandler(SignInManager<api.Models.User> signInManager, UserManager<api.Models.User> userManager)
+    public LoginHandler(SignInManager<api.Models.User> signInManager, UserManager<api.Models.User> userManager, AppDbContext dbContext)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _dbContext = dbContext;
     }
 
     public async Task<UserDto?> Handle(LoginCommand request)
@@ -28,14 +31,7 @@ public class LoginHandler
         {
             return null;
         }
-        
-        return new UserDto
-        {
-            Id = user.Id,
-            Name = user.Name,
-            Username = user.UserName ?? string.Empty,
-            Email = user.Email ?? string.Empty,
-            ProfilePictureUrl = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-        };
+
+        return await user.ToDtoAsync(_dbContext);
     }
 }

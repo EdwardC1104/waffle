@@ -15,19 +15,18 @@ public class GetSuggestionsHandler
 
     public async Task<IEnumerable<UserDto>> Handle(GetSuggestionsQuery query)
     {
-        // For now, get all users except the current user
+        // Get all users except the current user
         var users = await _context.Users
             .Where(u => u.UserName != query.Username)
-            .Select(u => new UserDto
-            {
-                Id = u.Id,
-                Name = u.Name,
-                Username = u.UserName ?? string.Empty,
-                Email = u.Email ?? string.Empty,
-                ProfilePictureUrl = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-            })
             .ToListAsync();
 
-        return users;
+        var userDtos = new List<UserDto>();
+        foreach (var user in users)
+        {
+            var userDto = await user.ToDtoAsync(_context);
+            userDtos.Add(userDto);
+        }
+
+        return userDtos;
     }
 }
