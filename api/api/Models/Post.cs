@@ -15,6 +15,8 @@ public class Post
     
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     
+    public string CoverImageUrl { get; set; } = string.Empty;
+    
     // Foreign key for User relationship - using string to match IdentityUser.Id
     public string UserId { get; set; } = string.Empty;
     
