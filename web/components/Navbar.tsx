@@ -88,7 +88,7 @@ export function Navbar() {
                     />
                   </svg>
                 </Link>
-                <Search isMobile={true} />
+                <Search />
               </>
             )}
 

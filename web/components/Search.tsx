@@ -6,11 +6,10 @@ import SearchBox from "./SearchBox";
 import TextInput from "./TextInput";
 
 interface SearchProps {
-  isMobile?: boolean;
   className?: string;
 }
 
-export default function Search({ isMobile = false, className = "" }: SearchProps) {
+export default function Search({ className = "" }: SearchProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -23,40 +22,31 @@ export default function Search({ isMobile = false, className = "" }: SearchProps
     setSearchTerm("");
   };
 
-  if (isMobile) {
-    return (
-      <div className={`relative ${className}`}>
-        <button
-          onClick={handleSearchOpen}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-        >
-          <SearchIcon size={24} className="text-gray-600" />
-        </button>
-        <SearchBox
-          isOpen={isSearchOpen}
-          onClose={handleSearchClose}
-          isMobile={true}
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-        />
-      </div>
-    );
-  }
-
   return (
     <div className={`relative ${className}`}>
-      <TextInput
-        icon={<SearchIcon className="text-gray-600" />}
-        placeholder="Search"
-        value={searchTerm}
-        onTextChange={setSearchTerm}
-        onFocus={handleSearchOpen}
-        inputClassName="min-w-[120px]"
-      />
+      {/* Mobile button - only visible on small screens */}
+      <button
+        onClick={handleSearchOpen}
+        className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+      >
+        <SearchIcon size={24} className="text-gray-600" />
+      </button>
+
+      {/* Desktop search input - only visible on large screens */}
+      <div className="hidden lg:block">
+        <TextInput
+          icon={<SearchIcon className="text-gray-600" />}
+          placeholder="Search"
+          value={searchTerm}
+          onTextChange={setSearchTerm}
+          onFocus={handleSearchOpen}
+          inputClassName="min-w-[120px]"
+        />
+      </div>
+
       <SearchBox
         isOpen={isSearchOpen}
         onClose={handleSearchClose}
-        isMobile={false}
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
       />
