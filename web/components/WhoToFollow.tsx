@@ -1,12 +1,9 @@
-import { User } from "../types";
-import UserProfile from "./UserProfile";
-import FollowButton from "./FollowButton";
 import useAuth from "@/hooks/useAuth";
-import { useCallback,
-          useState,
-          useEffect
-        } from "react";
 import { fetchFollowSuggestions } from "@/utils/api";
+import { useCallback, useEffect, useState } from "react";
+import { User } from "../types";
+import FollowButton from "./FollowButton";
+import UserProfile from "./UserProfile";
 
 export default function WhoToFollow() {
   const [suggestedUsers, setSuggestedUsers] = useState<User[]>([]);
@@ -24,7 +21,6 @@ export default function WhoToFollow() {
     }
   }, [currentUser]);
 
-
   useEffect(() => {
     fetchSuggestedUsers();
   }, [fetchSuggestedUsers]);
@@ -40,7 +36,7 @@ export default function WhoToFollow() {
               <UserProfile user={user} size="sm" />
             </div>
 
-            <FollowButton userId={user.id} />
+            <FollowButton username={user.username} />
           </div>
         ))}
       </div>

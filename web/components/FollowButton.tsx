@@ -1,24 +1,39 @@
 "use client";
 
-import { useState } from "react";
 import useAuth from "@/hooks/useAuth";
+import { follow, unfollow } from "@/utils/api";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface FollowButtonProps {
-  userId: string;
+  username: string;
   initialFollowState?: boolean;
   className?: string;
   size?: "sm" | "lg";
 }
 
 export default function FollowButton({
-  userId,
+  username,
   initialFollowState = false,
   className = "",
   size = "sm",
 }: FollowButtonProps) {
+  const router = useRouter();
+  const { user: currentUser } = useAuth();
   const [isFollowing, setIsFollowing] = useState(initialFollowState);
 
   const toggleFollowState = () => {
+    if (!currentUser) {
+      router.push("/login");
+      return;
+    }
+
+    if (isFollowing) {
+      unfollow(currentUser.username, username);
+    } else {
+      follow(currentUser.username, username);
+    }
+
     setIsFollowing(!isFollowing);
   };
 
@@ -37,20 +52,20 @@ export default function FollowButton({
   const config = sizeConfig[size];
 
   return (
-    <button 
+    <button
       onClick={toggleFollowState}
-      className={`${config.padding} rounded-full shadow-lg flex justify-center items-center transition-all hover:opacity-90 ${
-        isFollowing 
-          ? 'bg-gray-200 border border-stone-900' 
-          : 'bg-stone-900'
+      className={`${
+        config.padding
+      } rounded-full shadow-lg flex justify-center items-center transition-all hover:opacity-90 ${
+        isFollowing ? "bg-gray-200 border border-stone-900" : "bg-stone-900"
       } ${className}`}
     >
-      <span className={`${config.fontSize} ${
-        isFollowing 
-          ? 'text-stone-900' 
-          : 'text-white'
-      }`}>
-        {isFollowing ? 'Following' : 'Follow'}
+      <span
+        className={`${config.fontSize} ${
+          isFollowing ? "text-stone-900" : "text-white"
+        }`}
+      >
+        {isFollowing ? "Following" : "Follow"}
       </span>
     </button>
   );
