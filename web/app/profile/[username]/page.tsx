@@ -9,7 +9,6 @@ import WritePostCTA from "@/components/WritePostCTA";
 import useAuth from "@/hooks/useAuth";
 import { Post, User } from "@/types";
 import {
-  getSuggestedUsers,
   getUserByUsername,
   getUserPosts,
 } from "@/utils/api";
@@ -20,7 +19,6 @@ export default function UserProfilePage() {
   const username = useParams().username;
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [suggestedUsers, setSuggestedUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user: currentUser } = useAuth();
@@ -54,25 +52,10 @@ export default function UserProfilePage() {
     }
   }, [username]);
 
-  const fetchSuggestedUsers = useCallback(async () => {
-    if (currentUser) {
-      try {
-        const users = await getSuggestedUsers(currentUser.username);
-        setSuggestedUsers(users);
-      } catch (err) {
-        console.error("Failed to fetch suggested users:", err);
-        setSuggestedUsers([]);
-      }
-    }
-  }, [currentUser]);
-
   useEffect(() => {
     fetchUserData();
   }, [fetchUserData]);
 
-  useEffect(() => {
-    fetchSuggestedUsers();
-  }, [fetchSuggestedUsers]);
 
   if (loading) {
     return <LoadingSpinner text="Loading profile..." fullPage center />;
@@ -130,7 +113,7 @@ export default function UserProfilePage() {
         </div>
 
         <div className="hidden lg:flex w-60 flex-col gap-8 flex-shrink-0">
-          <WhoToFollow users={suggestedUsers} />
+          <WhoToFollow />
         </div>
       </div>
     </div>
