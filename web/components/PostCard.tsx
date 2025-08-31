@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Post } from "../types";
 import PostActions from "./PostActions";
+import UserProfile from "./UserProfile";
 
 interface PostCardProps {
   post: Post;
@@ -31,25 +32,10 @@ export default function PostCard({ post }: PostCardProps) {
               : post.content}
           </p>
         </div>
-
+        </Link>
         <div className="flex items-center gap-1.5">
-          <Image
-            src={post.author.profilePictureUrl}
-            alt={post.author.name}
-            width={36}
-            height={36}
-            className="w-9 h-9 rounded-full object-cover"
-          />
-          <div>
-            <p className="text-stone-900 text-xs font-medium">
-              {post.author.name}
-            </p>
-            <p className="text-zinc-600 text-xs font-normal">
-              @{post.author.username}
-            </p>
-          </div>
+          <UserProfile user={post.author} size="sm" />
         </div>
-      </Link>
 
       <PostActions likes={0} replies={0} bookmarks={0} />
     </article>

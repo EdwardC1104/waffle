@@ -1,11 +1,14 @@
 "use client";
 
+import ErrorMessage from "@/components/ErrorMessage";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import PostActions from "@/components/PostActions";
 import { Post } from "@/types";
 import { getPostById } from "@/utils/api";
 import Image from "next/image";
 import { notFound, useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
+import UserProfile from "@/components/UserProfile";
 
 interface PostPageProps {
   params: Promise<{
@@ -39,14 +42,7 @@ export default function PostPage({ params }: PostPageProps) {
   }, [resolvedParams.id]);
 
   if (loading) {
-    return (
-      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading post...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner text="Loading post..." center />;
   }
 
   if (error || !post) {
@@ -55,15 +51,12 @@ export default function PostPage({ params }: PostPageProps) {
     }
     return (
       <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">Error loading post: {error}</p>
-          <button
-            onClick={() => router.back()}
-            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800"
-          >
-            Go Back
-          </button>
-        </div>
+        <ErrorMessage
+          title="Failed to Load Post"
+          message={error || "Post not found"}
+          onRetry={() => router.back()}
+          showRetryButton={true}
+        />
       </div>
     );
   }
@@ -109,21 +102,7 @@ export default function PostPage({ params }: PostPageProps) {
           </h1>
 
           <div className="flex items-center gap-3 mb-4">
-            <Image
-              src={post.author.profilePictureUrl}
-              alt={post.author.name}
-              width={48}
-              height={48}
-              className="w-12 h-12 rounded-full object-cover"
-            />
-            <div>
-              <p className="text-stone-900 text-sm font-medium">
-                {post.author.name}
-              </p>
-              <p className="text-zinc-600 text-sm font-normal">
-                @{post.author.username}
-              </p>
-            </div>
+            <UserProfile user={post.author} size="sm" />
           </div>
 
           <p className="text-zinc-500 text-sm">

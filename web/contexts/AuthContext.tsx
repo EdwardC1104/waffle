@@ -38,8 +38,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const fetchCurrentUser = async () => {
     try {
       const response = await fetch("/api/auth/me", {
-        credentials: "include", // Include cookies
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
       });
+
+      if (response.status === 401) {
+        // User is not authenticated
+        setUser(null);
+        return;
+      }
 
       if (response.ok) {
         const userData = await response.json();
@@ -86,6 +96,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       await fetch("/api/auth/logout", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         credentials: "include",
       });
     } catch (error) {

@@ -1,12 +1,12 @@
 "use client";
 
-import Feed from "@/components/Feed";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AuthenticatedRoute } from "@/components/AuthenticatedRoute";
+import FeedLayout from "@/components/FeedLayout";
 
 export default function FollowingPage() {
   return (
-    <ProtectedRoute>
-      <Feed feedType="following" />
-    </ProtectedRoute>
+    <AuthenticatedRoute>
+      {(user) => <FeedLayout feedType="following" user={user} />}
+    </AuthenticatedRoute>
   );
 }

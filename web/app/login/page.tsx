@@ -1,5 +1,6 @@
 "use client";
 
+import ErrorMessage from "@/components/ErrorMessage";
 import TextInput from "@/components/TextInput";
 import useAuth from "@/hooks/useAuth";
 import Link from "next/link";
@@ -45,9 +46,12 @@ export default function LoginPage() {
         <div className="mt-8 space-y-4">
           <form className="space-y-4" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-md text-sm">
-                {error}
-              </div>
+              <ErrorMessage
+                title="Login Failed"
+                message={error}
+                showRetryButton={false}
+                className="mb-4"
+              />
             )}
 
             <TextInput
