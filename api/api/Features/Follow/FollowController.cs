@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace api.Features.Follow;
 
 [ApiController]
-[Route("api/user")]
+[Route("api/follow")]
 public class FollowController : ControllerBase
 {
     private readonly GetSuggestionsHandler _getSuggestionsHandler;
@@ -20,37 +20,37 @@ public class FollowController : ControllerBase
         _getFollowingHandler = getFollowingHandler;
     }
 
-    [HttpGet("{username}/follow/suggestions")]
-    public async Task<IActionResult> GetSuggestions(string username)
+    [HttpPost("suggestions")]
+    public async Task<IActionResult> GetSuggestions([FromBody] GetSuggestionsQuery query)
     {
         // Ensure the user is authenticated
         if (!User.Identity?.IsAuthenticated ?? true)
         {
-            return Unauthorized();
+            return Unauthorized(new { message = "Not logged in" });
         }
 
         // Check if the authenticated user's username matches the route username
         var authenticatedUsername = User.Identity?.Name;
-        if (!string.Equals(authenticatedUsername, username, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(authenticatedUsername, query.Username, StringComparison.OrdinalIgnoreCase))
         {
-            return Forbid();
+            return StatusCode(403, new { message = "Forbidden: You can only get suggestions for your own account" });
         }
 
-        var response = await _getSuggestionsHandler.Handle(username);
+        var response = await _getSuggestionsHandler.Handle(query);
         return Ok(response);
     }
 
-    [HttpGet("{username}/followers")]
-    public async Task<IActionResult> GetFollowers(string username)
+    [HttpPost("followers")]
+    public async Task<IActionResult> GetFollowers([FromBody] GetFollowersQuery query)
     {
-        var response = await _getFollowersHandler.Handle(username);
+        var response = await _getFollowersHandler.Handle(query);
         return Ok(response);
     }
 
-    [HttpGet("{username}/following")]
-    public async Task<IActionResult> GetFollowing(string username)
+    [HttpPost("following")]
+    public async Task<IActionResult> GetFollowing([FromBody] GetFollowingQuery query)
     {
-        var response = await _getFollowingHandler.Handle(username);
+        var response = await _getFollowingHandler.Handle(query);
         return Ok(response);
     }
 }

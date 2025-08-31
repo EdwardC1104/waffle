@@ -13,11 +13,11 @@ public class GetPostsHandler
         _dbContext = dbContext;
     }
     
-    public async Task<IEnumerable<PostDto>> Handle(string username)
+    public async Task<IEnumerable<PostDto>> Handle(GetPostsQuery query)
     {
         // Get all posts for the user
         var posts = await _dbContext.Posts
-            .Where(p => p.User.UserName == username)
+            .Where(p => p.User.UserName == query.Username)
             .Include(p => p.User)
             .OrderByDescending(p => p.CreatedAt)
             .Select(p => new PostDto

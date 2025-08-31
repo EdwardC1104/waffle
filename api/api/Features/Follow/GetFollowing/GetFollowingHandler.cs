@@ -13,11 +13,11 @@ public class GetFollowingHandler
         _context = context;
     }
 
-    public async Task<IEnumerable<UserDto>> Handle(string username)
+    public async Task<IEnumerable<UserDto>> Handle(GetFollowingQuery query)
     {
         // Get all users who the specified user is following
         var following = await _context.Follows
-            .Where(f => f.Follower.UserName == username)
+            .Where(f => f.Follower.UserName == query.Username)
             .Include(f => f.Followee)
             .Select(f => new UserDto
             {

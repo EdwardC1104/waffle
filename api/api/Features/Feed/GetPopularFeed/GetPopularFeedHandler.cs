@@ -1,19 +1,20 @@
 using api.Data;
-using api.Features.User;
+using api.Features.Post;
 using Microsoft.EntityFrameworkCore;
+using api.Features.User;
 
-namespace api.Features.Post.GetFollowingFeed;
+namespace api.Features.Feed.GetPopularFeed;
 
-public class GetFollowingFeedHandler
+public class GetPopularFeedHandler
 {
     private readonly AppDbContext _context;
 
-    public GetFollowingFeedHandler(AppDbContext context)
+    public GetPopularFeedHandler(AppDbContext context)
     {
         _context = context;
     }
 
-    public async Task<IEnumerable<PostDto>> Handle(string username)
+    public async Task<IEnumerable<PostDto>> Handle()
     {
         var posts = await _context.Posts
             .Include(p => p.User)

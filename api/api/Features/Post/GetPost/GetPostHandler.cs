@@ -13,11 +13,11 @@ public class GetPostHandler
         _dbContext = dbContext;
     }
     
-    public async Task<PostDto?> Handle(int postId)
+    public async Task<PostDto?> Handle(GetPostQuery query)
     {
         // Get the specific post by ID
         var post = await _dbContext.Posts
-            .Where(p => p.Id == postId)
+            .Where(p => p.Id == query.PostId)
             .Include(p => p.User)
             .Select(p => new PostDto
             {

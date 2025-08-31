@@ -26,16 +26,11 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginCommand request)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var response = await _loginHandlerHandler.Handle(request);
         
         if (response == null)
         {
-            return Unauthorized("Invalid username or password");
+            return Unauthorized(new { message =  "Invalid username or password" });
         }
 
         return Ok(response);
@@ -44,32 +39,31 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterCommand request)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var (response, errors) = await _registerHandlerHandler.Handle(request);
         
         if (response == null)
         {
-            return BadRequest(errors);
+            var errorMessage = errors != null 
+                ? string.Join(" ", errors.Select(e => e.Description)) 
+                : "Registration failed";
+
+            return BadRequest(new { message = errorMessage });
         }
 
         return Created($"/api/user/{response.Username}", response);
     }
 
-    [HttpGet("me")]
+    [HttpPost("me")]
     public async Task<IActionResult> Me()
     {
         if (!User.Identity?.IsAuthenticated ?? true)
         {
-            return Unauthorized();
+            return Unauthorized(new { message =  "Not logged in" });
         }
         var response = await _getCurrentUserHandlerHandler.Handle(User);
         if (response == null)
         {
-            return NotFound("User not found");
+            return NotFound(new { message = "User not found" });
         }
         return Ok(response);
     }
@@ -78,6 +72,6 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         await _logoutHandlerHandler.Handle();
-        return NoContent();
+        return Ok(new { message = "Successfully logged out" });
     }
 }

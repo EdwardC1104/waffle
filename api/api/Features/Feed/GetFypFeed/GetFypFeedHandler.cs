@@ -1,8 +1,9 @@
 using api.Data;
+using api.Features.Post;
 using api.Features.User;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Features.Post.GetFypFeed;
+namespace api.Features.Feed.GetFypFeed;
 
 public class GetFypFeedHandler
 {
@@ -13,7 +14,7 @@ public class GetFypFeedHandler
         _context = context;
     }
 
-    public async Task<IEnumerable<PostDto>> Handle(string username)
+    public async Task<IEnumerable<PostDto>> Handle(GetFypFeedQuery query)
     {
         var posts = await _context.Posts
             .Include(p => p.User)

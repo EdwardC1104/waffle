@@ -14,14 +14,19 @@ public class UserController : ControllerBase
         _getUserHandler = getUserHandler;
     }
 
-    [HttpGet("{username}")]
-    public async Task<IActionResult> GetUser(string username)
+    [HttpPost("get")]
+    public async Task<IActionResult> GetUser([FromBody] GetUserQuery query)
     {
-        var response = await _getUserHandler.Handle(username);
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = string.Join("; ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+            return BadRequest(new { message = errorMessage });
+        }
+        var response = await _getUserHandler.Handle(query);
         
         if (response == null)
         {
-            return NotFound($"User with username '{username}' not found");
+            return NotFound(new { message = $"User with username '{query.Username}' not found" });
         }
         
         return Ok(response);

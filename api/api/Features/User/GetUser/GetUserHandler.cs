@@ -10,9 +10,9 @@ public class GetUserHandler
         _userManager = userManager;
     }
     
-    public async Task<UserDto?> Handle(string username)
+    public async Task<UserDto?> Handle(GetUserQuery query)
     {
-        var user = await _userManager.FindByNameAsync(username);
+        var user = await _userManager.FindByNameAsync(query.Username);
 
         if (user == null)
         {

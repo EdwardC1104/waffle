@@ -13,11 +13,11 @@ public class CreatePostHandler
         _dbContext = dbContext;
     }
 
-    public async Task<PostDto?> Handle(CreatePostCommand request, string username)
+    public async Task<PostDto?> Handle(CreatePostCommand request)
     {
         // First check if the user exists
         var user = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.UserName == username);
+            .FirstOrDefaultAsync(u => u.UserName == request.Username);
             
         if (user == null)
         {
