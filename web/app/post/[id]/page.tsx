@@ -3,12 +3,12 @@
 import ErrorMessage from "@/components/ErrorMessage";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostActions from "@/components/PostActions";
+import UserProfile from "@/components/UserProfile";
 import { Post } from "@/types";
-import { getPostById } from "@/utils/api";
+import { fetchPost } from "@/utils/api";
 import Image from "next/image";
 import { notFound, useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
-import UserProfile from "@/components/UserProfile";
 
 interface PostPageProps {
   params: Promise<{
@@ -24,11 +24,11 @@ export default function PostPage({ params }: PostPageProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPost = async () => {
+    const get = async () => {
       try {
         setLoading(true);
         setError(null);
-        const postData = await getPostById(parseInt(resolvedParams.id));
+        const postData = await fetchPost(parseInt(resolvedParams.id));
         setPost(postData);
       } catch (err) {
         console.error("Failed to fetch post:", err);
@@ -38,7 +38,7 @@ export default function PostPage({ params }: PostPageProps) {
       }
     };
 
-    fetchPost();
+    get();
   }, [resolvedParams.id]);
 
   if (loading) {

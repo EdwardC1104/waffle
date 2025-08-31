@@ -2,7 +2,7 @@
 
 import { AuthenticatedRoute } from "@/components/AuthenticatedRoute";
 import ErrorMessage from "@/components/ErrorMessage";
-import { postNewPost } from "@/utils/api";
+import { createNewPost } from "@/utils/api";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -47,7 +47,7 @@ function CreatePostForm({ user }: { user: { username: string } }) {
     setIsSubmitting(true);
 
     try {
-      await postNewPost(user.username, title, content);
+      await createNewPost(user.username, title, content);
       router.push(`/profile/${user.username}`);
     } catch (err) {
       console.error("Failed to create post:", err);

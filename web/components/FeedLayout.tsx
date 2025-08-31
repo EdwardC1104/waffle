@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { User } from "../types";
-import { getSuggestedUsers } from "../utils/api";
+import { fetchFollowSuggestions } from "../utils/api";
 import Feed from "./Feed";
 import UserProfile from "./UserProfile";
 import WhoToFollow from "./WhoToFollow";
@@ -20,7 +20,7 @@ export default function FeedLayout({ feedType, user }: FeedLayoutProps) {
     const fetchSuggestedUsers = async () => {
       if (user) {
         try {
-          const suggested = await getSuggestedUsers(user.username);
+          const suggested = await fetchFollowSuggestions(user.username);
           setSuggestedUsers(suggested);
         } catch (err) {
           console.warn("Could not fetch suggested users:", err);
@@ -47,7 +47,7 @@ export default function FeedLayout({ feedType, user }: FeedLayoutProps) {
       </div>
 
       <div className="hidden lg:flex w-60 flex-col gap-8 flex-shrink-0">
-        {suggestedUsers.length > 0 && <WhoToFollow users={suggestedUsers} />}
+        {suggestedUsers.length > 0 && <WhoToFollow />}
       </div>
     </div>
   );
