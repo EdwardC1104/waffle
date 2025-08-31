@@ -1,8 +1,18 @@
 using api.Data;
-using api.Features.Auth;
-using api.Features.Follow;
-using api.Features.Post;
-using api.Features.User;
+using api.Features.Auth.GetCurrentUser;
+using api.Features.Auth.Login;
+using api.Features.Auth.Logout;
+using api.Features.Auth.Register;
+using api.Features.Follow.GetFollowers;
+using api.Features.Follow.GetFollowing;
+using api.Features.Follow.GetSuggestions;
+using api.Features.Post.CreatePost;
+using api.Features.Post.GetFollowingFeed;
+using api.Features.Post.GetFypFeed;
+using api.Features.Post.GetPopularFeed;
+using api.Features.Post.GetPost;
+using api.Features.Post.GetPosts;
+using api.Features.User.GetUser;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
@@ -20,18 +30,20 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddScoped<GetPosts>();
-builder.Services.AddScoped<CreatePost>();
-builder.Services.AddScoped<GetPost>();
-builder.Services.AddScoped<GetUser>();
-builder.Services.AddScoped<Login>();
-builder.Services.AddScoped<Register>();
-builder.Services.AddScoped<GetCurrentUser>();
-builder.Services.AddScoped<Logout>();
-builder.Services.AddScoped<GetFollowingFeed>();
-builder.Services.AddScoped<GetFypFeed>();
-builder.Services.AddScoped<GetPopularFeed>();
-builder.Services.AddScoped<GetSuggestions>();
+builder.Services.AddScoped<GetPostsHandler>();
+builder.Services.AddScoped<CreatePostHandler>();
+builder.Services.AddScoped<GetPostHandler>();
+builder.Services.AddScoped<GetUserHandler>();
+builder.Services.AddScoped<LoginHandler>();
+builder.Services.AddScoped<RegisterHandler>();
+builder.Services.AddScoped<GetCurrentUserHandler>();
+builder.Services.AddScoped<LogoutHandler>();
+builder.Services.AddScoped<GetFollowingFeedHandler>();
+builder.Services.AddScoped<GetFypFeedHandler>();
+builder.Services.AddScoped<GetPopularFeedHandler>();
+builder.Services.AddScoped<GetSuggestionsHandler>();
+builder.Services.AddScoped<GetFollowersHandler>();
+builder.Services.AddScoped<GetFollowingHandler>();
 
 var app = builder.Build();
 

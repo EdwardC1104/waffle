@@ -1,3 +1,9 @@
+using api.Features.Post.CreatePost;
+using api.Features.Post.GetFollowingFeed;
+using api.Features.Post.GetFypFeed;
+using api.Features.Post.GetPopularFeed;
+using api.Features.Post.GetPost;
+using api.Features.Post.GetPosts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.Post;
@@ -6,32 +12,32 @@ namespace api.Features.Post;
 [Route("api/post")]
 public class PostController : ControllerBase
 {
-    private readonly GetPosts _getPosts;
-    private readonly CreatePost _createPost;
-    private readonly GetPost _getPost;
-    private readonly GetFollowingFeed _getFollowingFeed;
-    private readonly GetFypFeed _getFypFeed;
-    private readonly GetPopularFeed _getPopularFeed;
+    private readonly GetPostsHandler _getPostsHandler;
+    private readonly CreatePostHandler _createPost;
+    private readonly GetPostHandler _getPostHandler;
+    private readonly GetFollowingFeedHandler _getFollowingFeedHandler;
+    private readonly GetFypFeedHandler _getFypFeedHandler;
+    private readonly GetPopularFeedHandler _getPopularFeedHandler;
 
-    public PostController(GetPosts getPosts, CreatePost createPost, GetPost getPost, GetFollowingFeed getFollowingFeed, GetFypFeed getFypFeed, GetPopularFeed getPopularFeed)
+    public PostController(GetPostsHandler getPostsHandler, CreatePostHandler createPost, GetPostHandler getPostHandler, GetFollowingFeedHandler getFollowingFeedHandler, GetFypFeedHandler getFypFeedHandler, GetPopularFeedHandler getPopularFeedHandler)
     {
-        _getPosts = getPosts;
+        _getPostsHandler = getPostsHandler;
         _createPost = createPost;
-        _getPost = getPost;
-        _getFollowingFeed = getFollowingFeed;
-        _getFypFeed = getFypFeed;
-        _getPopularFeed = getPopularFeed;
+        _getPostHandler = getPostHandler;
+        _getFollowingFeedHandler = getFollowingFeedHandler;
+        _getFypFeedHandler = getFypFeedHandler;
+        _getPopularFeedHandler = getPopularFeedHandler;
     }
 
     [HttpGet("/api/user/{username}/post")]
     public async Task<IActionResult> GetPosts(string username)
     {
-        var response = await _getPosts.Handle(username);
+        var response = await _getPostsHandler.Handle(username);
         return Ok(response);
     }
     
     [HttpPost("/api/user/{username}/post")]
-    public async Task<IActionResult> CreatePost(string username, [FromBody] CreatePost.Request request)
+    public async Task<IActionResult> CreatePost(string username, [FromBody] CreatePostCommand request)
     {
         // Ensure the user is authenticated
         if (!User.Identity?.IsAuthenticated ?? true)
@@ -65,7 +71,7 @@ public class PostController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetPost(int id)
     {
-        var response = await _getPost.Handle(id);
+        var response = await _getPostHandler.Handle(id);
         
         if (response == null)
         {
@@ -78,21 +84,21 @@ public class PostController : ControllerBase
     [HttpGet("/api/user/{username}/feed/following")]
     public async Task<IActionResult> GetFollowingFeed(string username)
     {
-        var posts = await _getFollowingFeed.Handle(username);
+        var posts = await _getFollowingFeedHandler.Handle(username);
         return Ok(posts);
     }
 
     [HttpGet("/api/user/{username}/feed/fyp")]
     public async Task<IActionResult> GetFypFeed(string username)
     {
-        var posts = await _getFypFeed.Handle(username);
+        var posts = await _getFypFeedHandler.Handle(username);
         return Ok(posts);
     }
 
     [HttpGet("/api/feed/popular")]
     public async Task<IActionResult> GetPopularFeed()
     {
-        var posts = await _getPopularFeed.Handle();
+        var posts = await _getPopularFeedHandler.Handle();
         return Ok(posts);
     }
 }

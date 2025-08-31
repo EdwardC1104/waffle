@@ -1,34 +1,16 @@
 using api.Data;
+using api.Features.User;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Features.Post;
+namespace api.Features.Post.GetPosts;
 
-public class GetPosts
+public class GetPostsHandler
 {
     private readonly AppDbContext _dbContext;
     
-    public GetPosts(AppDbContext dbContext)
+    public GetPostsHandler(AppDbContext dbContext)
     {
         _dbContext = dbContext;
-    }
-
-    public class PostDto
-    {
-        public int Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public string Content { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
-        public AuthorDto Author { get; set; } = new AuthorDto();
-        public string CoverImageUrl { get; set; } = string.Empty;
-    }
-
-    public class AuthorDto
-    {
-        public string Id { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string ProfilePictureUrl { get; set; } = string.Empty;
     }
     
     public async Task<IEnumerable<PostDto>> Handle(string username)
@@ -44,7 +26,7 @@ public class GetPosts
                 Title = p.Title,
                 Content = p.Content,
                 CreatedAt = p.CreatedAt,
-                Author = new AuthorDto
+                Author = new UserDto
                 {
                     Id = p.User.Id,
                     Name = p.User.Name,

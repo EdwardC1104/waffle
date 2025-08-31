@@ -1,3 +1,4 @@
+using api.Features.User.GetUser;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.User;
@@ -6,17 +7,17 @@ namespace api.Features.User;
 [Route("/api/user")]
 public class UserController : ControllerBase
 {
-    private readonly GetUser _getUser;
+    private readonly GetUserHandler _getUserHandler;
 
-    public UserController(GetUser getUser)
+    public UserController(GetUserHandler getUserHandler)
     {
-        _getUser = getUser;
+        _getUserHandler = getUserHandler;
     }
 
     [HttpGet("{username}")]
     public async Task<IActionResult> GetUser(string username)
     {
-        var response = await _getUser.Handle(username);
+        var response = await _getUserHandler.Handle(username);
         
         if (response == null)
         {
