@@ -10,7 +10,7 @@ import useAuth from "@/hooks/useAuth";
 import useProfile from "@/hooks/useProfile";
 
 export default function UserProfilePage() {
-  const { user, posts, loading, error, refetch, handlePostUpdate } = useProfile();
+  const { user, posts, loading, error, refetch, handlePostUpdate } = useProfile('posts');
   const { user: currentUser } = useAuth();
 
   if (loading) {
