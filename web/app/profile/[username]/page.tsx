@@ -1,5 +1,6 @@
 "use client";
 
+import ErrorMessage from "@/components/ErrorMessage";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostCard from "@/components/PostCard";
 import UserProfile from "@/components/UserProfile";
@@ -13,7 +14,7 @@ import {
   getUserPosts,
 } from "@/utils/api";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function UserProfilePage() {
   const username = useParams().username;
@@ -24,54 +25,74 @@ export default function UserProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const { user: currentUser } = useAuth();
 
-  useEffect(() => {
-    const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
       if (!username || typeof username !== "string") {
-        setUser(currentUser);
+        setError("No username provided in URL");
+        setUser(null);
         return;
       }
 
+      const [userData, userPosts] = await Promise.all([
+        getUserByUsername(username),
+        getUserPosts(username),
+      ]);
+
+      setUser(userData);
+      setPosts(userPosts);
+    } catch (err) {
+      console.error("Failed to fetch user data:", err);
+      setError(
+        err instanceof Error ? err.message : "Failed to load user profile"
+      );
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [username]);
+
+  const fetchSuggestedUsers = useCallback(async () => {
+    if (currentUser) {
       try {
-        setLoading(true);
-        setError(null);
-
-        // Fetch user details and posts in parallel
-        const [userData, userPosts, users] = await Promise.all([
-          getUserByUsername(username),
-          getUserPosts(username),
-          getSuggestedUsers(username),
-        ]);
-
-        setUser(userData);
-        setPosts(userPosts);
+        const users = await getSuggestedUsers(currentUser.username);
         setSuggestedUsers(users);
       } catch (err) {
-        console.error("Failed to fetch user data:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to load user profile"
-        );
-        // Fallback to current user if API fails
-        setUser(currentUser);
-      } finally {
-        setLoading(false);
+        console.error("Failed to fetch suggested users:", err);
+        setSuggestedUsers([]);
       }
-    };
+    }
+  }, [currentUser]);
 
+  useEffect(() => {
     fetchUserData();
-  }, [username, currentUser]);
+  }, [fetchUserData]);
+
+  useEffect(() => {
+    fetchSuggestedUsers();
+  }, [fetchSuggestedUsers]);
 
   if (loading) {
     return <LoadingSpinner text="Loading profile..." fullPage center />;
   }
 
-  if (!user) {
+  if (error || !user) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <div className="w-full max-w-[1476px] mx-auto flex justify-center items-center px-4 sm:px-6 lg:px-8 py-6">
-          <div className="text-center">
-            <p className="text-red-600 mb-4">User not found</p>
-            {error && <p className="text-gray-600 text-sm">{error}</p>}
-          </div>
+          <ErrorMessage
+            title={error ? "Failed to load profile" : "User not found"}
+            message={
+              error ||
+              (username && typeof username === "string"
+                ? `The user "${username}" could not be found.`
+                : "Invalid username provided.")
+            }
+            onRetry={fetchUserData}
+            showRetryButton={!!error}
+          />
         </div>
       </div>
     );
@@ -80,14 +101,11 @@ export default function UserProfilePage() {
   return (
     <div className="min-h-screen">
       <div className="w-full max-w-[1476px] mx-auto flex justify-center items-start gap-4 lg:gap-8 xl:gap-16 px-4 sm:px-6 lg:px-8 py-6">
-        {/* Left sidebar - hidden on mobile and tablet */}
         <div className="hidden xl:flex w-60 flex-col gap-8 flex-shrink-0">
           <WritePostCTA todayWordCount={0} />
         </div>
 
-        {/* Main content - Profile and Posts */}
         <div className="flex flex-col gap-8 w-full max-w-[600px] min-w-0">
-          {/* Profile Section */}
           <div className="bg-white shadow rounded-lg">
             <UserProfile user={user} size="lg" />
             <div className="px-6 pb-6">
@@ -96,15 +114,14 @@ export default function UserProfilePage() {
                   About
                 </h2>
                 <p className="text-gray-600">
-                  {user.username === user.username
+                  {currentUser && user.username === currentUser.username
                     ? "This is your profile."
-                    : `Welcome to ${user.name}'s profile!`}
+                    : `Welcome to ${user.name || user.username}'s profile!`}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Posts Section */}
           <div className="flex flex-col gap-6 md:gap-8">
             {posts.map((post) => (
               <PostCard key={post.id} post={post} />
@@ -112,7 +129,6 @@ export default function UserProfilePage() {
           </div>
         </div>
 
-        {/* Right sidebar - hidden on mobile, shown on tablet+ */}
         <div className="hidden lg:flex w-60 flex-col gap-8 flex-shrink-0">
           <WhoToFollow users={suggestedUsers} />
         </div>
