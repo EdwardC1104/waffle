@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using NpgsqlTypes;
 
 namespace api.Models;
 
@@ -22,4 +23,5 @@ public class Post
     
     // Navigation property to User
     public User User { get; set; } = null!;
+
 }

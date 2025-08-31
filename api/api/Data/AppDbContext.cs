@@ -19,12 +19,22 @@ public class AppDbContext : IdentityDbContext<User>
     {
         base.OnModelCreating(modelBuilder);
         
+        modelBuilder.Entity<User>()
+            .HasIndex(u => new { u.Name, u.UserName })
+            .HasMethod("GIN")
+            .IsTsVectorExpressionIndex("english");
+        
         // Configure Post entity relationships
         modelBuilder.Entity<Post>()
             .HasOne(p => p.User)
             .WithMany(u => u.Posts)
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Post>()
+            .HasIndex(b => new { b.Title, b.Content })
+            .HasMethod("GIN")
+            .IsTsVectorExpressionIndex("english");
         
         // Configure Follow entity with composite primary key
         modelBuilder.Entity<Follow>()

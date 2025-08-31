@@ -16,6 +16,7 @@ using api.Features.Like.CreateLike;
 using api.Features.Like.DeleteLike;
 using api.Features.Post.GetPost;
 using api.Features.Post.GetPosts;
+using api.Features.Search.SearchUsersAndPosts;
 using api.Features.User.GetUser;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -78,6 +79,7 @@ builder.Services.AddScoped<CreateFollowHandler>();
 builder.Services.AddScoped<DeleteFollowHandler>();
 builder.Services.AddScoped<CreateLikeHandler>();
 builder.Services.AddScoped<DeleteLikeHandler>();
+builder.Services.AddScoped<SearchUsersAndPostsHandler>();
 
 var app = builder.Build();
 
