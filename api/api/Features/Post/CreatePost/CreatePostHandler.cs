@@ -30,7 +30,8 @@ public class CreatePostHandler
             Title = request.Title,
             Content = request.Content,
             UserId = user.Id,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            CoverImageUrl = request.CoverImageUrl,
         };
         
         _dbContext.Posts.Add(newPost);

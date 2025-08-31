@@ -37,7 +37,7 @@ public static class PostExtensions
             Content = post.Content,
             CreatedAt = post.CreatedAt,
             Author =  await post.User.ToDtoAsync(context),
-            CoverImageUrl = "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=300&fit=crop",
+            CoverImageUrl = string.IsNullOrEmpty(post.CoverImageUrl) ? "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=300&fit=crop" : post.CoverImageUrl,
             LikeCount = likeCount,
             LikedByAuthenticatedUser = existingLike != null
         };
