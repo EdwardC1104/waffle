@@ -53,7 +53,7 @@ export default function UserProfilePage() {
     } finally {
       setLoading(false);
     }
-  }, [username]);
+  }, [username, currentUser]); // eslint-disable-line
 
   useEffect(() => {
     fetchUserData();
