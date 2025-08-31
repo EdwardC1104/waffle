@@ -33,17 +33,33 @@ const fetchSuggestedUsers = useCallback(async () => {
       <h3 className="text-stone-900 text-xl font-semibold">Who to follow</h3>
 
       <div className="flex flex-col gap-4">
-        {suggestedUsers.map((user) => (
-          <div key={user.id} className="flex justify-between items-center">
-            <div className="flex items-center gap-2.5">
-              <UserProfile user={user} size="sm" />
-            </div>
+        {suggestedUsers.map((user) => {
+          const [isFollowing, setIsFollowing] = useState(false);
+          return (
+            <div key={user.id} className="flex justify-between items-center">
+              <div className="flex items-center gap-2.5">
+                <UserProfile user={user} size="sm" />
+              </div>
 
-            <button className="px-3.5 py-1 bg-stone-900 rounded-full shadow-lg flex justify-center items-center transition-opacity hover:opacity-90">
-              <span className="text-white text-xs font-semibold">Follow</span>
-            </button>
-          </div>
-        ))}
+              <button 
+                onClick={() => setIsFollowing(!isFollowing)}
+                className={`px-3.5 py-1 rounded-full shadow-lg flex justify-center items-center transition-all hover:opacity-90 ${
+                  isFollowing 
+                    ? 'bg-gray-200 border border-stone-900' 
+                    : 'bg-stone-900'
+                }`}
+              >
+                <span className={`text-xs font-semibold ${
+                  isFollowing 
+                    ? 'text-stone-900' 
+                    : 'text-white'
+                }`}>
+                  {isFollowing ? 'Following' : 'Follow'}
+                </span>
+              </button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
