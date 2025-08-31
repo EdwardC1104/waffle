@@ -24,6 +24,10 @@ export default function PostPage({ params }: PostPageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const handlePostUpdate = (updatedPost: Post) => {
+    setPost(updatedPost);
+  };
+
   useEffect(() => {
     const get = async () => {
       try {
@@ -107,7 +111,12 @@ export default function PostPage({ params }: PostPageProps) {
         </div>
 
         <div className="pt-6 border-t border-gray-200">
-          <PostActions likes={0} replies={0} bookmarks={0} />
+          <PostActions
+            post={post}
+            replies={0}
+            bookmarks={0}
+            onPostUpdate={handlePostUpdate}
+          />
         </div>
       </article>
     </div>
