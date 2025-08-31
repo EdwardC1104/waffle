@@ -7,57 +7,11 @@ import UserProfile from "@/components/UserProfile";
 import WhoToFollow from "@/components/WhoToFollow";
 import WritePostCTA from "@/components/WritePostCTA";
 import useAuth from "@/hooks/useAuth";
-import { Post, User } from "@/types";
-import { fetchUser, fetchUserPosts } from "@/utils/api";
-import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import useProfile from "@/hooks/useProfile";
 
 export default function UserProfilePage() {
-  const username = useParams().username;
-  const [user, setUser] = useState<User | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { user, posts, loading, error, refetch, handlePostUpdate } = useProfile();
   const { user: currentUser } = useAuth();
-
-  const handlePostUpdate = (updatedPost: Post) => {
-    setPosts((prevPosts) =>
-      prevPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
-    );
-  };
-
-  const fetchUserData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      if (!username || typeof username !== "string") {
-        setError("No username provided in URL");
-        setUser(null);
-        return;
-      }
-
-      const [userData, userPosts] = await Promise.all([
-        fetchUser(username),
-        fetchUserPosts(username),
-      ]);
-
-      setUser(userData);
-      setPosts(userPosts);
-    } catch (err) {
-      console.error("Failed to fetch user data:", err);
-      setError(
-        err instanceof Error ? err.message : "Failed to load user profile"
-      );
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [username]);
-
-  useEffect(() => {
-    fetchUserData();
-  }, [fetchUserData]);
 
   if (loading) {
     return <LoadingSpinner text="Loading profile..." fullPage center />;
@@ -71,11 +25,9 @@ export default function UserProfilePage() {
             title={error ? "Failed to load profile" : "User not found"}
             message={
               error ||
-              (username && typeof username === "string"
-                ? `The user "${username}" could not be found.`
-                : "Invalid username provided.")
+              "The user could not be found."
             }
-            onRetry={fetchUserData}
+            onRetry={refetch}
             showRetryButton={!!error}
           />
         </div>

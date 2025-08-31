@@ -1,46 +1,13 @@
 "use client";
 
 import FollowLayout from "@/components/FollowLayout";
-import { User } from "@/types";
-import { fetchFollowing, fetchUser } from "@/utils/api";
-import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import useProfile from "@/hooks/useProfile";
 
 export default function FollowingPage() {
-  const username = useParams().username;
-  const [user, setUser] = useState<User | null>(null);
-  const [following, setFollowing] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      if (!username || typeof username !== "string") {
-        setError("No username provided in URL");
-        return;
-      }
-
-      const [userData, followingData] = await Promise.all([
-        fetchUser(username),
-        fetchFollowing(username),
-      ]);
-
-      setUser(userData);
-      setFollowing(followingData);
-    } catch (err) {
-      console.error("Failed to fetch following:", err);
-      setError(err instanceof Error ? err.message : "Failed to load following");
-    } finally {
-      setLoading(false);
-    }
-  }, [username]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const { user, following, loading, error, refetch } = useProfile({
+    includePosts: false,
+    includeFollowing: true,
+  });
 
   return (
     <FollowLayout
@@ -48,7 +15,7 @@ export default function FollowingPage() {
       users={following}
       loading={loading}
       error={error}
-      onRetry={fetchData}
+      onRetry={refetch}
       type="following"
     />
   );
