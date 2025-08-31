@@ -1,4 +1,5 @@
 using api.Data;
+using api.Features.Post;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Features.Like.DeleteLike;
@@ -12,22 +13,23 @@ public class DeleteLikeHandler
         _dbContext = dbContext;
     }
 
-    public async Task<bool> Handle(string username, DeleteLikeCommand command)
+    public async Task<PostDto?> Handle(string username, DeleteLikeCommand command)
     {
         var user = await _dbContext.Users
             .FirstOrDefaultAsync(u => u.UserName == username);
         
         if (user == null)
         {
-            return false;
+            return null;
         }
         
         var post = await _dbContext.Posts
+            .Include(p => p.User)
             .FirstOrDefaultAsync(p => p.Id == command.PostId);
         
         if (post == null)
         {
-            return false;
+            return null;
         }
         
         var existingLike = await _dbContext.Likes
@@ -35,12 +37,13 @@ public class DeleteLikeHandler
         
         if (existingLike == null)
         {
-            return false;
+            return null; // Not liked
         }
         
         _dbContext.Likes.Remove(existingLike);
         await _dbContext.SaveChangesAsync();
 
-        return true;
+        // Return the updated post with the user's like status
+        return await post.ToDtoAsync(username, _dbContext);
     }
 }

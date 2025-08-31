@@ -30,14 +30,14 @@ public class LikeController : ControllerBase
             return Unauthorized(new { message = "Not logged in" });
         }
 
-        var success = await _createLikeHandler.Handle(User.Identity.Name, query);
+        var result = await _createLikeHandler.Handle(User.Identity.Name, query);
         
-        if (success)
+        if (result != null)
         {
-            return Ok(new { message = "Successfully liked post" });
+            return Ok(result);
         }
 
-        return BadRequest(new { message = "Unable to like post. User may not exist or you may already like the post." });
+        return BadRequest(new { message = "Unable to like post. Post may not exist or you may already like the post." });
     }
 
     [HttpPost("delete")]
@@ -48,13 +48,13 @@ public class LikeController : ControllerBase
             return Unauthorized(new { message = "Not logged in" });
         }
 
-        var success = await _deleteLikeHandler.Handle(User.Identity.Name, command);
+        var result = await _deleteLikeHandler.Handle(User.Identity.Name, command);
         
-        if (success)
+        if (result != null)
         {
-            return Ok(new { message = "Successfully unliked post" });
+            return Ok(result);
         }
 
-        return BadRequest(new { message = "Unable to unlike post. User may not exist or you may not already like the post." });
+        return BadRequest(new { message = "Unable to unlike post. Post may not exist or you may not like the post." });
     }
 }
