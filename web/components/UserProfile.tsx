@@ -3,6 +3,9 @@ import Link from "next/dist/client/link";
 import Image from "next/image";
 import { User } from "../types";
 import { MoreIcon } from "./Icons";
+import useAuth from "@/hooks/useAuth";
+
+
 
 interface UserProfileProps {
   user: User;
@@ -17,6 +20,11 @@ export default function UserProfile({
   size = "md",
   containerClassName = "",
 }: UserProfileProps) {
+  const { user: currentUser } = useAuth();
+  
+  // Check if the displayed user is the current logged-in user
+  const isCurrentUser = currentUser && user.id === currentUser.id;
+  
   // Size configurations
   const sizeConfig = {
     sm: {
