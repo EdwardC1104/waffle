@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/components/LoadingSpinner";
 import PostActions from "@/components/PostActions";
 import { Post } from "@/types";
 import { getPostById } from "@/utils/api";
@@ -39,14 +40,7 @@ export default function PostPage({ params }: PostPageProps) {
   }, [resolvedParams.id]);
 
   if (loading) {
-    return (
-      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading post...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner text="Loading post..." center />;
   }
 
   if (error || !post) {

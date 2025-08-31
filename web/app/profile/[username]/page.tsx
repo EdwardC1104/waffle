@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingSpinner from "@/components/LoadingSpinner";
 import PostCard from "@/components/PostCard";
 import UserProfile from "@/components/UserProfile";
 import WhoToFollow from "@/components/WhoToFollow";
@@ -60,16 +61,7 @@ export default function UserProfilePage() {
   }, [username, currentUser]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="w-full max-w-[1476px] mx-auto flex justify-center items-center px-4 sm:px-6 lg:px-8 py-6">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading profile...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner text="Loading profile..." fullPage center />;
   }
 
   if (!user) {

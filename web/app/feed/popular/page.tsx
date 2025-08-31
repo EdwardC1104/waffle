@@ -1,5 +1,7 @@
-import Feed from "@/components/Feed";
+"use client";
+
+import FeedLayout from "@/components/FeedLayout";
 
 export default function PopularPage() {
-  return <Feed feedType="popular" />;
+  return <FeedLayout feedType="popular" />;
 }
