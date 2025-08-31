@@ -1,3 +1,4 @@
+using api.Data;
 using Microsoft.AspNetCore.Identity;
 
 namespace api.Features.User.GetUser;
@@ -5,29 +6,22 @@ namespace api.Features.User.GetUser;
 public class GetUserHandler
 {
     private readonly UserManager<Models.User> _userManager;
-    public GetUserHandler(UserManager<Models.User> userManager)
+    private readonly AppDbContext _dbContext;
+    public GetUserHandler(UserManager<Models.User> userManager, AppDbContext dbContext)
     {
         _userManager = userManager;
+        _dbContext = dbContext;
     }
     
-    public async Task<UserDto?> Handle(string username)
+    public async Task<UserDto?> Handle(GetUserQuery query)
     {
-        var user = await _userManager.FindByNameAsync(username);
+        var user = await _userManager.FindByNameAsync(query.Username);
 
         if (user == null)
         {
             return null;
         }
 
-        var response = new UserDto
-        {
-            Id = user.Id,
-            Name = user.Name,
-            Username = user.UserName,
-            Email = user.Email,
-            ProfilePictureUrl = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-        };
-
-        return response;
+        return await user.ToDtoAsync(_dbContext);
     }
 }

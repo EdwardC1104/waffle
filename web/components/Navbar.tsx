@@ -11,14 +11,10 @@ import TextInput from "./TextInput";
 export function Navbar() {
   const pathname = usePathname();
   const isFeedPage = pathname?.startsWith("/feed");
-  const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
 
   const handleSearchChange = (text: string) => {
     console.log("Search text:", text);
-  };
-
-  const handleLogout = async () => {
-    await logout();
   };
 
   return (
@@ -52,33 +48,21 @@ export function Navbar() {
               />
             )}
 
-            {!isLoading && (
+            {!isLoading && !isAuthenticated && (
               <div className="flex items-center space-x-4">
-                {isAuthenticated ? (
-                  <>
-                    <button
-                      onClick={handleLogout}
-                      className="text-sm font-medium text-gray-500 hover:text-gray-700"
-                    >
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href="/login"
-                      className="text-sm font-medium text-gray-700 hover:text-gray-900"
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      href="/signup"
-                      className="bg-stone-900 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-stone-800"
-                    >
-                      Sign Up
-                    </Link>
-                  </>
-                )}
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-gray-700 hover:text-gray-900"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="bg-stone-900 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-stone-800"
+                >
+                  Sign Up
+                </Link>
+                <div />
               </div>
             )}
           </div>

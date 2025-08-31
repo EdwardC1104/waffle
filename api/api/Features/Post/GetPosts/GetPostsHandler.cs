@@ -13,31 +13,22 @@ public class GetPostsHandler
         _dbContext = dbContext;
     }
     
-    public async Task<IEnumerable<PostDto>> Handle(string username)
+    public async Task<IEnumerable<PostDto>> Handle(GetPostsQuery query)
     {
-        // Get all posts for the user
-        var posts = await _dbContext.Posts
-            .Where(p => p.User.UserName == username)
+        // Fetch posts including user
+        var postsEntities = await _dbContext.Posts
+            .Where(p => p.User.UserName == query.Username)
             .Include(p => p.User)
             .OrderByDescending(p => p.CreatedAt)
-            .Select(p => new PostDto
-            {
-                Id = p.Id,
-                Title = p.Title,
-                Content = p.Content,
-                CreatedAt = p.CreatedAt,
-                Author = new UserDto
-                {
-                    Id = p.User.Id,
-                    Name = p.User.Name,
-                    Username = p.User.UserName ?? string.Empty,
-                    Email = p.User.Email ?? string.Empty,
-                    ProfilePictureUrl = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-                },
-                CoverImageUrl = "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=300&fit=crop"
-            })
-            .ToListAsync();
-            
+            .ToListAsync(); // fetch first
+
+        // Map to DTOs asynchronously
+        var posts = new List<PostDto>();
+        foreach (var post in postsEntities)
+        {
+            posts.Add(await post.ToDtoAsync(_dbContext));
+        }
+
         return posts;
     }
 }

@@ -9,14 +9,13 @@ import { useCallback,
 import { getSuggestedUsers } from "@/utils/api";
 
 export default function WhoToFollow() {
-  
   const [suggestedUsers, setSuggestedUsers] = useState<User[]>([]);
   const { user: currentUser } = useAuth();
 
-const fetchSuggestedUsers = useCallback(async () => {
+  const fetchSuggestedUsers = useCallback(async () => {
     if (currentUser) {
       try {
-        const users = await getSuggestedUsers(currentUser.username);
+        const users = await fetchFollowSuggestions(currentUser.username);
         setSuggestedUsers(users);
       } catch (err) {
         console.error("Failed to fetch suggested users:", err);
@@ -24,6 +23,14 @@ const fetchSuggestedUsers = useCallback(async () => {
       }
     }
   }, [currentUser]);
+
+  const toggleFollowState = (index: number) => {
+    setFollowStates((prev) => {
+      const newStates = [...prev];
+      newStates[index] = !newStates[index];
+      return newStates;
+    });
+  };
 
   useEffect(() => {
     fetchSuggestedUsers();

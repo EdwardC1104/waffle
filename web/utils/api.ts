@@ -19,57 +19,83 @@ async function post<T, U>(endpoint: string, body: U): Promise<T> {
   return await response.json();
 }
 
-export async function getUserByUsername(
-  username: string
-): Promise<User | null> {
+export async function fetchUser(username: string): Promise<User | null> {
   return await post<User, { username: string }>(`/api/user/get`, { username });
 }
 
-export async function getUserPosts(username: string): Promise<Post[]> {
+export async function fetchUserPosts(username: string): Promise<Post[]> {
   return await post<Post[], { username: string }>(`/api/user/post/list`, {
     username,
   });
 }
 
-export async function getPostById(id: number): Promise<Post> {
+export async function fetchPost(id: number): Promise<Post> {
   return await post<Post, { postId: number }>(`/api/post/get`, { postId: id });
 }
 
-export async function getPopularFeed(): Promise<Post[]> {
+export async function fetchPopularFeed(): Promise<Post[]> {
   return await post<Post[], Record<string, never>>(`/api/feed/popular`, {});
 }
 
-export async function getFypFeed(username: string): Promise<Post[]> {
+export async function fetchFypFeed(username: string): Promise<Post[]> {
   return await post<Post[], { username: string }>(`/api/feed/fyp`, {
     username,
   });
 }
 
-export async function getFollowingFeed(username: string): Promise<Post[]> {
+export async function fetchFollowingFeed(username: string): Promise<Post[]> {
   return await post<Post[], { username: string }>(`/api/feed/following`, {
     username,
   });
 }
 
-export async function getSuggestedUsers(username: string): Promise<User[]> {
+export async function fetchFollowSuggestions(
+  username: string
+): Promise<User[]> {
   return await post<User[], { username: string }>(`/api/follow/suggestions`, {
     username,
   });
 }
 
-export async function getFollowers(username: string): Promise<User[]> {
+export async function fetchFollowers(username: string): Promise<User[]> {
   return await post<User[], { username: string }>(`/api/follow/followers`, {
     username,
   });
 }
 
-export async function getFollowing(username: string): Promise<User[]> {
+export async function fetchFollowing(username: string): Promise<User[]> {
   return await post<User[], { username: string }>(`/api/follow/following`, {
     username,
   });
 }
 
-export async function postNewPost(
+export async function follow(
+  follower: string,
+  following: string
+): Promise<User[]> {
+  return await post<User[], { follower: string; following: string }>(
+    `/api/follow/create`,
+    {
+      follower,
+      following,
+    }
+  );
+}
+
+export async function unfollow(
+  follower: string,
+  following: string
+): Promise<User[]> {
+  return await post<User[], { follower: string; following: string }>(
+    `/api/follow/delete`,
+    {
+      follower,
+      following,
+    }
+  );
+}
+
+export async function createNewPost(
   username: string,
   title: string,
   content: string
@@ -82,4 +108,110 @@ export async function postNewPost(
       content,
     }
   );
+}
+
+// Auth functions with custom error handling
+export async function fetchCurrentUser(): Promise<User | null> {
+  try {
+    const response = await fetch("/api/auth/me", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (response.status === 401) {
+      // User is not authenticated
+      return null;
+    }
+
+    if (response.ok) {
+      const userData = await response.json();
+      return userData;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Failed to fetch current user:", error);
+    return null;
+  }
+}
+
+export async function loginUser(
+  username: string,
+  password: string
+): Promise<{ success: boolean; user?: User; error?: string }> {
+  try {
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (response.ok) {
+      const userData = await response.json();
+      return { success: true, user: userData };
+    } else {
+      const errorData = await response.json();
+      return { success: false, error: errorData.message || "Login failed" };
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    return { success: false, error: "Network error occurred" };
+  }
+}
+
+export async function logoutUser(): Promise<void> {
+  try {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
+}
+
+export async function registerUser(
+  name: string,
+  username: string,
+  email: string,
+  password: string
+): Promise<{ success: boolean; user?: User; error?: string }> {
+  try {
+    const response = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        name,
+        username,
+        password,
+        email,
+      }),
+    });
+
+    if (response.ok) {
+      const userData = await response.json();
+      return { success: true, user: userData };
+    } else {
+      const errorData = await response.json();
+      return {
+        success: false,
+        error: errorData.message || "Registration failed",
+      };
+    }
+  } catch (error) {
+    console.error("Registration error:", error);
+    return { success: false, error: "Network error occurred" };
+  }
 }

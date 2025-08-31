@@ -22,11 +22,6 @@ export default function UserProfile({
   size = "md",
   containerClassName = "",
 }: UserProfileProps) {
-  const { user: currentUser } = useAuth();
-  
-  // Check if the displayed user is the current logged-in user
-  const isCurrentUser = currentUser && user.id === currentUser.id;
-  
   // Size configurations
   const sizeConfig = {
     sm: {
@@ -147,28 +142,36 @@ export default function UserProfile({
               </div>
             </div>
             <div className="flex-1 flex flex-col items-center gap-1">
-              <div
-                className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
-              >
-                {formatNumber(0)}
-              </div>
-              <div
-                className={`text-center text-stone-900 ${config.statsLabel}`}
-              >
-                Followers
-              </div>
+              <Link href={`/profile/${user.username}/followers`}>
+                <button className="flex flex-col items-center gap-1 hover:bg-gray-50 rounded-lg p-2 transition-colors">
+                  <div
+                    className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
+                  >
+                    {formatNumber(0)}
+                  </div>
+                  <div
+                    className={`text-center text-stone-900 ${config.statsLabel}`}
+                  >
+                    Followers
+                  </div>
+                </button>
+              </Link>
             </div>
             <div className="flex-1 flex flex-col items-center gap-1">
-              <div
-                className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
-              >
-                {0}
-              </div>
-              <div
-                className={`text-center text-stone-900 ${config.statsLabel}`}
-              >
-                Following
-              </div>
+              <Link href={`/profile/${user.username}/following`}>
+                <button className="flex flex-col items-center gap-1 hover:bg-gray-50 rounded-lg p-2 transition-colors">
+                  <div
+                    className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
+                  >
+                    {0}
+                  </div>
+                  <div
+                    className={`text-center text-stone-900 ${config.statsLabel}`}
+                  >
+                    Following
+                  </div>
+                </button>
+              </Link>
             </div>
           </div>
         )}
@@ -207,50 +210,52 @@ export default function UserProfile({
           )}
         </div>
 
-        {config.showStats && (
-          <div className="flex justify-center items-center">
-            <div className="flex-1 flex flex-col items-center gap-1">
-              <div
-                className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
-              >
-                {formatNumber(0)}
-              </div>
-              <div
-                className={`text-center text-stone-900 ${config.statsLabel}`}
-              >
-                Words
-              </div>
+      {config.showStats && (
+        <div className="flex justify-center items-center">
+          <div className="flex-1 flex flex-col items-center gap-1">
+            <div
+              className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
+            >
+              {formatNumber(0)}
             </div>
-            <div className="flex-1 flex flex-col items-center gap-1">
-              <div
-                className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
-              >
-                {formatNumber(0)}
-              </div>
-              <div
-                className={`text-center text-stone-900 ${config.statsLabel}`}
-              >
-                Followers
-              </div>
-            </div>
-            <div className="flex-1 flex flex-col items-center gap-1">
-              <div
-                className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
-              >
-                {0}
-              </div>
-              <div
-                className={`text-center text-stone-900 ${config.statsLabel}`}
-              >
-                Following
-              </div>
+            <div className={`text-center text-stone-900 ${config.statsLabel}`}>
+              Words
             </div>
           </div>
-        )}
-      </div>
-    );
-  }
-
-  // Fallback (shouldn't reach here)
-  return null;
+          <div className="flex-1 flex flex-col items-center gap-1">
+            <Link href={`/profile/${user.username}/followers`}>
+              <button className="flex flex-col items-center gap-1 hover:bg-gray-50 rounded-lg p-2 transition-colors">
+                <div
+                  className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
+                >
+                  {formatNumber(user.followerCount)}
+                </div>
+                <div
+                  className={`text-center text-stone-900 ${config.statsLabel}`}
+                >
+                  Followers
+                </div>
+              </button>
+            </Link>
+          </div>
+          <div className="flex-1 flex flex-col items-center gap-1">
+            <Link href={`/profile/${user.username}/following`}>
+              <button className="flex flex-col items-center gap-1 hover:bg-gray-50 rounded-lg p-2 transition-colors">
+                <div
+                  className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
+                >
+                  {user.followingCount}
+                </div>
+                <div
+                  className={`text-center text-stone-900 ${config.statsLabel}`}
+                >
+                  Following
+                </div>
+              </button>
+            </Link>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

@@ -8,10 +8,7 @@ import WhoToFollow from "@/components/WhoToFollow";
 import WritePostCTA from "@/components/WritePostCTA";
 import useAuth from "@/hooks/useAuth";
 import { Post, User } from "@/types";
-import {
-  getUserByUsername,
-  getUserPosts,
-} from "@/utils/api";
+import { fetchUser, fetchUserPosts } from "@/utils/api";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -35,8 +32,8 @@ export default function UserProfilePage() {
       }
 
       const [userData, userPosts] = await Promise.all([
-        getUserByUsername(username),
-        getUserPosts(username),
+        fetchUser(username),
+        fetchUserPosts(username),
       ]);
 
       setUser(userData);
@@ -55,7 +52,6 @@ export default function UserProfilePage() {
   useEffect(() => {
     fetchUserData();
   }, [fetchUserData]);
-
 
   if (loading) {
     return <LoadingSpinner text="Loading profile..." fullPage center />;

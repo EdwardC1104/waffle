@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Post } from "../types";
-import { getFollowingFeed, getFypFeed, getPopularFeed } from "../utils/api";
+import {
+  fetchFollowingFeed,
+  fetchFypFeed,
+  fetchPopularFeed,
+} from "../utils/api";
 import ErrorMessage from "./ErrorMessage";
 import LoadingSpinner from "./LoadingSpinner";
 import PostCard from "./PostCard";
@@ -26,16 +30,16 @@ export default function Feed({ feedType, username }: FeedProps) {
         let feedPosts: Post[] = [];
         switch (feedType) {
           case "popular":
-            feedPosts = await getPopularFeed();
+            feedPosts = await fetchPopularFeed();
             break;
           case "following":
             if (!username)
               throw new Error("Username required for following feed");
-            feedPosts = await getFollowingFeed(username);
+            feedPosts = await fetchFollowingFeed(username);
             break;
           case "fyp":
             if (!username) throw new Error("Username required for FYP feed");
-            feedPosts = await getFypFeed(username);
+            feedPosts = await fetchFypFeed(username);
             break;
         }
 

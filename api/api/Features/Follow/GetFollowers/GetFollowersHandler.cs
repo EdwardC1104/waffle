@@ -13,22 +13,22 @@ public class GetFollowersHandler
         _context = context;
     }
 
-    public async Task<IEnumerable<UserDto>> Handle(string username)
+    public async Task<IEnumerable<UserDto>> Handle(GetFollowersQuery query)
     {
         // Get all users who are following the specified user
-        var followers = await _context.Follows
-            .Where(f => f.Followee.UserName == username)
+        var followerUsers = await _context.Follows
+            .Where(f => f.Followee.UserName == query.Username)
             .Include(f => f.Follower)
-            .Select(f => new UserDto
-            {
-                Id = f.Follower.Id,
-                Name = f.Follower.Name,
-                Username = f.Follower.UserName ?? string.Empty,
-                Email = f.Follower.Email ?? string.Empty,
-                ProfilePictureUrl = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-            })
+            .Select(f => f.Follower)
             .ToListAsync();
 
-        return followers;
+        var userDtos = new List<UserDto>();
+        foreach (var user in followerUsers)
+        {
+            var userDto = await user.ToDtoAsync(_context);
+            userDtos.Add(userDto);
+        }
+
+        return userDtos;
     }
 }
