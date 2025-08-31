@@ -200,11 +200,7 @@ export default function UserProfile({
             </div>
           </div>
           {!isCurrentUser ? (
-            <FollowButton
-              username={user.username}
-              initialFollowState={false}
-              size="lg"
-            /> // temp hardcoded false follow
+            <FollowButton username={user.username} size="lg" /> // temp hardcoded false follow
           ) : (
             <DropDown
               userId={user.id}
