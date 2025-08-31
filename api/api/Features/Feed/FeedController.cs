@@ -1,6 +1,7 @@
 using api.Features.Feed.GetFollowingFeed;
 using api.Features.Feed.GetFypFeed;
 using api.Features.Feed.GetPopularFeed;
+using api.Features.Post;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.Feed;
@@ -47,7 +48,16 @@ public class FeedController : ControllerBase
     [HttpPost("popular")]
     public async Task<IActionResult> GetPopularFeed()
     {
-        var posts = await _getPopularFeedHandler.Handle();
+        IEnumerable<PostDto> posts;
+        if (User.Identity is { IsAuthenticated: true, Name: not null })
+        {
+            posts = await _getPopularFeedHandler.Handle(User.Identity.Name);
+
+        }
+        else
+        {
+            posts = await _getPopularFeedHandler.Handle();
+        }
         return Ok(posts);
     }
 }

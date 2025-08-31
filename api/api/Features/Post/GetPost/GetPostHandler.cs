@@ -27,4 +27,19 @@ public class GetPostHandler
 
         return postDto;
     }
+    
+    public async Task<PostDto?> Handle(string username, GetPostQuery query)
+    {
+        // Fetch the post entity including the user
+        var postEntity = await _dbContext.Posts
+            .Include(p => p.User)
+            .FirstOrDefaultAsync(p => p.Id == query.PostId);
+
+        if (postEntity == null) return null;
+
+        // Map to DTO asynchronously
+        var postDto = await postEntity.ToDtoAsync(username, _dbContext);
+
+        return postDto;
+    }
 }

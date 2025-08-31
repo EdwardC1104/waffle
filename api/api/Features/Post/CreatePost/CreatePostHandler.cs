@@ -37,6 +37,6 @@ public class CreatePostHandler
         await _dbContext.SaveChangesAsync();
         
         // Return the created post with author information
-        return await newPost.ToDtoAsync(_dbContext);
+        return await newPost.ToDtoAsync(username, _dbContext);
     }
 }

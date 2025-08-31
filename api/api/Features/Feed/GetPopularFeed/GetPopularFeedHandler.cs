@@ -29,4 +29,21 @@ public class GetPopularFeedHandler
 
         return postDtos;
     }
+    
+    public async Task<IEnumerable<PostDto>> Handle(string username)
+    {
+        var posts = await _context.Posts
+            .Include(p => p.User)
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync();
+
+        var postDtos = new List<PostDto>();
+        foreach (var post in posts)
+        {
+            var postDto = await post.ToDtoAsync(username, _context);
+            postDtos.Add(postDto);
+        }
+
+        return postDtos;
+    }
 }

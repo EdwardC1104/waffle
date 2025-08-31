@@ -23,7 +23,7 @@ public class GetFypFeedHandler
         var postDtos = new List<PostDto>();
         foreach (var post in posts)
         {
-            var postDto = await post.ToDtoAsync(_context);
+            var postDto = await post.ToDtoAsync(username, _context);
             postDtos.Add(postDto);
         }
 

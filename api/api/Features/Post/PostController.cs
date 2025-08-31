@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using api.Features.Post.CreatePost;
 using api.Features.Post.GetPost;
 using api.Features.Post.GetPosts;
+using api.Features.User;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.Post;
@@ -23,7 +25,17 @@ public class PostController : ControllerBase
     [HttpPost("/api/user/post/list")]
     public async Task<IActionResult> GetPosts([FromBody] GetPostsQuery query)
     {
-        var response = await _getPostsHandler.Handle(query);
+        IEnumerable<PostDto> response;
+        if (User.Identity is { IsAuthenticated: true, Name: not null })
+        {
+            response = await _getPostsHandler.Handle(User.Identity.Name, query);
+
+        }
+        else
+        {
+            response = await _getPostsHandler.Handle(query);
+        }
+        
         return Ok(response);
     }
     
@@ -34,7 +46,6 @@ public class PostController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
-
 
         var response = await _createPost.Handle(User.Identity.Name, request);
         
@@ -49,7 +60,15 @@ public class PostController : ControllerBase
     [HttpPost("get")]
     public async Task<IActionResult> GetPost([FromBody] GetPostQuery query)
     {
-        var response = await _getPostHandler.Handle(query);
+        PostDto? response = null;
+        if (User.Identity is { IsAuthenticated: true, Name: not null })
+        {
+            response = await _getPostHandler.Handle(User.Identity.Name, query);
+        }
+        else
+        {
+            response = await _getPostHandler.Handle(query);
+        }
         
         if (response == null)
         {

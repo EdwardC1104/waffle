@@ -74,14 +74,14 @@ public class FollowController : ControllerBase
     }
 
     [HttpPost("delete")]
-    public async Task<IActionResult> Unfollow([FromBody] DeleteFollowQuery query)
+    public async Task<IActionResult> Unfollow([FromBody] DeleteFollowCommand command)
     {
         if (User.Identity is not { IsAuthenticated: true, Name: not null })
         {
             return Unauthorized(new { message = "Not logged in" });
         }
 
-        var success = await _deleteFollowHandler.Handle(User.Identity.Name, query);
+        var success = await _deleteFollowHandler.Handle(User.Identity.Name, command);
         
         if (success)
         {

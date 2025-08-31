@@ -31,4 +31,23 @@ public class GetPostsHandler
 
         return posts;
     }
+    
+    public async Task<IEnumerable<PostDto>> Handle(string username, GetPostsQuery query)
+    {
+        // Fetch posts including user
+        var postsEntities = await _dbContext.Posts
+            .Where(p => p.User.UserName == query.Username)
+            .Include(p => p.User)
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync(); // fetch first
+
+        // Map to DTOs asynchronously
+        var posts = new List<PostDto>();
+        foreach (var post in postsEntities)
+        {
+            posts.Add(await post.ToDtoAsync(username, _dbContext));
+        }
+
+        return posts;
+    }
 }

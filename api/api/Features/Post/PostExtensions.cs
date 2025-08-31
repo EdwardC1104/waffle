@@ -5,8 +5,11 @@ namespace api.Features.Post;
 
 public static class PostExtensions
 {
-public static async Task<PostDto> ToDtoAsync(this Models.Post post, DbContext context)
+    public static async Task<PostDto> ToDtoAsync(this Models.Post post, DbContext context)
     {
+        var likeCount = await context.Set<Models.Like>()
+            .CountAsync(l => l.PostId == post.Id);
+        
         return new PostDto
         {
             Id = post.Id,
@@ -14,8 +17,29 @@ public static async Task<PostDto> ToDtoAsync(this Models.Post post, DbContext co
             Content = post.Content,
             CreatedAt = post.CreatedAt,
             Author =  await post.User.ToDtoAsync(context),
-            CoverImageUrl = "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=300&fit=crop"
+            CoverImageUrl = "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=300&fit=crop",
+            LikeCount = likeCount
         };
     }
     
+    public static async Task<PostDto> ToDtoAsync(this Models.Post post, string username, DbContext context)
+    {
+        var likeCount = await context.Set<Models.Like>()
+            .CountAsync(l => l.PostId == post.Id);
+        
+        var existingLike = await context.Set<Models.Like>()
+            .FirstOrDefaultAsync(l => l.User.UserName == username && l.PostId == post.Id);
+        
+        return new PostDto
+        {
+            Id = post.Id,
+            Title = post.Title,
+            Content = post.Content,
+            CreatedAt = post.CreatedAt,
+            Author =  await post.User.ToDtoAsync(context),
+            CoverImageUrl = "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=300&fit=crop",
+            LikeCount = likeCount,
+            LikedByAuthenticatedUser = existingLike != null
+        };
+    }
 }

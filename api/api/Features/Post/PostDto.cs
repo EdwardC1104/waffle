@@ -10,4 +10,6 @@ public class PostDto
     public DateTime CreatedAt { get; set; }
     public UserDto Author { get; set; } = new UserDto();
     public string CoverImageUrl { get; set; } = string.Empty;
+    public int LikeCount { get; set; }
+    public bool LikedByAuthenticatedUser { get; set; }
 }

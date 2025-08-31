@@ -12,7 +12,7 @@ public class DeleteFollowHandler
         _context = context;
     }
 
-    public async Task<bool> Handle(string username, DeleteFollowQuery query)
+    public async Task<bool> Handle(string username, DeleteFollowCommand command)
     {
         // Find the follower user by username
         var followerUser = await _context.Users
@@ -25,7 +25,7 @@ public class DeleteFollowHandler
 
         // Find the followee user by username
         var followeeUser = await _context.Users
-            .FirstOrDefaultAsync(u => u.UserName == query.Following);
+            .FirstOrDefaultAsync(u => u.UserName == command.Following);
         
         if (followeeUser == null)
         {
