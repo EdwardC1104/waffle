@@ -69,6 +69,32 @@ export async function fetchFollowing(username: string): Promise<User[]> {
   });
 }
 
+export async function follow(
+  follower: string,
+  following: string
+): Promise<User[]> {
+  return await post<User[], { follower: string; following: string }>(
+    `/api/follow/create`,
+    {
+      follower,
+      following,
+    }
+  );
+}
+
+export async function unfollow(
+  follower: string,
+  following: string
+): Promise<User[]> {
+  return await post<User[], { follower: string; following: string }>(
+    `/api/follow/delete`,
+    {
+      follower,
+      following,
+    }
+  );
+}
+
 export async function createNewPost(
   username: string,
   title: string,
