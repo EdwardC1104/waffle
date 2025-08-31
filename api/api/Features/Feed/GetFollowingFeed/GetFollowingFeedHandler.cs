@@ -13,7 +13,7 @@ public class GetFollowingFeedHandler
         _context = context;
     }
 
-    public async Task<IEnumerable<PostDto>> Handle(GetFollowingFeedQuery query)
+    public async Task<IEnumerable<PostDto>> Handle(string username)
     {
         var posts = await _context.Posts
             .Include(p => p.User)

@@ -23,6 +23,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Features\Like\CreateLike\" />
+      <Folder Include="Features\Like\DeleteLike\" />
       <Folder Include="Migrations\" />
     </ItemGroup>
 
