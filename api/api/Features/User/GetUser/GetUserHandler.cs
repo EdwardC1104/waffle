@@ -1,27 +1,16 @@
-using api.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
-namespace api.Features.User;
+namespace api.Features.User.GetUser;
 
-public class GetUser
+public class GetUserHandler
 {
     private readonly UserManager<Models.User> _userManager;
-    public GetUser(UserManager<Models.User> userManager)
+    public GetUserHandler(UserManager<Models.User> userManager)
     {
         _userManager = userManager;
     }
-
-    public class Response
-    {
-        public string Id { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string ProfilePictureUrl { get; set; } = string.Empty;
-    }
     
-    public async Task<Response?> Handle(string username)
+    public async Task<UserDto?> Handle(string username)
     {
         var user = await _userManager.FindByNameAsync(username);
 
@@ -30,7 +19,7 @@ public class GetUser
             return null;
         }
 
-        var response = new Response
+        var response = new UserDto
         {
             Id = user.Id,
             Name = user.Name,

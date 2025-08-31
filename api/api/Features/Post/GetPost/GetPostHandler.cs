@@ -1,49 +1,31 @@
 using api.Data;
+using api.Features.User;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Features.Post;
+namespace api.Features.Post.GetPost;
 
-public class GetPost
+public class GetPostHandler
 {
     private readonly AppDbContext _dbContext;
     
-    public GetPost(AppDbContext dbContext)
+    public GetPostHandler(AppDbContext dbContext)
     {
         _dbContext = dbContext;
     }
-
-    public class Response
-    {
-        public int Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public string Content { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
-        public AuthorDto Author { get; set; } = new AuthorDto();
-        public string CoverImageUrl { get; set; } = string.Empty;
-    }
-
-    public class AuthorDto
-    {
-        public string Id { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string ProfilePictureUrl { get; set; } = string.Empty;
-    }
     
-    public async Task<Response?> Handle(int postId)
+    public async Task<PostDto?> Handle(int postId)
     {
         // Get the specific post by ID
         var post = await _dbContext.Posts
             .Where(p => p.Id == postId)
             .Include(p => p.User)
-            .Select(p => new Response
+            .Select(p => new PostDto
             {
                 Id = p.Id,
                 Title = p.Title,
                 Content = p.Content,
                 CreatedAt = p.CreatedAt,
-                Author = new AuthorDto
+                Author = new UserDto
                 {
                     Id = p.User.Id,
                     Name = p.User.Name,

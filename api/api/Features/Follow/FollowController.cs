@@ -1,3 +1,6 @@
+using api.Features.Follow.GetFollowers;
+using api.Features.Follow.GetFollowing;
+using api.Features.Follow.GetSuggestions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.Follow;
@@ -6,11 +9,15 @@ namespace api.Features.Follow;
 [Route("api/user")]
 public class FollowController : ControllerBase
 {
-    private readonly GetSuggestions _getSuggestions;
+    private readonly GetSuggestionsHandler _getSuggestionsHandler;
+    private readonly GetFollowersHandler _getFollowersHandler;
+    private readonly GetFollowingHandler _getFollowingHandler;
 
-    public FollowController(GetSuggestions getSuggestions)
+    public FollowController(GetSuggestionsHandler getSuggestionsHandler, GetFollowersHandler getFollowersHandler, GetFollowingHandler getFollowingHandler)
     {
-        _getSuggestions = getSuggestions;
+        _getSuggestionsHandler = getSuggestionsHandler;
+        _getFollowersHandler = getFollowersHandler;
+        _getFollowingHandler = getFollowingHandler;
     }
 
     [HttpGet("{username}/follow/suggestions")]
@@ -29,7 +36,21 @@ public class FollowController : ControllerBase
             return Forbid();
         }
 
-        var response = await _getSuggestions.Handle(username);
+        var response = await _getSuggestionsHandler.Handle(username);
+        return Ok(response);
+    }
+
+    [HttpGet("{username}/followers")]
+    public async Task<IActionResult> GetFollowers(string username)
+    {
+        var response = await _getFollowersHandler.Handle(username);
+        return Ok(response);
+    }
+
+    [HttpGet("{username}/following")]
+    public async Task<IActionResult> GetFollowing(string username)
+    {
+        var response = await _getFollowingHandler.Handle(username);
         return Ok(response);
     }
 }

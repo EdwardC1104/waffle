@@ -1,36 +1,16 @@
 using api.Data;
-using System.Threading.Tasks;
+using api.Features.User;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Features.Post;
+namespace api.Features.Post.GetFollowingFeed;
 
-public class GetFollowingFeed
+public class GetFollowingFeedHandler
 {
     private readonly AppDbContext _context;
 
-    public GetFollowingFeed(AppDbContext context)
+    public GetFollowingFeedHandler(AppDbContext context)
     {
         _context = context;
-    }
-
-    // DTO for post
-    public class PostDto
-    {
-        public int Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public string Content { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
-        public AuthorDto Author { get; set; } = new AuthorDto();
-        public string CoverImageUrl { get; set; } = string.Empty;
-    }
-
-    public class AuthorDto
-    {
-        public string Id { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string ProfilePictureUrl { get; set; } = string.Empty;
     }
 
     public async Task<IEnumerable<PostDto>> Handle(string username)
@@ -44,7 +24,7 @@ public class GetFollowingFeed
                 Title = p.Title,
                 Content = p.Content,
                 CreatedAt = p.CreatedAt,
-                Author = new AuthorDto
+                Author = new UserDto
                 {
                     Id = p.User.Id,
                     Name = p.User.Name,

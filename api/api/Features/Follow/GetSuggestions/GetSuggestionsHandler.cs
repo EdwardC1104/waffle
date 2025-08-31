@@ -1,24 +1,16 @@
 using api.Data;
+using api.Features.User;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Features.Follow;
+namespace api.Features.Follow.GetSuggestions;
 
-public class GetSuggestions
+public class GetSuggestionsHandler
 {
     private readonly AppDbContext _context;
 
-    public GetSuggestions(AppDbContext context)
+    public GetSuggestionsHandler(AppDbContext context)
     {
         _context = context;
-    }
-
-    public class UserDto
-    {
-        public string Id { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string ProfilePictureUrl { get; set; } = string.Empty;
     }
 
     public async Task<IEnumerable<UserDto>> Handle(string username)

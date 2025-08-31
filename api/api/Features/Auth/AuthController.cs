@@ -1,3 +1,7 @@
+using api.Features.Auth.GetCurrentUser;
+using api.Features.Auth.Login;
+using api.Features.Auth.Logout;
+using api.Features.Auth.Register;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.Auth;
@@ -6,28 +10,28 @@ namespace api.Features.Auth;
 [Route("/api/auth")]
 public class AuthController : ControllerBase
 {
-    private readonly Login _loginHandler;
-    private readonly Register _registerHandler;
-    private readonly GetCurrentUser _getCurrentUserHandler;
-    private readonly Logout _logoutHandler;
+    private readonly LoginHandler _loginHandlerHandler;
+    private readonly RegisterHandler _registerHandlerHandler;
+    private readonly GetCurrentUserHandler _getCurrentUserHandlerHandler;
+    private readonly LogoutHandler _logoutHandlerHandler;
 
-    public AuthController(Login loginHandler, Register registerHandler, GetCurrentUser getCurrentUserHandler, Logout logoutHandler)
+    public AuthController(LoginHandler loginHandlerHandler, RegisterHandler registerHandlerHandler, GetCurrentUserHandler getCurrentUserHandlerHandler, LogoutHandler logoutHandlerHandler)
     {
-        _loginHandler = loginHandler;
-        _registerHandler = registerHandler;
-        _getCurrentUserHandler = getCurrentUserHandler;
-        _logoutHandler = logoutHandler;
+        _loginHandlerHandler = loginHandlerHandler;
+        _registerHandlerHandler = registerHandlerHandler;
+        _getCurrentUserHandlerHandler = getCurrentUserHandlerHandler;
+        _logoutHandlerHandler = logoutHandlerHandler;
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] Login.Request request)
+    public async Task<IActionResult> Login([FromBody] LoginCommand request)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var response = await _loginHandler.Handle(request);
+        var response = await _loginHandlerHandler.Handle(request);
         
         if (response == null)
         {
@@ -38,14 +42,14 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] Register.Request request)
+    public async Task<IActionResult> Register([FromBody] RegisterCommand request)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var (response, errors) = await _registerHandler.Handle(request);
+        var (response, errors) = await _registerHandlerHandler.Handle(request);
         
         if (response == null)
         {
@@ -62,7 +66,7 @@ public class AuthController : ControllerBase
         {
             return Unauthorized();
         }
-        var response = await _getCurrentUserHandler.Handle(User);
+        var response = await _getCurrentUserHandlerHandler.Handle(User);
         if (response == null)
         {
             return NotFound("User not found");
@@ -73,7 +77,7 @@ public class AuthController : ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        await _logoutHandler.Handle();
+        await _logoutHandlerHandler.Handle();
         return NoContent();
     }
 }

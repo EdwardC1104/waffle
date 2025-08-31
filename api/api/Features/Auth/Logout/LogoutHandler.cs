@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace api.Features.Auth;
+namespace api.Features.Auth.Logout;
 
-public class Logout
+public class LogoutHandler
 {
     private readonly SignInManager<api.Models.User> _signInManager;
 
-    public Logout(SignInManager<api.Models.User> signInManager)
+    public LogoutHandler(SignInManager<api.Models.User> signInManager)
     {
         _signInManager = signInManager;
     }

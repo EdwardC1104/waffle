@@ -1,33 +1,25 @@
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using api.Features.User;
 
-namespace api.Features.Auth;
+namespace api.Features.Auth.GetCurrentUser;
 
-public class GetCurrentUser
+public class GetCurrentUserHandler
 {
     private readonly UserManager<api.Models.User> _userManager;
 
-    public GetCurrentUser(UserManager<api.Models.User> userManager)
+    public GetCurrentUserHandler(UserManager<api.Models.User> userManager)
     {
         _userManager = userManager;
     }
-    
-    public class Response
-    {
-        public string Id { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string ProfilePictureUrl { get; set; } = string.Empty;
-    }
 
-    public async Task<Response?> Handle(ClaimsPrincipal user)
+    public async Task<UserDto?> Handle(ClaimsPrincipal user)
     {
         var username = user.Identity?.Name;
         if (string.IsNullOrEmpty(username)) return null;
         var appUser = await _userManager.FindByNameAsync(username);
         if (appUser == null) return null;
-        return new Response
+        return new UserDto
         {
             Id = appUser.Id,
             Name = appUser.Name,
