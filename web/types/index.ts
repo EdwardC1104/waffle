@@ -18,3 +18,8 @@ export type Post = {
   likeCount: number;
   likedByAuthenticatedUser: boolean;
 };
+
+export type SearchResult = {
+  posts: Post[];
+  users: User[];
+};

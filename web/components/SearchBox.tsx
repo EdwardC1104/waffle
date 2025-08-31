@@ -1,6 +1,7 @@
 "use client";
 
 import { Post, User } from "@/types";
+import { search } from "@/utils/api";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -14,76 +15,6 @@ interface SearchBoxProps {
   onSearchChange: (term: string) => void;
 }
 
-// Dummy data for testing
-const dummyUsers: User[] = [
-  {
-    id: "1",
-    name: "John Doe",
-    username: "johndoe",
-    email: "john@example.com",
-    profilePictureUrl:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-    followerCount: 120,
-    followingCount: 89,
-  },
-  {
-    id: "2",
-    name: "Jane Smith",
-    username: "janesmith",
-    email: "jane@example.com",
-    profilePictureUrl:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-    followerCount: 340,
-    followingCount: 156,
-  },
-  {
-    id: "3",
-    name: "Mike Johnson",
-    username: "mikej",
-    email: "mike@example.com",
-    profilePictureUrl:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-    followerCount: 89,
-    followingCount: 67,
-  },
-];
-
-const dummyPosts: Post[] = [
-  {
-    id: 1,
-    title: "Getting Started with React",
-    content: "Learn the basics of React development...",
-    coverImageUrl:
-      "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=300&fit=crop",
-    author: dummyUsers[0],
-    createdAt: "2024-01-15T10:30:00Z",
-    likeCount: 0,
-    likedByAuthenticatedUser: false,
-  },
-  {
-    id: 2,
-    title: "JavaScript Best Practices",
-    content: "Tips and tricks for writing better JavaScript...",
-    coverImageUrl:
-      "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=300&fit=crop",
-    author: dummyUsers[1],
-    createdAt: "2024-01-14T15:45:00Z",
-    likeCount: 0,
-    likedByAuthenticatedUser: false,
-  },
-  {
-    id: 3,
-    title: "CSS Grid vs Flexbox",
-    content: "Understanding when to use each layout method...",
-    coverImageUrl:
-      "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=300&fit=crop",
-    author: dummyUsers[2],
-    createdAt: "2024-01-13T09:20:00Z",
-    likeCount: 0,
-    likedByAuthenticatedUser: false,
-  },
-];
-
 export default function SearchBox({
   isOpen,
   onClose,
@@ -92,6 +23,8 @@ export default function SearchBox({
 }: SearchBoxProps) {
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -114,35 +47,64 @@ export default function SearchBox({
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
+    const performSearch = async () => {
+      if (searchTerm.trim()) {
+        setIsLoading(true);
+        setError(null);
 
-      // Filter users
-      const users = dummyUsers.filter(
-        (user) =>
-          user.name.toLowerCase().includes(term) ||
-          user.username.toLowerCase().includes(term)
-      );
+        try {
+          const results = await search(searchTerm.trim());
+          // The API returns SearchResult[], but based on the types it should return SearchResult
+          // Let's handle both cases for safety
+          if (Array.isArray(results) && results.length > 0) {
+            setFilteredUsers(results[0].users || []);
+            setFilteredPosts(results[0].posts || []);
+          } else if (
+            results &&
+            typeof results === "object" &&
+            "users" in results &&
+            "posts" in results
+          ) {
+            const searchResult = results as { users: User[]; posts: Post[] };
+            setFilteredUsers(searchResult.users || []);
+            setFilteredPosts(searchResult.posts || []);
+          } else {
+            setFilteredUsers([]);
+            setFilteredPosts([]);
+          }
+        } catch (err) {
+          console.error("Search error:", err);
+          setError("Failed to search. Please try again.");
+          setFilteredUsers([]);
+          setFilteredPosts([]);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setFilteredUsers([]);
+        setFilteredPosts([]);
+        setError(null);
+        setIsLoading(false);
+      }
+    };
 
-      // Filter posts
-      const posts = dummyPosts.filter(
-        (post) =>
-          post.title.toLowerCase().includes(term) ||
-          post.content.toLowerCase().includes(term)
-      );
-
-      setFilteredUsers(users);
-      setFilteredPosts(posts);
-    } else {
-      setFilteredUsers([]);
-      setFilteredPosts([]);
-    }
+    // Debounce the search to avoid too many API calls
+    const timeoutId = setTimeout(performSearch, 300);
+    return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
   if (!isOpen) return null;
 
   const hasResults = filteredUsers.length > 0 || filteredPosts.length > 0;
   const showPlaceholder = searchTerm.trim() === "";
+  const showError = error !== null;
+  const showLoading = isLoading && searchTerm.trim() !== "";
+  const showNoResults =
+    !showPlaceholder &&
+    !showLoading &&
+    !showError &&
+    !hasResults &&
+    searchTerm.trim() !== "";
 
   return (
     <>
@@ -165,6 +127,7 @@ export default function SearchBox({
             value={searchTerm}
             onTextChange={onSearchChange}
             autoFocus={true}
+            containerClassName="w-full"
           />
         </div>
 
@@ -174,7 +137,16 @@ export default function SearchBox({
             <div className="p-4 text-[#1C1C19]/50 text-center">
               Start typing to search for users and posts
             </div>
-          ) : !hasResults ? (
+          ) : showLoading ? (
+            <div className="p-4 text-[#1C1C19]/50 text-center">
+              <div className="flex items-center justify-center space-x-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#1C1C19]"></div>
+                <span>Searching...</span>
+              </div>
+            </div>
+          ) : showError ? (
+            <div className="p-4 text-red-500 text-center">{error}</div>
+          ) : showNoResults ? (
             <div className="p-4 text-[#1C1C19]/50 text-center">
               No results found for &quot;{searchTerm}&quot;
             </div>
