@@ -1,4 +1,3 @@
-import useAuth from "@/hooks/useAuth";
 import { fetchFollowSuggestions } from "@/utils/api";
 import { useCallback, useEffect, useState } from "react";
 import { User } from "../types";
@@ -7,23 +6,24 @@ import UserProfile from "./UserProfile";
 
 export default function WhoToFollow() {
   const [suggestedUsers, setSuggestedUsers] = useState<User[]>([]);
-  const { user: currentUser } = useAuth();
 
   const fetchSuggestedUsers = useCallback(async () => {
-    if (currentUser) {
-      try {
-        const users = await fetchFollowSuggestions(currentUser.username);
-        setSuggestedUsers(users);
-      } catch (err) {
-        console.error("Failed to fetch suggested users:", err);
-        setSuggestedUsers([]);
-      }
+    try {
+      const users = await fetchFollowSuggestions();
+      setSuggestedUsers(users);
+    } catch (err) {
+      console.error("Failed to fetch suggested users:", err);
+      setSuggestedUsers([]);
     }
-  }, [currentUser]);
+  }, []);
 
   useEffect(() => {
     fetchSuggestedUsers();
   }, [fetchSuggestedUsers]);
+
+  if (suggestedUsers.length === 0) {
+    return null;
+  }
 
   return (
     <div className="py-6 rounded-2xl flex flex-col gap-6">

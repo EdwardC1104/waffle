@@ -49,12 +49,11 @@ export async function fetchFollowingFeed(username: string): Promise<Post[]> {
   });
 }
 
-export async function fetchFollowSuggestions(
-  username: string
-): Promise<User[]> {
-  return await post<User[], { username: string }>(`/api/follow/suggestions`, {
-    username,
-  });
+export async function fetchFollowSuggestions(): Promise<User[]> {
+  return await post<User[], Record<string, never>>(
+    `/api/follow/suggestions`,
+    {}
+  );
 }
 
 export async function fetchFollowers(username: string): Promise<User[]> {
@@ -93,6 +92,13 @@ export async function unfollow(
       following,
     }
   );
+}
+
+export async function likePost(postId: number): Promise<Post> {
+  return await post<Post, { postId: number }>(`/api/like/create`, { postId });
+}
+export async function unlikePost(postId: number): Promise<Post> {
+  return await post<Post, { postId: number }>(`/api/like/delete`, { postId });
 }
 
 export async function createNewPost(
