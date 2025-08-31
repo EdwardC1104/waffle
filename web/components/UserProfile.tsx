@@ -22,6 +22,10 @@ export default function UserProfile({
   size = "md",
   containerClassName = "",
 }: UserProfileProps) {
+
+  // Check for currentUser
+  const isCurrentUser = useAuth().user?.id === user.id;
+
   // Size configurations
   const sizeConfig = {
     sm: {
@@ -258,4 +262,5 @@ export default function UserProfile({
       )}
     </div>
   );
+}
 }

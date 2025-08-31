@@ -6,7 +6,7 @@ import { useCallback,
           useState,
           useEffect
         } from "react";
-import { getSuggestedUsers } from "@/utils/api";
+import { fetchFollowSuggestions } from "@/utils/api";
 
 export default function WhoToFollow() {
   const [suggestedUsers, setSuggestedUsers] = useState<User[]>([]);
@@ -24,13 +24,6 @@ export default function WhoToFollow() {
     }
   }, [currentUser]);
 
-  const toggleFollowState = (index: number) => {
-    setFollowStates((prev) => {
-      const newStates = [...prev];
-      newStates[index] = !newStates[index];
-      return newStates;
-    });
-  };
 
   useEffect(() => {
     fetchSuggestedUsers();
