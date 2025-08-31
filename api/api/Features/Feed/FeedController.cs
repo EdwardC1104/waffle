@@ -21,16 +21,26 @@ public class FeedController : ControllerBase
     }
 
     [HttpPost("fyp")]
-    public async Task<IActionResult> GetFypFeed([FromBody] GetFypFeedQuery query)
+    public async Task<IActionResult> GetFypFeed()
     {
-        var posts = await _getFypFeedHandler.Handle(query);
+        if (User.Identity is not { IsAuthenticated: true, Name: not null })
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
+        
+        var posts = await _getFypFeedHandler.Handle(User.Identity.Name);
         return Ok(posts);
     }
     
     [HttpPost("following")]
-    public async Task<IActionResult> GetFollowingFeed([FromBody] GetFollowingFeedQuery query)
+    public async Task<IActionResult> GetFollowingFeed()
     {
-        var posts = await _getFollowingFeedHandler.Handle(query);
+        if (User.Identity is not { IsAuthenticated: true, Name: not null })
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
+
+        var posts = await _getFollowingFeedHandler.Handle(User.Identity.Name);
         return Ok(posts);
     }
 

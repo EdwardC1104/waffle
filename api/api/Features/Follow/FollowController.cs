@@ -27,23 +27,18 @@ public class FollowController : ControllerBase
     }
 
     [HttpPost("suggestions")]
-    public async Task<IActionResult> GetSuggestions([FromBody] GetSuggestionsQuery query)
+    public async Task<IActionResult> GetSuggestions()
     {
-        // Ensure the user is authenticated
-        if (!User.Identity?.IsAuthenticated ?? true)
+        if (User.Identity is { IsAuthenticated: true, Name: not null })
         {
-            return Unauthorized(new { message = "Not logged in" });
+            var response = await _getSuggestionsHandler.Handle(User.Identity.Name);
+            return Ok(response);
         }
-
-        // Check if the authenticated user's username matches the route username
-        var authenticatedUsername = User.Identity?.Name;
-        if (!string.Equals(authenticatedUsername, query.Username, StringComparison.OrdinalIgnoreCase))
+        else
         {
-            return StatusCode(403, new { message = "Forbidden: You can only get suggestions for your own account" });
+            var response = await _getSuggestionsHandler.Handle();
+            return Ok(response);
         }
-
-        var response = await _getSuggestionsHandler.Handle(query);
-        return Ok(response);
     }
 
     [HttpPost("followers")]
@@ -63,56 +58,36 @@ public class FollowController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> Follow([FromBody] CreateFollowQuery query)
     {
-        // Ensure the user is authenticated
-        if (!User.Identity?.IsAuthenticated ?? true)
+        if (User.Identity is not { IsAuthenticated: true, Name: not null })
         {
             return Unauthorized(new { message = "Not logged in" });
         }
 
-        // Check if the authenticated user's username matches the follower username
-        var authenticatedUsername = User.Identity?.Name;
-        if (!string.Equals(authenticatedUsername, query.Follower, StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(403, new { message = "Forbidden: You can only create follows for your own account" });
-        }
-
-        var success = await _createFollowHandler.Handle(query);
+        var success = await _createFollowHandler.Handle(User.Identity.Name, query);
         
         if (success)
         {
             return Ok(new { message = "Successfully followed user" });
         }
-        else
-        {
-            return BadRequest(new { message = "Unable to follow user. User may not exist or you may already be following them." });
-        }
+
+        return BadRequest(new { message = "Unable to follow user. User may not exist or you may already be following them." });
     }
 
     [HttpPost("delete")]
     public async Task<IActionResult> Unfollow([FromBody] DeleteFollowQuery query)
     {
-        // Ensure the user is authenticated
-        if (!User.Identity?.IsAuthenticated ?? true)
+        if (User.Identity is not { IsAuthenticated: true, Name: not null })
         {
             return Unauthorized(new { message = "Not logged in" });
         }
 
-        // Check if the authenticated user's username matches the follower username
-        var authenticatedUsername = User.Identity?.Name;
-        if (!string.Equals(authenticatedUsername, query.Follower, StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(403, new { message = "Forbidden: You can only delete follows for your own account" });
-        }
-
-        var success = await _deleteFollowHandler.Handle(query);
+        var success = await _deleteFollowHandler.Handle(User.Identity.Name, query);
         
         if (success)
         {
             return Ok(new { message = "Successfully unfollowed user" });
         }
-        else
-        {
-            return BadRequest(new { message = "Unable to unfollow user. User may not exist or you may not be following them." });
-        }
+
+        return BadRequest(new { message = "Unable to unfollow user. User may not exist or you may not be following them." });
     }
 }

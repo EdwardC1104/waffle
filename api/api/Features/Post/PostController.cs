@@ -30,22 +30,17 @@ public class PostController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> CreatePost([FromBody] CreatePostCommand request)
     {
-        if (!User.Identity?.IsAuthenticated ?? true)
+        if (User.Identity is not { IsAuthenticated: true, Name: not null })
         {
             return Unauthorized(new { message = "Not logged in" });
         }
 
-        var authenticatedUsername = User.Identity?.Name;
-        if (!string.Equals(authenticatedUsername, request.Username, StringComparison.OrdinalIgnoreCase))
-        {
-            return StatusCode(403, new { message = "Forbidden: You can only create posts for your own account" });
-        }
 
-        var response = await _createPost.Handle(request);
+        var response = await _createPost.Handle(User.Identity.Name, request);
         
         if (response == null)
         {
-            return NotFound(new { message = $"User with username '{request.Username}' not found" });
+            return NotFound(new { message = $"User with username '{User.Identity.Name}' not found" });
         }
         
         return Created($"/api/post/get", response);

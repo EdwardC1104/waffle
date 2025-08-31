@@ -12,11 +12,11 @@ public class CreateFollowHandler
         _context = context;
     }
 
-    public async Task<bool> Handle(CreateFollowQuery query)
+    public async Task<bool> Handle(string username, CreateFollowQuery query)
     {
         // Find the follower user by username
         var followerUser = await _context.Users
-            .FirstOrDefaultAsync(u => u.UserName == query.Follower);
+            .FirstOrDefaultAsync(u => u.UserName == username);
         
         if (followerUser == null)
         {

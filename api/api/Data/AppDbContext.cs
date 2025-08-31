@@ -13,6 +13,8 @@ public class AppDbContext : IdentityDbContext<User>
     public DbSet<Post> Posts { get; set; }
     public DbSet<Follow> Follows { get; set; }
     
+    public DbSet<Like> Likes { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -40,5 +42,21 @@ public class AppDbContext : IdentityDbContext<User>
             .WithMany()
             .HasForeignKey(f => f.FolloweeId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<Like>()
+            .HasKey(l => new { l.UserId, l.PostId });
+        
+        // Configure Like entity relationships
+        modelBuilder.Entity<Like>()
+            .HasOne(l => l.User)
+            .WithMany()
+            .HasForeignKey(l => l.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+            
+        modelBuilder.Entity<Like>()
+            .HasOne(l => l.Post)
+            .WithMany()
+            .HasForeignKey(l => l.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -13,11 +13,26 @@ public class GetSuggestionsHandler
         _context = context;
     }
 
-    public async Task<IEnumerable<UserDto>> Handle(GetSuggestionsQuery query)
+    public async Task<IEnumerable<UserDto>> Handle(string username)
     {
-        // Get all users except the current user
+        
         var users = await _context.Users
-            .Where(u => u.UserName != query.Username)
+            .Where(u => u.UserName != username)
+            .ToListAsync();
+
+        var userDtos = new List<UserDto>();
+        foreach (var user in users)
+        {
+            var userDto = await user.ToDtoAsync(_context);
+            userDtos.Add(userDto);
+        }
+
+        return userDtos;
+    }
+    
+    public async Task<IEnumerable<UserDto>> Handle()
+    {
+        var users = await _context.Users
             .ToListAsync();
 
         var userDtos = new List<UserDto>();
