@@ -10,6 +10,8 @@ using api.Features.Post.CreatePost;
 using api.Features.Feed.GetFollowingFeed;
 using api.Features.Feed.GetFypFeed;
 using api.Features.Feed.GetPopularFeed;
+using api.Features.Follow.CreateFollow;
+using api.Features.Follow.DeleteFollow;
 using api.Features.Post.GetPost;
 using api.Features.Post.GetPosts;
 using api.Features.User.GetUser;
@@ -70,6 +72,8 @@ builder.Services.AddScoped<GetPopularFeedHandler>();
 builder.Services.AddScoped<GetSuggestionsHandler>();
 builder.Services.AddScoped<GetFollowersHandler>();
 builder.Services.AddScoped<GetFollowingHandler>();
+builder.Services.AddScoped<CreateFollowHandler>();
+builder.Services.AddScoped<DeleteFollowHandler>();
 
 var app = builder.Build();
 
