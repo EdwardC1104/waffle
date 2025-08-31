@@ -12,5 +12,5 @@ export interface Post {
   content: string;
   coverImageUrl: string;
   author: User;
-  createdAt: Date;
+  createdAt: string;
 }

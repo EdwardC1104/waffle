@@ -56,12 +56,6 @@ export function Navbar() {
               <div className="flex items-center space-x-4">
                 {isAuthenticated ? (
                   <>
-                    <Link
-                      href={`/profile/${user?.username}`}
-                      className="text-sm font-medium text-gray-700 hover:text-gray-900"
-                    >
-                      {user?.name}
-                    </Link>
                     <button
                       onClick={handleLogout}
                       className="text-sm font-medium text-gray-500 hover:text-gray-700"
@@ -93,7 +87,7 @@ export function Navbar() {
             {isAuthenticated && (
               <>
                 <Link
-                  href={`/profile/${user?.username || "edward"}`}
+                  href={`/profile/${user?.username || ""}`}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <svg

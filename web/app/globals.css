@@ -25,7 +25,6 @@ body::before {
   height: 100%;
   background: url("/texture.webp") lightgray 0% 0% / 256px 256px repeat;
   mix-blend-mode: multiply;
-  opacity: 0.8;
   pointer-events: none;
   z-index: 1000;
 }
