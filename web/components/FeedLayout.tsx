@@ -25,6 +25,8 @@ export default function FeedLayout({ feedType, user }: FeedLayoutProps) {
         } catch (err) {
           console.warn("Could not fetch suggested users:", err);
         }
+      } else {
+        setSuggestedUsers([]);
       }
     };
 
