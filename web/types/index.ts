@@ -1,4 +1,4 @@
-export interface User {
+export type User = {
   id: string;
   name: string;
   username: string;
@@ -6,13 +6,15 @@ export interface User {
   profilePictureUrl: string;
   followerCount: number;
   followingCount: number;
-}
+};
 
-export interface Post {
+export type Post = {
   id: number;
   title: string;
   content: string;
   coverImageUrl: string;
   author: User;
   createdAt: string;
-}
+  likeCount: number;
+  likedByAuthenticatedUser: boolean;
+};

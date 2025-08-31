@@ -20,6 +20,12 @@ export default function UserProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const { user: currentUser } = useAuth();
 
+  const handlePostUpdate = (updatedPost: Post) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
+    );
+  };
+
   const fetchUserData = useCallback(async () => {
     try {
       setLoading(true);
@@ -47,7 +53,7 @@ export default function UserProfilePage() {
     } finally {
       setLoading(false);
     }
-  }, [username]);
+  }, [username, currentUser]); // eslint-disable-line
 
   useEffect(() => {
     fetchUserData();
@@ -103,7 +109,11 @@ export default function UserProfilePage() {
 
           <div className="flex flex-col gap-6 md:gap-8">
             {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
+              <PostCard
+                key={post.id}
+                post={post}
+                onPostUpdate={handlePostUpdate}
+              />
             ))}
           </div>
         </div>

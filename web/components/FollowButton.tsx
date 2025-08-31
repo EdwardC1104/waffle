@@ -76,7 +76,7 @@ export default function FollowButton({
 
   const config = sizeConfig[size];
 
-  if (!currentUser || currentUser.username === username) {
+  if (currentUser?.username === username) {
     return null;
   }
 

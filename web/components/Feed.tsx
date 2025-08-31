@@ -21,6 +21,12 @@ export default function Feed({ feedType, username }: FeedProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const handlePostUpdate = (updatedPost: Post) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
+    );
+  };
+
   useEffect(() => {
     const fetchFeedData = async () => {
       try {
@@ -73,7 +79,7 @@ export default function Feed({ feedType, username }: FeedProps) {
   return (
     <div className="flex flex-col gap-6 md:gap-8">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post.id} post={post} onPostUpdate={handlePostUpdate} />
       ))}
     </div>
   );
