@@ -48,16 +48,18 @@ export default function PostCard({
           </p>
         </div>
       </Link>
-      <div className="flex items-center gap-1.5">
-        <UserProfile user={post.author} size="sm" />
-      </div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+        <div className="flex items-center gap-1.5">
+          <UserProfile user={post.author} size="sm" />
+        </div>
 
-      <PostActions
-        post={post}
-        replies={0}
-        bookmarks={0}
-        onPostUpdate={handlePostUpdate}
-      />
+        <PostActions
+          post={post}
+          replies={0}
+          bookmarks={0}
+          onPostUpdate={handlePostUpdate}
+        />
+      </div>
     </article>
   );
 }
