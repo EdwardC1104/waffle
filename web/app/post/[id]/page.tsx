@@ -8,6 +8,7 @@ import { getPostById } from "@/utils/api";
 import Image from "next/image";
 import { notFound, useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
+import UserProfile from "@/components/UserProfile";
 
 interface PostPageProps {
   params: Promise<{
@@ -101,21 +102,7 @@ export default function PostPage({ params }: PostPageProps) {
           </h1>
 
           <div className="flex items-center gap-3 mb-4">
-            <Image
-              src={post.author.profilePictureUrl}
-              alt={post.author.name}
-              width={48}
-              height={48}
-              className="w-12 h-12 rounded-full object-cover"
-            />
-            <div>
-              <p className="text-stone-900 text-sm font-medium">
-                {post.author.name}
-              </p>
-              <p className="text-zinc-600 text-sm font-normal">
-                @{post.author.username}
-              </p>
-            </div>
+            <UserProfile user={post.author} size="sm" />
           </div>
 
           <p className="text-zinc-500 text-sm">
