@@ -62,7 +62,7 @@ builder.Services.AddControllers()
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     var host = builder.Configuration["HOST"];
-    var port = builder.Configuration["PORT"];
+    var port = builder.Configuration["DB_PORT"];
     var database = builder.Configuration["DATABASE"];
     var username = builder.Configuration["USERNAME"];
     var password = builder.Configuration["PASSWORD"];
