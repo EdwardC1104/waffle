@@ -9,4 +9,7 @@ public class UserDto
     public string ProfilePictureUrl { get; set; } = string.Empty;
     public int FollowerCount { get; set; }
     public int FollowingCount { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    
 }

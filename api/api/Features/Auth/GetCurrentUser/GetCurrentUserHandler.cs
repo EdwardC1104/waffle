@@ -18,10 +18,12 @@ public class GetCurrentUserHandler
 
     public async Task<UserDto?> Handle(ClaimsPrincipal user)
     {
-        var username = user.Identity?.Name;
-        if (string.IsNullOrEmpty(username)) return null;
-        var appUser = await _userManager.FindByNameAsync(username);
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId)) return null;
+    
+        var appUser = await _userManager.FindByIdAsync(userId);
         if (appUser == null) return null;
+    
         return await appUser.ToDtoAsync(_dbContext);
     }
 }

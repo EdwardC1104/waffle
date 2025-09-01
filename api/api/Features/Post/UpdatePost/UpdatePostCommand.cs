@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace api.Features.Post.EditPost;
+namespace api.Features.Post.UpdatePost;
 
-public class EditPostCommand
+public class UpdatePostCommand
 {
     [Required(ErrorMessage = "Post ID is required")]
     public int PostId { get; set; }

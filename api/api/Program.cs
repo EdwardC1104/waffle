@@ -15,11 +15,13 @@ using api.Features.Follow.DeleteFollow;
 using api.Features.Like.CreateLike;
 using api.Features.Like.DeleteLike;
 using api.Features.Post.DeletePost;
-using api.Features.Post.EditPost;
 using api.Features.Post.GetPost;
 using api.Features.Post.GetPosts;
+using api.Features.Post.UpdatePost;
 using api.Features.Search.SearchUsersAndPosts;
+using api.Features.User.DeleteUser;
 using api.Features.User.GetUser;
+using api.Features.User.UpdateUser;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
@@ -66,10 +68,12 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped<GetPostsHandler>();
 builder.Services.AddScoped<CreatePostHandler>();
 builder.Services.AddScoped<GetPostHandler>();
-builder.Services.AddScoped<EditPostHandler>();
+builder.Services.AddScoped<UpdatePostHandler>();
 builder.Services.AddScoped<DeletePostHandler>();
 
 builder.Services.AddScoped<GetUserHandler>();
+builder.Services.AddScoped<UpdateUserHandler>();
+builder.Services.AddScoped<DeleteUserHandler>();
 
 builder.Services.AddScoped<LoginHandler>();
 builder.Services.AddScoped<RegisterHandler>();

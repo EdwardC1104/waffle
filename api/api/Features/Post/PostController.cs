@@ -1,9 +1,9 @@
 using System.Security.Claims;
 using api.Features.Post.CreatePost;
 using api.Features.Post.DeletePost;
-using api.Features.Post.EditPost;
 using api.Features.Post.GetPost;
 using api.Features.Post.GetPosts;
+using api.Features.Post.UpdatePost;
 using api.Features.User;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,15 +15,15 @@ public class PostController : ControllerBase
 {
     private readonly GetPostsHandler _getPostsHandler;
     private readonly CreatePostHandler _createPost;
-    private readonly EditPostHandler _editPost;
+    private readonly UpdatePostHandler _updatePost;
     private readonly DeletePostHandler _deletePost;
     private readonly GetPostHandler _getPostHandler;
 
-    public PostController(GetPostsHandler getPostsHandler, CreatePostHandler createPost, EditPostHandler editPost, DeletePostHandler deletePost, GetPostHandler getPostHandler)
+    public PostController(GetPostsHandler getPostsHandler, CreatePostHandler createPost, UpdatePostHandler updatePost, DeletePostHandler deletePost, GetPostHandler getPostHandler)
     {
         _getPostsHandler = getPostsHandler;
         _createPost = createPost;
-        _editPost = editPost;
+        _updatePost = updatePost;
         _deletePost = deletePost;
         _getPostHandler = getPostHandler;
     }
@@ -63,15 +63,15 @@ public class PostController : ControllerBase
         return Created($"/api/post/get", response);
     }
 
-    [HttpPost("edit")]
-    public async Task<IActionResult> EditPost([FromBody] EditPostCommand request)
+    [HttpPost("update")]
+    public async Task<IActionResult> UpdatePost([FromBody] UpdatePostCommand request)
     {
         if (User.Identity is not { IsAuthenticated: true, Name: not null })
         {
             return Unauthorized(new { message = "Not logged in" });
         }
 
-        var response = await _editPost.Handle(User.Identity.Name, request);
+        var response = await _updatePost.Handle(User.Identity.Name, request);
         
         if (response == null)
         {

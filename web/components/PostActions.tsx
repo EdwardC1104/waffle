@@ -6,6 +6,7 @@ import { likePost, unlikePost } from "@/utils/api";
 import formatNumber from "@/utils/formatNumber";
 import { useState } from "react";
 import { BookmarkIcon, HeartIcon, ReplyIcon, ShareIcon } from "./Icons";
+import { useRouter } from "next/navigation";
 
 interface PostActionsProps {
   post: Post;
@@ -24,6 +25,7 @@ export default function PostActions({
   const [optimisticLiked, setOptimisticLiked] = useState<boolean | null>(null);
   const [optimisticCount, setOptimisticCount] = useState<number | null>(null);
   const { isAuthenticated } = useAuth();
+  const router = useRouter();
 
   // Use optimistic values if available, otherwise use post values
   const isLiked =
@@ -31,7 +33,10 @@ export default function PostActions({
   const likeCount = optimisticCount !== null ? optimisticCount : post.likeCount;
 
   const handleLikeToggle = async () => {
-    if (isLiking || !isAuthenticated) return;
+    if (isLiking || !isAuthenticated){
+      router.push('/login');
+      return;
+    }
 
     // Optimistic update
     const newLikedState = !post.likedByAuthenticatedUser;
@@ -82,7 +87,7 @@ export default function PostActions({
     <div className="flex items-center justify-between sm:justify-start gap-4 sm:gap-8 lg:gap-12 w-full sm:w-auto max-w-md sm:max-w-none">
       <button
         onClick={handleLikeToggle}
-        disabled={isLiking || !isAuthenticated}
+        disabled={isLiking}
         className={`flex items-center gap-1 sm:gap-2 transition-all duration-200 group ${
           isLiked
             ? "text-pink-500"
