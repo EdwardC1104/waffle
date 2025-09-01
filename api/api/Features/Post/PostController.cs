@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using api.Features.Post.CreatePost;
+using api.Features.Post.DeletePost;
 using api.Features.Post.EditPost;
 using api.Features.Post.GetPost;
 using api.Features.Post.GetPosts;
@@ -15,13 +16,15 @@ public class PostController : ControllerBase
     private readonly GetPostsHandler _getPostsHandler;
     private readonly CreatePostHandler _createPost;
     private readonly EditPostHandler _editPost;
+    private readonly DeletePostHandler _deletePost;
     private readonly GetPostHandler _getPostHandler;
 
-    public PostController(GetPostsHandler getPostsHandler, CreatePostHandler createPost, EditPostHandler editPost, GetPostHandler getPostHandler)
+    public PostController(GetPostsHandler getPostsHandler, CreatePostHandler createPost, EditPostHandler editPost, DeletePostHandler deletePost, GetPostHandler getPostHandler)
     {
         _getPostsHandler = getPostsHandler;
         _createPost = createPost;
         _editPost = editPost;
+        _deletePost = deletePost;
         _getPostHandler = getPostHandler;
     }
 
@@ -97,5 +100,23 @@ public class PostController : ControllerBase
         }
         
         return Ok(response);
+    }
+
+    [HttpPost("delete")]
+    public async Task<IActionResult> DeletePost([FromBody] DeletePostCommand request)
+    {
+        if (User.Identity is not { IsAuthenticated: true, Name: not null })
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
+
+        var success = await _deletePost.Handle(User.Identity.Name, request);
+        
+        if (success)
+        {
+            return Ok(new { message = "Post deleted successfully" });
+        }
+        
+        return NotFound(new { message = "Post not found or you don't have permission to delete it" });
     }
 }

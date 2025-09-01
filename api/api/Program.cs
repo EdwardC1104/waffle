@@ -14,6 +14,7 @@ using api.Features.Follow.CreateFollow;
 using api.Features.Follow.DeleteFollow;
 using api.Features.Like.CreateLike;
 using api.Features.Like.DeleteLike;
+using api.Features.Post.DeletePost;
 using api.Features.Post.EditPost;
 using api.Features.Post.GetPost;
 using api.Features.Post.GetPosts;
@@ -66,6 +67,7 @@ builder.Services.AddScoped<GetPostsHandler>();
 builder.Services.AddScoped<CreatePostHandler>();
 builder.Services.AddScoped<GetPostHandler>();
 builder.Services.AddScoped<EditPostHandler>();
+builder.Services.AddScoped<DeletePostHandler>();
 
 builder.Services.AddScoped<GetUserHandler>();
 
