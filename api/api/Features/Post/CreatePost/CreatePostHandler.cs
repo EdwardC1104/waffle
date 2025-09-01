@@ -27,7 +27,14 @@ public class CreatePostHandler
         _dbContext.Posts.Add(newPost);
         await _dbContext.SaveChangesAsync();
         
+        // Load the post with the User navigation property included
+        var postWithUser = await _dbContext.Posts
+            .Include(p => p.User)
+            .FirstOrDefaultAsync(p => p.Id == newPost.Id);
+        
+        if (postWithUser == null) return null;
+        
         // Return the created post with author information
-        return await newPost.ToDtoAsync(userId, _dbContext);
+        return await postWithUser.ToDtoAsync(userId, _dbContext);
     }
 }

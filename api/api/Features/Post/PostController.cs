@@ -69,7 +69,7 @@ public class PostController : ControllerBase
         
         if (response == null)
         {
-            return NotFound(new { message = $"User with username '{User.Identity.Name}' not found" });
+            return NotFound(new { message = $"User with id '{userId}' not found" });
         }
         
         return Created($"/api/post/get", response);
