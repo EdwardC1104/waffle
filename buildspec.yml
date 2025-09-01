@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Restore started on `date`
+      - cd api
+      - dotnet restore api.sln
+  build:
+    commands:
+      - echo Build started on `date`
+      - dotnet build api.sln --configuration Release
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - dotnet publish api/api.csproj --configuration Release --output ./publish
+artifacts:
+  files:
+    - '**/*'
+  base-directory: api/publish
+  name: waffle-api-$(date +%Y-%m-%d)
