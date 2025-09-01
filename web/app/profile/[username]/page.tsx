@@ -39,6 +39,7 @@ export default function UserProfilePage() {
     <div className="min-h-screen">
       <div className="w-full max-w-[1476px] mx-auto flex justify-center items-start gap-4 lg:gap-8 xl:gap-16 px-4 sm:px-6 lg:px-8 py-6">
         <div className="hidden xl:flex w-60 flex-col gap-8 flex-shrink-0 sticky top-16">
+          {currentUser && currentUser.id !== user.id && <UserProfile user={currentUser} />}
           <WritePostCTA todayWordCount={todayWordCount} />
         </div>
 

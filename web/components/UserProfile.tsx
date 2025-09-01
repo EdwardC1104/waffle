@@ -102,21 +102,21 @@ export default function UserProfile({
   if (size === "sm") {
     return (
       <div className={`${config.container} ${containerClassName}`}>
-        <div className={config.userSection}>
-          <Link href={`/profile/${user.username}`}>
-            <button className="flex items-center gap-3 text-left cursor-pointer">
+        <div className={`${config.userSection} min-w-0 flex-1`}>
+          <Link href={`/profile/${user.username}`} className="min-w-0 flex-1">
+            <button className="flex items-center gap-3 text-left cursor-pointer min-w-0 w-full">
               <Image
                 src={!user.profilePictureUrl ?  '/Chicken.jpeg' : user.profilePictureUrl}
                 alt={user.name}
                 width={config.avatarSize}
                 height={config.avatarSize}
-                className={`${config.avatar} rounded-full object-cover`}
+                className={`${config.avatar} rounded-full object-cover flex-shrink-0`}
               />
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className={`text-stone-900 ${config.nameText}`}>
                   {user.name}
                 </p>
-                <p className={`text-zinc-600 ${config.usernameText}`}>
+                <p className={`text-zinc-600 ${config.usernameText} truncate`}>
                   @{user.username}
                 </p>
               </div>
@@ -125,9 +125,7 @@ export default function UserProfile({
         </div>
       </div>
     );
-  }
-
-  // Medium size layout
+  }  // Medium size layout
   if (size === "md") {
     return (
       <div className={`${config.container} ${containerClassName}`}>
