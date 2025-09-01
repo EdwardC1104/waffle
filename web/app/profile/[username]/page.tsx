@@ -43,18 +43,7 @@ export default function UserProfilePage() {
         <div className="flex flex-col gap-8 w-full max-w-[600px] min-w-0">
           <div className="bg-white shadow rounded-lg">
             <UserProfile user={user} size="lg" />
-            <div className="px-6 pb-6">
-              <div className="border-t pt-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                  About
-                </h2>
-                <p className="text-gray-600">
-                  {currentUser && user.username === currentUser.username
-                    ? "This is your profile."
-                    : `Welcome to ${user.name || user.username}'s profile!`}
-                </p>
-              </div>
-            </div>
+
           </div>
 
           <div className="flex flex-col gap-6 md:gap-8">
