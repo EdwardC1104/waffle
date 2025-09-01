@@ -75,7 +75,7 @@ function EditPostContent({
 
     try {
       await updatePost(post.id, title, content, imageUrl);
-      router.push(`/post/${post.id}`);
+      router.replace(`/post/${post.id}`);
     } finally {
       setIsSubmitting(false);
     }
