@@ -76,7 +76,7 @@ export default function UserProfile({
   const dropdownItems = isCurrentUser ? [
     {
       label: 'Saved posts',
-      onClick: () => router.push('/profile/feed/popular'),  // Temporary
+      onClick: () => router.push('/feed/popular'),  // Temporary
       icon: <SavedPostsIcon size={16} />
     },
     {
