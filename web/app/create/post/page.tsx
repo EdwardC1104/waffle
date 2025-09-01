@@ -4,6 +4,7 @@ import { AuthenticatedRoute } from "@/components/AuthenticatedRoute";
 import BackButton from "@/components/BackButton";
 import ErrorMessage from "@/components/ErrorMessage";
 import { createNewPost } from "@/utils/api";
+import { validateImage, convertToBase64, getSupportedImageTypes } from "@/utils/imageUtils";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -24,19 +25,35 @@ function CreatePostForm({ user }: { user: { username: string } }) {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Validate the image
+    const validation = validateImage(file, 5); // 5MB limit
+    if (!validation.isValid) {
+      setError(validation.error || "Invalid image file");
+      return;
+    }
+
+    try {
+      // Convert to base64 using utility function
+      const base64String = await convertToBase64(file);
+      setImagePreview(base64String);
+      setError(null); // Clear any previous errors
+    } catch (err) {
+      console.error("Failed to process image:", err);
+      setError("Failed to process the selected image");
     }
   };
 
   const removeImage = () => {
     setImagePreview(null);
+    // Clear the file input
+    const fileInput = document.getElementById("image-upload") as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = "";
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -162,7 +179,7 @@ function CreatePostForm({ user }: { user: { username: string } }) {
             <div className="border-2 border-dashed border-zinc-300 rounded-lg p-8 text-center hover:border-zinc-400 transition-colors">
               <input
                 type="file"
-                accept="image/*"
+                accept={getSupportedImageTypes()}
                 onChange={handleImageChange}
                 className="hidden"
                 id="image-upload"

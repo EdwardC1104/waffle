@@ -111,6 +111,25 @@ export async function search(query: string): Promise<SearchResult[]> {
   );
 }
 
+export async function editUser(
+  username: string,
+  name: string,
+  profilePictureUrl: string
+): Promise<User> {
+  return await post<
+    User,
+    { username: string; name: string; profilePictureUrl: string }
+  >(`/api/user/edit`, {
+    username,
+    name,
+    profilePictureUrl,
+  });
+}
+
+export async function deleteUser(): Promise<void> {
+  return await post<void, Record<string, never>>(`/api/user/delete`, {});
+}
+
 export async function createNewPost(
   username: string,
   title: string,
