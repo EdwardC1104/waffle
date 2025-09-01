@@ -1,18 +1,18 @@
 using api.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Features.Post.EditPost;
+namespace api.Features.Post.UpdatePost;
 
-public class EditPostHandler
+public class UpdatePostHandler
 {
     private readonly AppDbContext _dbContext;
     
-    public EditPostHandler(AppDbContext dbContext)
+    public UpdatePostHandler(AppDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task<PostDto?> Handle(string username, EditPostCommand request)
+    public async Task<PostDto?> Handle(string username, UpdatePostCommand request)
     {
         // First check if the user exists
         var user = await _dbContext.Users

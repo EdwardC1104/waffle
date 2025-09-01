@@ -24,6 +24,7 @@ public class RegisterHandler
             Name = request.Name,
             UserName = request.Username,
             Email = request.Email,
+            CreatedAt = DateTime.UtcNow
         };
 
         var result = await _userManager.CreateAsync(newUser, request.Password);
