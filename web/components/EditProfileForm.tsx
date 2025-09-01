@@ -54,7 +54,7 @@ export default function EditProfileForm({
       <form onSubmit={onSubmit} className="border-b border-gray-100">
         {/* Profile Picture Section */}
         <ProfilePictureUpload
-          currentImageUrl={formData.profilePicturePreview}
+          currentImageUrl={!formData.profilePicturePreview ? '/Chicken.jpg' : formData.profilePicturePreview}
           onImageChange={handleProfilePictureChange}
           onError={setError}
           hasNewImage={formData.profilePicture !== null}
