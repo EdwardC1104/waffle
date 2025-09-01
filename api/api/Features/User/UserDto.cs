@@ -12,4 +12,6 @@ public class UserDto
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     
+    public int WordCount { get; set; }
+    
 }

@@ -4,6 +4,7 @@ using api.Features.Post.DeletePost;
 using api.Features.Post.GetPost;
 using api.Features.Post.GetPosts;
 using api.Features.Post.UpdatePost;
+using api.Features.Post.WordCount;
 using api.Features.User;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,14 +19,16 @@ public class PostController : ControllerBase
     private readonly UpdatePostHandler _updatePost;
     private readonly DeletePostHandler _deletePost;
     private readonly GetPostHandler _getPostHandler;
+    private readonly TodaysWordCountHandler _todaysWordCountHandler;
 
-    public PostController(GetPostsHandler getPostsHandler, CreatePostHandler createPost, UpdatePostHandler updatePost, DeletePostHandler deletePost, GetPostHandler getPostHandler)
+    public PostController(GetPostsHandler getPostsHandler, CreatePostHandler createPost, UpdatePostHandler updatePost, DeletePostHandler deletePost, GetPostHandler getPostHandler, TodaysWordCountHandler todaysWordCountHandler)
     {
         _getPostsHandler = getPostsHandler;
         _createPost = createPost;
         _updatePost = updatePost;
         _deletePost = deletePost;
         _getPostHandler = getPostHandler;
+        _todaysWordCountHandler = todaysWordCountHandler;
     }
 
     [HttpPost("/api/user/post/list")]
@@ -147,5 +150,13 @@ public class PostController : ControllerBase
         }
         
         return NotFound(new { message = "Post not found or you don't have permission to delete it" });
+    }
+
+    [HttpPost("count/today")]
+    public async Task<IActionResult> GetTodaysWordCount()
+    {
+        var totalWordCount = await _todaysWordCountHandler.Handle();
+        
+        return Ok(totalWordCount);
     }
 }

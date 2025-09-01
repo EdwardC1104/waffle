@@ -14,6 +14,9 @@ public class Post
     [Required]
     public string Content { get; set; } = string.Empty;
     
+    [Required]
+    public int WordCount { get; set; }
+    
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     
     public DateTime? UpdatedAt { get; set; }
@@ -25,5 +28,6 @@ public class Post
     
     // Navigation property to User
     public User User { get; set; } = null!;
+    
 
 }

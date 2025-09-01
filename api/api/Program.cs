@@ -18,6 +18,7 @@ using api.Features.Post.DeletePost;
 using api.Features.Post.GetPost;
 using api.Features.Post.GetPosts;
 using api.Features.Post.UpdatePost;
+using api.Features.Post.WordCount;
 using api.Features.Search.SearchUsersAndPosts;
 using api.Features.User.DeleteUser;
 using api.Features.User.GetUser;
@@ -70,6 +71,7 @@ builder.Services.AddScoped<CreatePostHandler>();
 builder.Services.AddScoped<GetPostHandler>();
 builder.Services.AddScoped<UpdatePostHandler>();
 builder.Services.AddScoped<DeletePostHandler>();
+builder.Services.AddScoped<TodaysWordCountHandler>();
 
 builder.Services.AddScoped<GetUserHandler>();
 builder.Services.AddScoped<UpdateUserHandler>();

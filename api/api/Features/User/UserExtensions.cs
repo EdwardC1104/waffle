@@ -12,6 +12,10 @@ public static class UserExtensions
         var followingCount = await context.Set<Models.Follow>()
             .CountAsync(f => f.FollowerId == user.Id);
 
+        var totalWordCount = await context.Set<Models.Post>()
+            .Where(p => p.UserId == user.Id)
+            .SumAsync(p => p.WordCount);
+
         return new UserDto
         {
             Id = user.Id,
@@ -22,7 +26,8 @@ public static class UserExtensions
             FollowerCount = followerCount,
             FollowingCount = followingCount,
             CreatedAt = user.CreatedAt,
-            UpdatedAt = user.UpdatedAt
+            UpdatedAt = user.UpdatedAt,
+            WordCount = totalWordCount
         };
     }
 }

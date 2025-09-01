@@ -13,4 +13,5 @@ public class PostDto
     public string CoverImageUrl { get; set; } = string.Empty;
     public int LikeCount { get; set; }
     public bool LikedByAuthenticatedUser { get; set; }
+    public int WordCount { get; set; }
 }

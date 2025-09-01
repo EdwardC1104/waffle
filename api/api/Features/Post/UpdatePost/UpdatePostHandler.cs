@@ -33,6 +33,8 @@ public class UpdatePostHandler
         if (request.Content != null)
         {
             post.Content = request.Content;
+            post.WordCount = post.Content.Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Length;
         }
         
         if (request.CoverImageUrl != null)

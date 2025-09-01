@@ -22,6 +22,7 @@ public class CreatePostHandler
             UserId = userId,
             CreatedAt = DateTime.UtcNow,
             CoverImageUrl = request.CoverImageUrl,
+            WordCount = request.Content.Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries).Length
         };
         
         _dbContext.Posts.Add(newPost);

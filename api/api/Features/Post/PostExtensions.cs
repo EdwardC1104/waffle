@@ -41,7 +41,8 @@ public static class PostExtensions
             Author =  await post.User.ToDtoAsync(context),
             CoverImageUrl = post.CoverImageUrl,
             LikeCount = likeCount,
-            LikedByAuthenticatedUser = existingLike != null
+            LikedByAuthenticatedUser = existingLike != null,
+            WordCount = post.WordCount,
         };
     }
 }
