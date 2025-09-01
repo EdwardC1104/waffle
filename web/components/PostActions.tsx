@@ -91,11 +91,7 @@ export default function PostActions({
         className={`flex items-center gap-1 sm:gap-2 transition-all duration-200 group ${
           isLiked
             ? "text-pink-500"
-            : isAuthenticated
-            ? "hover:text-pink-500"
-            : "cursor-default"
-        } ${isLiking ? "opacity-75 cursor-not-allowed" : ""} ${
-          !isAuthenticated ? "opacity-60" : ""
+            : "hover:text-pink-500"
         }`}
       >
         {isLiked ? (
@@ -113,20 +109,14 @@ export default function PostActions({
         ) : (
           <HeartIcon
             size={20}
-            className={`text-gray-600 transition-all duration-200 ${
-              isAuthenticated
-                ? "group-hover:text-pink-500 transform hover:scale-110"
-                : ""
-            }`}
+            className={`text-gray-600 transition-all duration-200 group-hover:text-pink-500 transform hover:scale-110`}
           />
         )}
         <span
           className={`text-xs font-medium transition-colors duration-200 ${
             isLiked
               ? "text-pink-500"
-              : isAuthenticated
-              ? "text-gray-600 group-hover:text-pink-500"
-              : "text-gray-600"
+              : "text-gray-600 group-hover:text-pink-500"
           }`}
         >
           {formatNumber(likeCount)}
