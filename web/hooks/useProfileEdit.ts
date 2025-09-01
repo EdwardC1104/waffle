@@ -1,7 +1,7 @@
 "use client";
 
 import { User } from "@/types";
-import { deleteUser, editUser } from "@/utils/api";
+import { deleteUser, updateUserProfile } from "@/utils/api";
 import { convertToBase64 } from "@/utils/imageUtils";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import { useState } from "react";
 interface UseProfileEditOptions {
   user: User;
   onUserUpdated: () => Promise<void>;
+  onUserDeleted: () => Promise<void>;
 }
 
 export interface ProfileEditFormData {
@@ -21,6 +22,7 @@ export interface ProfileEditFormData {
 export default function useProfileEdit({
   user,
   onUserUpdated,
+  onUserDeleted,
 }: UseProfileEditOptions) {
   const router = useRouter();
 
@@ -79,7 +81,11 @@ export default function useProfileEdit({
       }
 
       // Call the API to update user profile
-      await editUser(formData.username, formData.name, profilePictureUrl);
+      await updateUserProfile(
+        formData.username,
+        formData.name,
+        profilePictureUrl
+      );
 
       // Refetch user data to get updated info
       await onUserUpdated();
@@ -112,8 +118,7 @@ export default function useProfileEdit({
 
     try {
       await deleteUser();
-      // Redirect to home page after successful deletion
-      router.push("/");
+      await onUserDeleted();
     } catch (err) {
       console.error("Failed to delete user:", err);
       setError(err instanceof Error ? err.message : "Failed to delete account");

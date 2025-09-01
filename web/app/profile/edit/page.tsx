@@ -5,6 +5,7 @@ import BackButton from "@/components/BackButton";
 import EditProfileForm from "@/components/EditProfileForm";
 import useAuth from "@/hooks/useAuth";
 import { User } from "@/types";
+import { useRouter } from "next/navigation";
 
 export default function EditProfilePage() {
   return (
@@ -15,7 +16,14 @@ export default function EditProfilePage() {
 }
 
 function EditProfileContent({ user }: { user: User }) {
-  const { refetchUser } = useAuth();
+  const { refetchUser, logout } = useAuth();
+
+  const router = useRouter();
+
+  const onUserDeleted = async () => {
+    logout();
+    router.push("/");
+  };
 
   return (
     <div className="min-h-screen">
@@ -34,7 +42,11 @@ function EditProfileContent({ user }: { user: User }) {
             </p>
           </div>
 
-          <EditProfileForm user={user} onUserUpdated={refetchUser} />
+          <EditProfileForm
+            user={user}
+            onUserUpdated={refetchUser}
+            onUserDeleted={onUserDeleted}
+          />
         </div>
       </div>
     </div>
