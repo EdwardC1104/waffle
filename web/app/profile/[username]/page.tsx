@@ -43,7 +43,6 @@ export default function UserProfilePage() {
         <div className="flex flex-col gap-8 w-full max-w-[600px] min-w-0">
           <div className="bg-white shadow rounded-lg">
             <UserProfile user={user} size="lg" />
-
           </div>
 
           <div className="flex flex-col gap-6 md:gap-8">
