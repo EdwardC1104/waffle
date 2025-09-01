@@ -10,11 +10,13 @@ import { User } from "@/types";
 interface EditProfileFormProps {
   user: User;
   onUserUpdated: () => Promise<void>;
+  onUserDeleted: () => Promise<void>;
 }
 
 export default function EditProfileForm({
   user,
   onUserUpdated,
+  onUserDeleted,
 }: EditProfileFormProps) {
   const {
     formData,
@@ -28,7 +30,7 @@ export default function EditProfileForm({
     handleSubmit,
     handleCancel,
     handleDelete,
-  } = useProfileEdit({ user, onUserUpdated });
+  } = useProfileEdit({ user, onUserUpdated, onUserDeleted });
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();

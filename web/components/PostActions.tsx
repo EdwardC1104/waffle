@@ -6,6 +6,7 @@ import { likePost, unlikePost } from "@/utils/api";
 import formatNumber from "@/utils/formatNumber";
 import { useState } from "react";
 import { BookmarkIcon, HeartIcon, ReplyIcon, ShareIcon } from "./Icons";
+import { useRouter } from "next/navigation";
 
 interface PostActionsProps {
   post: Post;
@@ -24,6 +25,7 @@ export default function PostActions({
   const [optimisticLiked, setOptimisticLiked] = useState<boolean | null>(null);
   const [optimisticCount, setOptimisticCount] = useState<number | null>(null);
   const { isAuthenticated } = useAuth();
+  const router = useRouter();
 
   // Use optimistic values if available, otherwise use post values
   const isLiked =
@@ -31,7 +33,10 @@ export default function PostActions({
   const likeCount = optimisticCount !== null ? optimisticCount : post.likeCount;
 
   const handleLikeToggle = async () => {
-    if (isLiking || !isAuthenticated) return;
+    if (isLiking || !isAuthenticated){
+      router.push('/login');
+      return;
+    }
 
     // Optimistic update
     const newLikedState = !post.likedByAuthenticatedUser;
@@ -82,15 +87,11 @@ export default function PostActions({
     <div className="flex items-center justify-between sm:justify-start gap-4 sm:gap-8 lg:gap-12 w-full sm:w-auto max-w-md sm:max-w-none">
       <button
         onClick={handleLikeToggle}
-        disabled={isLiking || !isAuthenticated}
+        disabled={isLiking}
         className={`flex items-center gap-1 sm:gap-2 transition-all duration-200 group ${
           isLiked
             ? "text-pink-500"
-            : isAuthenticated
-            ? "hover:text-pink-500"
-            : "cursor-default"
-        } ${isLiking ? "opacity-75 cursor-not-allowed" : ""} ${
-          !isAuthenticated ? "opacity-60" : ""
+            : "hover:text-pink-500"
         }`}
       >
         {isLiked ? (
@@ -108,20 +109,14 @@ export default function PostActions({
         ) : (
           <HeartIcon
             size={20}
-            className={`text-gray-600 transition-all duration-200 ${
-              isAuthenticated
-                ? "group-hover:text-pink-500 transform hover:scale-110"
-                : ""
-            }`}
+            className={`text-gray-600 transition-all duration-200 group-hover:text-pink-500 transform hover:scale-110`}
           />
         )}
         <span
           className={`text-xs font-medium transition-colors duration-200 ${
             isLiked
               ? "text-pink-500"
-              : isAuthenticated
-              ? "text-gray-600 group-hover:text-pink-500"
-              : "text-gray-600"
+              : "text-gray-600 group-hover:text-pink-500"
           }`}
         >
           {formatNumber(likeCount)}

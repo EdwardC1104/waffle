@@ -111,7 +111,7 @@ export async function search(query: string): Promise<SearchResult[]> {
   );
 }
 
-export async function editUser(
+export async function updateUserProfile(
   username: string,
   name: string,
   profilePictureUrl: string
@@ -119,7 +119,7 @@ export async function editUser(
   return await post<
     User,
     { username: string; name: string; profilePictureUrl: string }
-  >(`/api/user/edit`, {
+  >(`/api/user/update`, {
     username,
     name,
     profilePictureUrl,
