@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using api.Features.Follow.CreateFollow;
 using api.Features.Follow.DeleteFollow;
 using api.Features.Follow.GetFollowers;
@@ -31,7 +32,13 @@ public class FollowController : ControllerBase
     {
         if (User.Identity is { IsAuthenticated: true, Name: not null })
         {
-            var response = await _getSuggestionsHandler.Handle(User.Identity.Name);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "Not logged in" });
+            }
+            
+            var response = await _getSuggestionsHandler.Handle(userId);
             return Ok(response);
         }
         else
@@ -62,8 +69,14 @@ public class FollowController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
 
-        var success = await _createFollowHandler.Handle(User.Identity.Name, query);
+        var success = await _createFollowHandler.Handle(userId, query);
         
         if (success)
         {
@@ -80,8 +93,14 @@ public class FollowController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
 
-        var success = await _deleteFollowHandler.Handle(User.Identity.Name, command);
+        var success = await _deleteFollowHandler.Handle(userId, command);
         
         if (success)
         {

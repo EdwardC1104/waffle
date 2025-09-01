@@ -13,11 +13,11 @@ public class GetSuggestionsHandler
         _context = context;
     }
 
-    public async Task<IEnumerable<UserDto>> Handle(string username)
+    public async Task<IEnumerable<UserDto>> Handle(string userId)
     {
         
         var users = await _context.Users
-            .Where(u => u.UserName != username)
+            .Where(u => u.Id != userId)
             .ToListAsync();
 
         var userDtos = new List<UserDto>();

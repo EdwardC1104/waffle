@@ -13,7 +13,7 @@ public class GetFollowingFeedHandler
         _context = context;
     }
 
-    public async Task<IEnumerable<PostDto>> Handle(string username)
+    public async Task<IEnumerable<PostDto>> Handle(string userId)
     {
         var posts = await _context.Posts
             .Include(p => p.User)
@@ -23,7 +23,7 @@ public class GetFollowingFeedHandler
         var postDtos = new List<PostDto>();
         foreach (var post in posts)
         {
-            var postDto = await post.ToDtoAsync(username, _context);
+            var postDto = await post.ToDtoAsync(userId, _context);
             postDtos.Add(postDto);
         }
 

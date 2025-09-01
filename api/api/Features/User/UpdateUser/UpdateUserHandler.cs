@@ -14,9 +14,9 @@ public class UpdateUserHandler
         _dbContext = dbContext;
     }
 
-    public async Task<UserDto?> Handle(string username, UpdateUserCommand request)
+    public async Task<UserDto?> Handle(string userId, UpdateUserCommand request)
     {
-        var user = await _userManager.FindByNameAsync(username);
+        var user = await _userManager.FindByIdAsync(userId);
         
         if (user == null)
         {

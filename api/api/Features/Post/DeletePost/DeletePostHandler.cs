@@ -12,20 +12,10 @@ public class DeletePostHandler
         _dbContext = dbContext;
     }
 
-    public async Task<bool> Handle(string username, DeletePostCommand request)
+    public async Task<bool> Handle(string userId, DeletePostCommand request)
     {
-        // First check if the user exists
-        var user = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.UserName == username);
-            
-        if (user == null)
-        {
-            return false;
-        }
-        
-        // Find the post and verify ownership
         var post = await _dbContext.Posts
-            .FirstOrDefaultAsync(p => p.Id == request.PostId && p.UserId == user.Id);
+            .FirstOrDefaultAsync(p => p.Id == request.PostId && p.UserId == userId);
         
         if (post == null)
         {

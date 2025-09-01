@@ -12,17 +12,8 @@ public class DeleteFollowHandler
         _context = context;
     }
 
-    public async Task<bool> Handle(string username, DeleteFollowCommand command)
-    {
-        // Find the follower user by username
-        var followerUser = await _context.Users
-            .FirstOrDefaultAsync(u => u.UserName == username);
-        
-        if (followerUser == null)
-        {
-            return false; // Follower user not found
-        }
-
+    public async Task<bool> Handle(string userId, DeleteFollowCommand command)
+    { 
         // Find the followee user by username
         var followeeUser = await _context.Users
             .FirstOrDefaultAsync(u => u.UserName == command.Following);
@@ -34,7 +25,7 @@ public class DeleteFollowHandler
 
         // Find the existing follow relationship
         var existingFollow = await _context.Follows
-            .FirstOrDefaultAsync(f => f.FollowerId == followerUser.Id && f.FolloweeId == followeeUser.Id);
+            .FirstOrDefaultAsync(f => f.FollowerId == userId && f.FolloweeId == followeeUser.Id);
         
         if (existingFollow == null)
         {

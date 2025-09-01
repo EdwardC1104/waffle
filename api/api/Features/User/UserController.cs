@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using api.Features.User.DeleteUser;
 using api.Features.User.GetUser;
 using api.Features.User.UpdateUser;
@@ -40,8 +41,14 @@ public class UserController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
 
-        var result = await _updateUserHandler.Handle(User.Identity.Name, request);
+        var result = await _updateUserHandler.Handle(userId, request);
         
         if (result == null)
         {
@@ -58,8 +65,14 @@ public class UserController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
 
-        var success = await _deleteUserHandler.Handle(User.Identity.Name);
+        var success = await _deleteUserHandler.Handle(userId);
         
         if (success)
         {

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using api.Features.Feed.GetFollowingFeed;
 using api.Features.Feed.GetFypFeed;
 using api.Features.Feed.GetPopularFeed;
@@ -28,8 +29,13 @@ public class FeedController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
         
-        var posts = await _getFypFeedHandler.Handle(User.Identity.Name);
+        var posts = await _getFypFeedHandler.Handle(userId);
         return Ok(posts);
     }
     
@@ -40,8 +46,13 @@ public class FeedController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
 
-        var posts = await _getFollowingFeedHandler.Handle(User.Identity.Name);
+        var posts = await _getFollowingFeedHandler.Handle(userId);
         return Ok(posts);
     }
 
@@ -51,8 +62,13 @@ public class FeedController : ControllerBase
         IEnumerable<PostDto> posts;
         if (User.Identity is { IsAuthenticated: true, Name: not null })
         {
-            posts = await _getPopularFeedHandler.Handle(User.Identity.Name);
-
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "Not logged in" });
+            }
+            
+            posts = await _getPopularFeedHandler.Handle(userId);
         }
         else
         {

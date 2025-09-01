@@ -34,7 +34,13 @@ public class PostController : ControllerBase
         IEnumerable<PostDto> response;
         if (User.Identity is { IsAuthenticated: true, Name: not null })
         {
-            response = await _getPostsHandler.Handle(User.Identity.Name, query);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "Not logged in" });
+            }
+            
+            response = await _getPostsHandler.Handle(userId, query);
 
         }
         else
@@ -52,8 +58,14 @@ public class PostController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
 
-        var response = await _createPost.Handle(User.Identity.Name, request);
+        var response = await _createPost.Handle(userId, request);
         
         if (response == null)
         {
@@ -70,8 +82,14 @@ public class PostController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
 
-        var response = await _updatePost.Handle(User.Identity.Name, request);
+        var response = await _updatePost.Handle(userId, request);
         
         if (response == null)
         {
@@ -87,7 +105,12 @@ public class PostController : ControllerBase
         PostDto? response = null;
         if (User.Identity is { IsAuthenticated: true, Name: not null })
         {
-            response = await _getPostHandler.Handle(User.Identity.Name, query);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "Not logged in" });
+            }
+            response = await _getPostHandler.Handle(userId, query);
         }
         else
         {
@@ -109,8 +132,14 @@ public class PostController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
 
-        var success = await _deletePost.Handle(User.Identity.Name, request);
+        var success = await _deletePost.Handle(userId, request);
         
         if (success)
         {
