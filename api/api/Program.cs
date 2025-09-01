@@ -14,6 +14,7 @@ using api.Features.Follow.CreateFollow;
 using api.Features.Follow.DeleteFollow;
 using api.Features.Like.CreateLike;
 using api.Features.Like.DeleteLike;
+using api.Features.Post.EditPost;
 using api.Features.Post.GetPost;
 using api.Features.Post.GetPosts;
 using api.Features.Search.SearchUsersAndPosts;
@@ -64,21 +65,28 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped<GetPostsHandler>();
 builder.Services.AddScoped<CreatePostHandler>();
 builder.Services.AddScoped<GetPostHandler>();
+builder.Services.AddScoped<EditPostHandler>();
+
 builder.Services.AddScoped<GetUserHandler>();
+
 builder.Services.AddScoped<LoginHandler>();
 builder.Services.AddScoped<RegisterHandler>();
 builder.Services.AddScoped<GetCurrentUserHandler>();
 builder.Services.AddScoped<LogoutHandler>();
+
 builder.Services.AddScoped<GetFollowingFeedHandler>();
 builder.Services.AddScoped<GetFypFeedHandler>();
 builder.Services.AddScoped<GetPopularFeedHandler>();
+
 builder.Services.AddScoped<GetSuggestionsHandler>();
 builder.Services.AddScoped<GetFollowersHandler>();
 builder.Services.AddScoped<GetFollowingHandler>();
 builder.Services.AddScoped<CreateFollowHandler>();
 builder.Services.AddScoped<DeleteFollowHandler>();
+
 builder.Services.AddScoped<CreateLikeHandler>();
 builder.Services.AddScoped<DeleteLikeHandler>();
+
 builder.Services.AddScoped<SearchUsersAndPostsHandler>();
 
 var app = builder.Build();
