@@ -165,7 +165,7 @@ export default function UserProfile({
               <div
                 className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
               >
-                {formatNumber(0)}
+                {formatNumber(user.wordCount)}
               </div>
               <div
                 className={`text-center text-stone-900 ${config.statsLabel}`}
@@ -249,7 +249,7 @@ export default function UserProfile({
               <div
                 className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
               >
-                {formatNumber(0)}
+                {formatNumber(user.wordCount)}
               </div>
               <div
                 className={`text-center text-stone-900 ${config.statsLabel}`}

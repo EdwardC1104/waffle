@@ -29,8 +29,13 @@ export async function fetchUserPosts(username: string): Promise<Post[]> {
   });
 }
 
+
 export async function fetchPost(id: number): Promise<Post> {
   return await post<Post, { postId: number }>(`/api/post/get`, { postId: id });
+}
+
+export async function fetchTodayCount(): Promise<number> {
+  return await post<number, void>(`/api/post/count/today`, undefined);
 }
 
 export async function fetchPopularFeed(): Promise<Post[]> {

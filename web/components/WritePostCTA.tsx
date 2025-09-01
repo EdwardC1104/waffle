@@ -16,11 +16,19 @@ export default function WritePostCTA({ todayWordCount }: WritePostCTAProps) {
           Ready to share your thoughts?
         </div>
         <div className="text-stone-900 text-xs">
-          <span className="font-semibold">{formatNumber(todayWordCount)}</span>
-          <span className="font-normal">
-            {" "}
-            words have been posted so far today - add yours.
-          </span>
+          {todayWordCount === 0 ? (
+            <span className="font-normal">
+              Be the first to post today - share your thoughts.
+            </span>
+          ) : (
+            <>
+              <span className="font-semibold">{formatNumber(todayWordCount)}</span>
+              <span className="font-normal">
+                {" "}
+                word{todayWordCount !== 1 ? "s" : ""} have been posted so far today - add yours.
+              </span>
+            </>
+          )}
         </div>
       </div>
 
