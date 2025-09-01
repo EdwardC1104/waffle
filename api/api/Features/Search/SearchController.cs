@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using api.Features.Search.SearchUsersAndPosts;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,8 +21,12 @@ public class SearchController : ControllerBase
         SearchUsersAndPostsResponse response;
         if (User.Identity is { IsAuthenticated: true, Name: not null })
         {
-            response = await _searchUsersAndPostsHandler.Handle(User.Identity.Name, query);
-
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized(new { message = "Not logged in" });
+            }
+            response = await _searchUsersAndPostsHandler.Handle(userId, query);
         }
         else
         {

@@ -13,16 +13,8 @@ public class DeleteLikeHandler
         _dbContext = dbContext;
     }
 
-    public async Task<PostDto?> Handle(string username, DeleteLikeCommand command)
+    public async Task<PostDto?> Handle(string userId, DeleteLikeCommand command)
     {
-        var user = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.UserName == username);
-        
-        if (user == null)
-        {
-            return null;
-        }
-        
         var post = await _dbContext.Posts
             .Include(p => p.User)
             .FirstOrDefaultAsync(p => p.Id == command.PostId);
@@ -33,7 +25,7 @@ public class DeleteLikeHandler
         }
         
         var existingLike = await _dbContext.Likes
-            .FirstOrDefaultAsync(l => l.UserId == user.Id && l.PostId == post.Id);
+            .FirstOrDefaultAsync(l => l.UserId == userId && l.PostId == post.Id);
         
         if (existingLike == null)
         {
@@ -44,6 +36,6 @@ public class DeleteLikeHandler
         await _dbContext.SaveChangesAsync();
 
         // Return the updated post with the user's like status
-        return await post.ToDtoAsync(username, _dbContext);
+        return await post.ToDtoAsync(userId, _dbContext);
     }
 }

@@ -17,9 +17,9 @@ public class DeleteUserHandler
         _dbContext = dbContext;
     }
 
-    public async Task<bool> Handle(string username)
+    public async Task<bool> Handle(string userId)
     {
-        var user = await _userManager.FindByNameAsync(username);
+        var user = await _userManager.FindByIdAsync(userId);
         
         if (user == null)
         {

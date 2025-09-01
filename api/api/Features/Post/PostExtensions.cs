@@ -23,13 +23,13 @@ public static class PostExtensions
         };
     }
     
-    public static async Task<PostDto> ToDtoAsync(this Models.Post post, string username, DbContext context)
+    public static async Task<PostDto> ToDtoAsync(this Models.Post post, string userId, DbContext context)
     {
         var likeCount = await context.Set<Models.Like>()
             .CountAsync(l => l.PostId == post.Id);
         
         var existingLike = await context.Set<Models.Like>()
-            .FirstOrDefaultAsync(l => l.User.UserName == username && l.PostId == post.Id);
+            .FirstOrDefaultAsync(l => l.User.Id == userId && l.PostId == post.Id);
         
         return new PostDto
         {

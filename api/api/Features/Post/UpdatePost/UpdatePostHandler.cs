@@ -12,21 +12,12 @@ public class UpdatePostHandler
         _dbContext = dbContext;
     }
 
-    public async Task<PostDto?> Handle(string username, UpdatePostCommand request)
+    public async Task<PostDto?> Handle(string userId, UpdatePostCommand request)
     {
-        // First check if the user exists
-        var user = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.UserName == username);
-            
-        if (user == null)
-        {
-            return null;
-        }
-        
         // Find the post and verify ownership
         var post = await _dbContext.Posts
             .Include(p => p.User)
-            .FirstOrDefaultAsync(p => p.Id == request.PostId && p.UserId == user.Id);
+            .FirstOrDefaultAsync(p => p.Id == request.PostId && p.UserId == userId);
         
         if (post == null)
         {
@@ -55,6 +46,6 @@ public class UpdatePostHandler
         await _dbContext.SaveChangesAsync();
         
         // Return the updated post
-        return await post.ToDtoAsync(user.Id, _dbContext);
+        return await post.ToDtoAsync(userId, _dbContext);
     }
 }

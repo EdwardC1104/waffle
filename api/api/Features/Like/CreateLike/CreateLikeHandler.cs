@@ -13,16 +13,8 @@ public class CreateLikeHandler
         _dbContext = dbContext;
     }
 
-    public async Task<PostDto?> Handle(string username, CreateLikeQuery query)
+    public async Task<PostDto?> Handle(string userId, CreateLikeQuery query)
     {
-        var user = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.UserName == username);
-        
-        if (user == null)
-        {
-            return null;
-        }
-        
         var post = await _dbContext.Posts
             .Include(p => p.User)
             .FirstOrDefaultAsync(p => p.Id == query.PostId);
@@ -33,7 +25,7 @@ public class CreateLikeHandler
         }
         
         var existingLike = await _dbContext.Likes
-            .FirstOrDefaultAsync(l => l.UserId == user.Id && l.PostId == post.Id);
+            .FirstOrDefaultAsync(l => l.UserId == userId && l.PostId == post.Id);
         
         if (existingLike != null)
         {
@@ -42,7 +34,7 @@ public class CreateLikeHandler
         
         var like = new api.Models.Like
         {
-            UserId = user.Id,
+            UserId = userId,
             PostId = post.Id,
             CreatedAt = DateTime.UtcNow
         };
@@ -51,6 +43,6 @@ public class CreateLikeHandler
         await _dbContext.SaveChangesAsync();
 
         // Return the updated post with the user's like status
-        return await post.ToDtoAsync(username, _dbContext);
+        return await post.ToDtoAsync(userId, _dbContext);
     }
 }

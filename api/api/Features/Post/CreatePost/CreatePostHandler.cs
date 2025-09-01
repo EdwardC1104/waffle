@@ -13,23 +13,13 @@ public class CreatePostHandler
         _dbContext = dbContext;
     }
 
-    public async Task<PostDto?> Handle(string username, CreatePostCommand request)
+    public async Task<PostDto?> Handle(string userId, CreatePostCommand request)
     {
-        // First check if the user exists
-        var user = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.UserName == username);
-            
-        if (user == null)
-        {
-            return null;
-        }
-        
-        // Create new post
         var newPost = new api.Models.Post
         {
             Title = request.Title,
             Content = request.Content,
-            UserId = user.Id,
+            UserId = userId,
             CreatedAt = DateTime.UtcNow,
             CoverImageUrl = request.CoverImageUrl,
         };
@@ -38,6 +28,6 @@ public class CreatePostHandler
         await _dbContext.SaveChangesAsync();
         
         // Return the created post with author information
-        return await newPost.ToDtoAsync(username, _dbContext);
+        return await newPost.ToDtoAsync(userId, _dbContext);
     }
 }

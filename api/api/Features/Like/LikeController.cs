@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using api.Features.Follow.CreateFollow;
 using api.Features.Follow.DeleteFollow;
 using api.Features.Follow.GetFollowers;
@@ -29,8 +30,14 @@ public class LikeController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
 
-        var result = await _createLikeHandler.Handle(User.Identity.Name, query);
+        var result = await _createLikeHandler.Handle(userId, query);
         
         if (result != null)
         {
@@ -47,8 +54,14 @@ public class LikeController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
 
-        var result = await _deleteLikeHandler.Handle(User.Identity.Name, command);
+        var result = await _deleteLikeHandler.Handle(userId, command);
         
         if (result != null)
         {

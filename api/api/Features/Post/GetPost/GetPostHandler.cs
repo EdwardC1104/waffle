@@ -28,7 +28,7 @@ public class GetPostHandler
         return postDto;
     }
     
-    public async Task<PostDto?> Handle(string username, GetPostQuery query)
+    public async Task<PostDto?> Handle(string userId, GetPostQuery query)
     {
         // Fetch the post entity including the user
         var postEntity = await _dbContext.Posts
@@ -38,7 +38,7 @@ public class GetPostHandler
         if (postEntity == null) return null;
 
         // Map to DTO asynchronously
-        var postDto = await postEntity.ToDtoAsync(username, _dbContext);
+        var postDto = await postEntity.ToDtoAsync(userId, _dbContext);
 
         return postDto;
     }

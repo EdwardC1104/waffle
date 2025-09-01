@@ -32,7 +32,7 @@ public class GetPostsHandler
         return posts;
     }
     
-    public async Task<IEnumerable<PostDto>> Handle(string username, GetPostsQuery query)
+    public async Task<IEnumerable<PostDto>> Handle(string userId, GetPostsQuery query)
     {
         // Fetch posts including user
         var postsEntities = await _dbContext.Posts
@@ -45,7 +45,7 @@ public class GetPostsHandler
         var posts = new List<PostDto>();
         foreach (var post in postsEntities)
         {
-            posts.Add(await post.ToDtoAsync(username, _dbContext));
+            posts.Add(await post.ToDtoAsync(userId, _dbContext));
         }
 
         return posts;

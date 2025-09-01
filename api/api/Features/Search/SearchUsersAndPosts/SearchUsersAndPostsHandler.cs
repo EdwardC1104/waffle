@@ -38,7 +38,7 @@ public class SearchUsersAndPostsHandler
         };
     }
     
-    public async Task<SearchUsersAndPostsResponse> Handle(string username, SearchUsersAndPostsQuery query)
+    public async Task<SearchUsersAndPostsResponse> Handle(string userId, SearchUsersAndPostsQuery query)
     {
         var posts = await _dbContext.Posts.Where(p => EF.Functions.ToTsVector("english", p.Title + " " + p.Content)
                 .Matches(query.Query))
@@ -48,7 +48,7 @@ public class SearchUsersAndPostsHandler
         var postDtos = new List<PostDto>();
         foreach (var post in posts)
         {
-            var postDto = await post.ToDtoAsync(username, _dbContext);
+            var postDto = await post.ToDtoAsync(userId, _dbContext);
             postDtos.Add(postDto);
         }
         

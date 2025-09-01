@@ -12,18 +12,8 @@ public class CreateFollowHandler
         _context = context;
     }
 
-    public async Task<bool> Handle(string username, CreateFollowQuery query)
+    public async Task<bool> Handle(string userId, CreateFollowQuery query)
     {
-        // Find the follower user by username
-        var followerUser = await _context.Users
-            .FirstOrDefaultAsync(u => u.UserName == username);
-        
-        if (followerUser == null)
-        {
-            return false; // Follower user not found
-        }
-
-        // Find the followee user by username
         var followeeUser = await _context.Users
             .FirstOrDefaultAsync(u => u.UserName == query.Following);
         
@@ -34,7 +24,7 @@ public class CreateFollowHandler
 
         // Check if the follow relationship already exists
         var existingFollow = await _context.Follows
-            .FirstOrDefaultAsync(f => f.FollowerId == followerUser.Id && f.FolloweeId == followeeUser.Id);
+            .FirstOrDefaultAsync(f => f.FollowerId == userId && f.FolloweeId == followeeUser.Id);
         
         if (existingFollow != null)
         {
@@ -44,7 +34,7 @@ public class CreateFollowHandler
         // Create new follow relationship
         var follow = new api.Models.Follow
         {
-            FollowerId = followerUser.Id,
+            FollowerId = userId,
             FolloweeId = followeeUser.Id,
             CreatedAt = DateTime.UtcNow
         };

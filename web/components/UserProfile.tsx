@@ -101,7 +101,7 @@ export default function UserProfile({
           <Link href={`/profile/${user.username}`}>
             <button className="flex items-center gap-3 text-left cursor-pointer">
               <Image
-                src={user.profilePictureUrl}
+                src={!user.profilePictureUrl ?  '/Chicken.jpeg' : user.profilePictureUrl}
                 alt={user.name}
                 width={config.avatarSize}
                 height={config.avatarSize}
@@ -130,7 +130,7 @@ export default function UserProfile({
           <Link href={`/profile/${user.username}`}>
             <button className="flex items-center gap-3 text-left cursor-pointer">
               <Image
-                src={user.profilePictureUrl}
+                src={!user.profilePictureUrl ?  '/Chicken.jpeg' : user.profilePictureUrl}
                 alt={user.name}
                 width={config.avatarSize}
                 height={config.avatarSize}
@@ -213,7 +213,7 @@ export default function UserProfile({
         <div className={config.userSection}>
           <div className="flex items-center gap-3">
             <Image
-              src={user.profilePictureUrl}
+              src={!user.profilePictureUrl ?  '/Chicken.jpeg' : user.profilePictureUrl}
               alt={user.name}
               width={config.avatarSize}
               height={config.avatarSize}
