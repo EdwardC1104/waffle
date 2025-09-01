@@ -215,32 +215,39 @@ export default function UserProfile({
   else {
     return (
       <div className={`${config.container} ${containerClassName}`}>
-        <div className={config.userSection}>
-          <div className="flex items-center gap-3">
-            <Image
-              src={!user.profilePictureUrl ?  '/Chicken.jpeg' : user.profilePictureUrl}
-              alt={user.name}
-              width={config.avatarSize}
-              height={config.avatarSize}
-              className={`${config.avatar} rounded-full object-cover`}
-            />
-            <div>
-              <p className={`text-stone-900 ${config.nameText}`}>{user.name}</p>
-              <p className={`text-zinc-600 ${config.usernameText}`}>
-                @{user.username}
-              </p>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div className="flex items-center gap-3">
+              <Image
+                src={!user.profilePictureUrl ?  '/Chicken.jpeg' : user.profilePictureUrl}
+                alt={user.name}
+                width={config.avatarSize}
+                height={config.avatarSize}
+                className={`${config.avatar} rounded-full object-cover`}
+              />
+              <div>
+                <p className={`text-stone-900 ${config.nameText}`}>{user.name}</p>
+                <p className={`text-zinc-600 ${config.usernameText}`}>
+                  @{user.username}
+                </p>
+              </div>
             </div>
+            
+            {!isCurrentUser ? (
+              <div className="flex justify-center sm:justify-end">
+                <FollowButton username={user.username} size="lg" />
+              </div>
+            ) : (
+              <div className="flex justify-center sm:justify-end">
+                <DropDown
+                  userId={user.id}
+                  showForCurrentUserOnly={true}
+                  iconSize={config.iconSize}
+                  items={dropdownItems}
+                />
+              </div>
+            )}
           </div>
-          {!isCurrentUser ? (
-            <FollowButton username={user.username} size="lg" /> // temp hardcoded false follow
-          ) : (
-            <DropDown
-              userId={user.id}
-              showForCurrentUserOnly={true}
-              iconSize={config.iconSize}
-              items={dropdownItems}
-            />
-          )}
         </div>
 
         {config.showStats && (

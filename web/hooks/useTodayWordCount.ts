@@ -9,7 +9,7 @@ export default function useTodayWordCount() {
   const hasInitialized = useRef(false);
 
   const fetchCount = useCallback(async () => {
-    if (isLoadingCount) return; // Prevent concurrent requests
+    if (isLoadingCount) return;
     
     setIsLoadingCount(true);
     try {
@@ -21,14 +21,14 @@ export default function useTodayWordCount() {
     } finally {
       setIsLoadingCount(false);
     }
-  }, []); // No dependencies - stable function
+  }, []);
 
   useEffect(() => {
     if (!hasInitialized.current) {
       hasInitialized.current = true;
       fetchCount();
     }
-  }, []); // Only run once on mount
+  }, []);
 
   return { todayWordCount, isLoadingCount, refetchCount: fetchCount };
 }
