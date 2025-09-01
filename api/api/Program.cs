@@ -1,5 +1,6 @@
 using api.Data;
 using api.Features.Auth.GetCurrentUser;
+using api.Features.Auth.GitHubLogin;
 using api.Features.Auth.Login;
 using api.Features.Auth.Logout;
 using api.Features.Auth.Register;
@@ -24,11 +25,24 @@ using api.Features.User.DeleteUser;
 using api.Features.User.GetUser;
 using api.Features.User.UpdateUser;
 using api.Models;
+using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
+Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication()
+    .AddCookie() // You already have Identity cookies
+    .AddGitHub(options =>
+    {
+        options.ClientId = builder.Configuration["GITHUB_CLIENT_ID"];
+        options.ClientSecret = builder.Configuration["GITHUB_CLIENT_SECRET"];
+        options.Scope.Add("user:email");
+        options.SaveTokens = true;
+    });
 
 builder.Services.AddAuthorization();
 
@@ -46,7 +60,17 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var host = builder.Configuration["HOST"];
+    var port = builder.Configuration["PORT"];
+    var database = builder.Configuration["DATABASE"];
+    var username = builder.Configuration["USERNAME"];
+    var password = builder.Configuration["PASSWORD"];
+    
+    var connectionString = $"Host={host};Port={port};Database={database};Username={username};Password={password}";
+    
+    options.UseNpgsql(connectionString);
+});
 
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -81,6 +105,7 @@ builder.Services.AddScoped<LoginHandler>();
 builder.Services.AddScoped<RegisterHandler>();
 builder.Services.AddScoped<GetCurrentUserHandler>();
 builder.Services.AddScoped<LogoutHandler>();
+builder.Services.AddScoped<GitHubLoginHandler>();
 
 builder.Services.AddScoped<GetFollowingFeedHandler>();
 builder.Services.AddScoped<GetFypFeedHandler>();
