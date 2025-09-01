@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { User } from "../types";
 import DropDown from "./DropDown";
 import FollowButton from "./FollowButton";
-import { EditIcon, LogoutIcon } from "./Icons";
+import { EditIcon, LogoutIcon, SavedPostsIcon } from "./Icons";
 
 interface UserProfileProps {
   user: User;
@@ -74,6 +74,11 @@ export default function UserProfile({
 
   // Dropdown items for current user
   const dropdownItems = isCurrentUser ? [
+    {
+      label: 'Saved posts',
+      onClick: () => router.push('/profile/feed/popular'),  // Temporary
+      icon: <SavedPostsIcon size={16} />
+    },
     {
       label: 'Edit Profile',
       onClick: () => router.push('/profile/edit'),
