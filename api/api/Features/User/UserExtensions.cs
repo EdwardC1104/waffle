@@ -18,7 +18,7 @@ public static class UserExtensions
             Name = user.Name,
             Username = user.UserName ?? string.Empty,
             Email = user.Email ?? string.Empty,
-            ProfilePictureUrl = string.IsNullOrEmpty(user.ProfilePictureUrl) ? "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" : user.ProfilePictureUrl,
+            ProfilePictureUrl = user.ProfilePictureUrl,
             FollowerCount = followerCount,
             FollowingCount = followingCount,
             CreatedAt = user.CreatedAt,

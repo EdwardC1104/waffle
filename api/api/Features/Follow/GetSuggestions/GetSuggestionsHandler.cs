@@ -18,6 +18,7 @@ public class GetSuggestionsHandler
         
         var users = await _context.Users
             .Where(u => u.Id != userId)
+            .Take(7)
             .ToListAsync();
 
         var userDtos = new List<UserDto>();
@@ -33,6 +34,7 @@ public class GetSuggestionsHandler
     public async Task<IEnumerable<UserDto>> Handle()
     {
         var users = await _context.Users
+            .Take(7)
             .ToListAsync();
 
         var userDtos = new List<UserDto>();
