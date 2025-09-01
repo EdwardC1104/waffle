@@ -1,6 +1,9 @@
 version: 0.2
 
 phases:
+  install:
+    runtime-versions:
+      dotnet: 8.0
   pre_build:
     commands:
       - echo Restore started on `date`
