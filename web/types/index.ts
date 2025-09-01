@@ -6,6 +6,7 @@ export type User = {
   profilePictureUrl: string;
   followerCount: number;
   followingCount: number;
+  wordCount: number;
 };
 
 export type Post = {

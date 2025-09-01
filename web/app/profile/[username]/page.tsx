@@ -8,11 +8,13 @@ import WhoToFollow from "@/components/WhoToFollow";
 import WritePostCTA from "@/components/WritePostCTA";
 import useAuth from "@/hooks/useAuth";
 import useProfile from "@/hooks/useProfile";
+import useTodayWordCount from "@/hooks/useTodayWordCount";
 
 export default function UserProfilePage() {
   const { user, posts, loading, error, refetch, handlePostUpdate } =
     useProfile("posts");
   const { user: currentUser } = useAuth();
+  const { todayWordCount } = useTodayWordCount();
 
   if (loading) {
     return <LoadingSpinner text="Loading profile..." fullPage center />;
@@ -37,7 +39,7 @@ export default function UserProfilePage() {
     <div className="min-h-screen">
       <div className="w-full max-w-[1476px] mx-auto flex justify-center items-start gap-4 lg:gap-8 xl:gap-16 px-4 sm:px-6 lg:px-8 py-6">
         <div className="hidden xl:flex w-60 flex-col gap-8 flex-shrink-0 sticky top-16">
-          <WritePostCTA todayWordCount={0} />
+          <WritePostCTA todayWordCount={todayWordCount} />
         </div>
 
         <div className="flex flex-col gap-8 w-full max-w-[600px] min-w-0">

@@ -69,7 +69,7 @@ export default function FollowButton({
       fontSize: "text-xs font-semibold",
     },
     lg: {
-      padding: "px-8 py-3",
+      padding: "px-10.5 py-3",
       fontSize: "text-lg font-semibold",
     },
   };

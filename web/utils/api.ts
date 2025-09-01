@@ -29,8 +29,13 @@ export async function fetchUserPosts(username: string): Promise<Post[]> {
   });
 }
 
+
 export async function fetchPost(id: number): Promise<Post> {
   return await post<Post, { postId: number }>(`/api/post/get`, { postId: id });
+}
+
+export async function fetchTodayCount(): Promise<number> {
+  return await post<number, void>(`/api/post/count/today`, undefined);
 }
 
 export async function fetchPopularFeed(): Promise<Post[]> {
@@ -128,6 +133,27 @@ export async function updateUserProfile(
 
 export async function deleteUser(): Promise<void> {
   return await post<void, Record<string, never>>(`/api/user/delete`, {});
+}
+
+export async function updatePost(
+  postId: number,
+  title: string,
+  content: string,
+  coverImageUrl?: string
+): Promise<Post> {
+  return await post<
+    Post,
+    { postId: number; title: string; content: string; coverImageUrl?: string }
+  >(`/api/post/update`, {
+    postId,
+    title,
+    content,
+    ...(coverImageUrl && { coverImageUrl }),
+  });
+}
+
+export async function deletePost(postId: number): Promise<void> {
+  return await post<void, { postId: number }>(`/api/post/delete`, { postId });
 }
 
 export async function createNewPost(

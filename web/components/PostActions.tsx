@@ -4,9 +4,16 @@ import useAuth from "@/hooks/useAuth";
 import { Post } from "@/types";
 import { likePost, unlikePost } from "@/utils/api";
 import formatNumber from "@/utils/formatNumber";
-import { useState } from "react";
-import { BookmarkIcon, HeartIcon, ReplyIcon, ShareIcon } from "./Icons";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import {
+  BookmarkIcon,
+  EditIcon,
+  HeartIcon,
+  ReplyIcon,
+  ShareIcon,
+} from "./Icons";
 
 interface PostActionsProps {
   post: Post;
@@ -24,7 +31,7 @@ export default function PostActions({
   const [isLiking, setIsLiking] = useState(false);
   const [optimisticLiked, setOptimisticLiked] = useState<boolean | null>(null);
   const [optimisticCount, setOptimisticCount] = useState<number | null>(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const router = useRouter();
 
   // Use optimistic values if available, otherwise use post values
@@ -32,9 +39,12 @@ export default function PostActions({
     optimisticLiked !== null ? optimisticLiked : post.likedByAuthenticatedUser;
   const likeCount = optimisticCount !== null ? optimisticCount : post.likeCount;
 
+  // Check if current user owns this post
+  const isOwner = user && post.author.username === user.username;
+
   const handleLikeToggle = async () => {
-    if (isLiking || !isAuthenticated){
-      router.push('/login');
+    if (isLiking || !isAuthenticated) {
+      router.push("/login");
       return;
     }
 
@@ -89,9 +99,7 @@ export default function PostActions({
         onClick={handleLikeToggle}
         disabled={isLiking}
         className={`flex items-center gap-1 sm:gap-2 transition-all duration-200 group ${
-          isLiked
-            ? "text-pink-500"
-            : "hover:text-pink-500"
+          isLiked ? "text-pink-500" : "hover:text-pink-500"
         }`}
       >
         {isLiked ? (
@@ -152,6 +160,18 @@ export default function PostActions({
           className="text-gray-600 group-hover:text-green-600"
         />
       </button>
+
+      {isOwner && (
+        <Link
+          href={`/post/${post.id}/edit`}
+          className="flex items-center gap-1 sm:gap-2 hover:text-blue-600 transition-colors group"
+        >
+          <EditIcon
+            size={20}
+            className="text-gray-600 group-hover:text-blue-600"
+          />
+        </Link>
+      )}
     </div>
   );
 }

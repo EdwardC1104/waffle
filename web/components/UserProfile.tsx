@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { User } from "../types";
 import DropDown from "./DropDown";
 import FollowButton from "./FollowButton";
-import { EditIcon, LogoutIcon } from "./Icons";
+import { EditIcon, LogoutIcon, SavedPostsIcon } from "./Icons";
 
 interface UserProfileProps {
   user: User;
@@ -75,6 +75,11 @@ export default function UserProfile({
   // Dropdown items for current user
   const dropdownItems = isCurrentUser ? [
     {
+      label: 'Saved posts',
+      onClick: () => router.push('/feed/popular'),  // Temporary
+      icon: <SavedPostsIcon size={16} />
+    },
+    {
       label: 'Edit Profile',
       onClick: () => router.push('/profile/edit'),
       icon: <EditIcon size={16} />
@@ -101,7 +106,7 @@ export default function UserProfile({
           <Link href={`/profile/${user.username}`}>
             <button className="flex items-center gap-3 text-left cursor-pointer">
               <Image
-                src={user.profilePictureUrl}
+                src={!user.profilePictureUrl ?  '/Chicken.jpeg' : user.profilePictureUrl}
                 alt={user.name}
                 width={config.avatarSize}
                 height={config.avatarSize}
@@ -130,7 +135,7 @@ export default function UserProfile({
           <Link href={`/profile/${user.username}`}>
             <button className="flex items-center gap-3 text-left cursor-pointer">
               <Image
-                src={user.profilePictureUrl}
+                src={!user.profilePictureUrl ?  '/Chicken.jpeg' : user.profilePictureUrl}
                 alt={user.name}
                 width={config.avatarSize}
                 height={config.avatarSize}
@@ -160,7 +165,7 @@ export default function UserProfile({
               <div
                 className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
               >
-                {formatNumber(0)}
+                {formatNumber(user.wordCount)}
               </div>
               <div
                 className={`text-center text-stone-900 ${config.statsLabel}`}
@@ -210,32 +215,39 @@ export default function UserProfile({
   else {
     return (
       <div className={`${config.container} ${containerClassName}`}>
-        <div className={config.userSection}>
-          <div className="flex items-center gap-3">
-            <Image
-              src={user.profilePictureUrl}
-              alt={user.name}
-              width={config.avatarSize}
-              height={config.avatarSize}
-              className={`${config.avatar} rounded-full object-cover`}
-            />
-            <div>
-              <p className={`text-stone-900 ${config.nameText}`}>{user.name}</p>
-              <p className={`text-zinc-600 ${config.usernameText}`}>
-                @{user.username}
-              </p>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div className="flex items-center gap-3">
+              <Image
+                src={!user.profilePictureUrl ?  '/Chicken.jpeg' : user.profilePictureUrl}
+                alt={user.name}
+                width={config.avatarSize}
+                height={config.avatarSize}
+                className={`${config.avatar} rounded-full object-cover`}
+              />
+              <div>
+                <p className={`text-stone-900 ${config.nameText}`}>{user.name}</p>
+                <p className={`text-zinc-600 ${config.usernameText}`}>
+                  @{user.username}
+                </p>
+              </div>
             </div>
+            
+            {!isCurrentUser ? (
+              <div className="flex justify-center sm:justify-end">
+                <FollowButton username={user.username} size="lg" />
+              </div>
+            ) : (
+              <div className="flex justify-center sm:justify-end">
+                <DropDown
+                  userId={user.id}
+                  showForCurrentUserOnly={true}
+                  iconSize={config.iconSize}
+                  items={dropdownItems}
+                />
+              </div>
+            )}
           </div>
-          {!isCurrentUser ? (
-            <FollowButton username={user.username} size="lg" /> // temp hardcoded false follow
-          ) : (
-            <DropDown
-              userId={user.id}
-              showForCurrentUserOnly={true}
-              iconSize={config.iconSize}
-              items={dropdownItems}
-            />
-          )}
         </div>
 
         {config.showStats && (
@@ -244,7 +256,7 @@ export default function UserProfile({
               <div
                 className={`text-center text-stone-900 ${config.statsNumber} font-serif`}
               >
-                {formatNumber(0)}
+                {formatNumber(user.wordCount)}
               </div>
               <div
                 className={`text-center text-stone-900 ${config.statsLabel}`}
