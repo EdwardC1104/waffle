@@ -215,7 +215,7 @@ export default function UserProfile({
       <div className={`${config.container} ${containerClassName}`}>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
               <Image
                 src={!user.profilePictureUrl ?  '/Chicken.jpeg' : user.profilePictureUrl}
                 alt={user.name}
@@ -223,26 +223,27 @@ export default function UserProfile({
                 height={config.avatarSize}
                 className={`${config.avatar} rounded-full object-cover`}
               />
-              <div>
+              <div className="flex-1 min-w-0">
                 <p className={`text-stone-900 ${config.nameText}`}>{user.name}</p>
                 <p className={`text-zinc-600 ${config.usernameText}`}>
                   @{user.username}
                 </p>
               </div>
+              {currentUser && (
+                <div className="flex flex-shrink-0">
+                  <DropDown
+                    userId={user.id}
+                    showForCurrentUserOnly={true}
+                    iconSize={config.iconSize}
+                    items={dropdownItems}
+                  />
+                </div>
+              )}
             </div>
             
-            {!isCurrentUser ? (
+            {!isCurrentUser && (
               <div className="flex justify-center sm:justify-end">
                 <FollowButton username={user.username} size="lg" />
-              </div>
-            ) : (
-              <div className="flex justify-center sm:justify-end">
-                <DropDown
-                  userId={user.id}
-                  showForCurrentUserOnly={true}
-                  iconSize={config.iconSize}
-                  items={dropdownItems}
-                />
               </div>
             )}
           </div>
