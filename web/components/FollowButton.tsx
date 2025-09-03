@@ -57,7 +57,6 @@ export default function FollowButton({
         await follow(currentUser.username, username);
       }
       setIsFollowing(!isFollowing);
-      refetchUser();
     } catch (error) {
       console.error("Error toggling follow state:", error);
     }

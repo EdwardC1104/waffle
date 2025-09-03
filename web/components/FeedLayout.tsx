@@ -27,7 +27,7 @@ export default function FeedLayout({ feedType, user }: FeedLayoutProps) {
         </div>
 
         <div className="flex flex-col gap-8 w-full max-w-[600px] min-w-0">
-          <Feed feedType={feedType} username={user?.username} />
+          <Feed feedType={feedType} />
         </div>
 
         <div className="hidden md:flex w-60 flex-col gap-8 flex-shrink-0 sticky top-16">

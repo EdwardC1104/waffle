@@ -1,13 +1,16 @@
 import { Post, SearchResult, User } from "../types";
 
-async function post<T, U>(endpoint: string, body: U): Promise<T> {
+// Post method overloaded to make body optional
+async function post<T>(endpoint: string): Promise<T>;
+async function post<T, U>(endpoint: string, body: U): Promise<T>;
+async function post<T, U>(endpoint: string, body?: U): Promise<T> {
   const response = await fetch(`${endpoint}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify(body),
+    ...(body !== undefined && { body: JSON.stringify(body) }),
   });
 
   if (!response.ok) {
@@ -29,36 +32,28 @@ export async function fetchUserPosts(username: string): Promise<Post[]> {
   });
 }
 
-
 export async function fetchPost(id: number): Promise<Post> {
   return await post<Post, { postId: number }>(`/api/post/get`, { postId: id });
 }
 
 export async function fetchTodayCount(): Promise<number> {
-  return await post<number, void>(`/api/post/count/today`, undefined);
+  return await post<number>(`/api/post/count/today`);
 }
 
 export async function fetchPopularFeed(): Promise<Post[]> {
-  return await post<Post[], Record<string, never>>(`/api/feed/popular`, {});
+  return await post<Post[]>(`/api/feed/popular`);
 }
 
-export async function fetchFypFeed(username: string): Promise<Post[]> {
-  return await post<Post[], { username: string }>(`/api/feed/fyp`, {
-    username,
-  });
+export async function fetchFypFeed(): Promise<Post[]> {
+  return await post<Post[]>(`/api/feed/fyp`);
 }
 
-export async function fetchFollowingFeed(username: string): Promise<Post[]> {
-  return await post<Post[], { username: string }>(`/api/feed/following`, {
-    username,
-  });
+export async function fetchFollowingFeed(): Promise<Post[]> {
+  return await post<Post[]>(`/api/feed/following`);
 }
 
 export async function fetchFollowSuggestions(): Promise<User[]> {
-  return await post<User[], Record<string, never>>(
-    `/api/follow/suggestions`,
-    {}
-  );
+  return await post<User[]>(`/api/follow/suggestions`);
 }
 
 export async function fetchFollowers(username: string): Promise<User[]> {
@@ -132,7 +127,7 @@ export async function updateUserProfile(
 }
 
 export async function deleteUser(): Promise<void> {
-  return await post<void, Record<string, never>>(`/api/user/delete`, {});
+  return await post<void>(`/api/user/delete`);
 }
 
 export async function updatePost(

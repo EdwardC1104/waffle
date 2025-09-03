@@ -13,10 +13,9 @@ import PostCard from "./PostCard";
 
 interface FeedProps {
   feedType: "fyp" | "following" | "popular";
-  username?: string; // Required for fyp and following feeds
 }
 
-export default function Feed({ feedType, username }: FeedProps) {
+export default function Feed({ feedType }: FeedProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,13 +38,10 @@ export default function Feed({ feedType, username }: FeedProps) {
             feedPosts = await fetchPopularFeed();
             break;
           case "following":
-            if (!username)
-              throw new Error("Username required for following feed");
-            feedPosts = await fetchFollowingFeed(username);
+            feedPosts = await fetchFollowingFeed();
             break;
           case "fyp":
-            if (!username) throw new Error("Username required for FYP feed");
-            feedPosts = await fetchFypFeed(username);
+            feedPosts = await fetchFypFeed();
             break;
         }
 
@@ -59,7 +55,7 @@ export default function Feed({ feedType, username }: FeedProps) {
     };
 
     fetchFeedData();
-  }, [feedType, username]);
+  }, [feedType]);
 
   if (loading) {
     return <LoadingSpinner text="Loading feed..." />;
@@ -78,9 +74,17 @@ export default function Feed({ feedType, username }: FeedProps) {
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
-      {posts.length > 0 ? posts.map((post) => (
-        <PostCard key={post.id} post={post} onPostUpdate={handlePostUpdate} />
-      )) : <p className="self-center text-zinc-600">{feedType === "following" ? "You don't follow anyone yet." : "Nothing to see here..."}</p>}
+      {posts.length > 0 ? (
+        posts.map((post) => (
+          <PostCard key={post.id} post={post} onPostUpdate={handlePostUpdate} />
+        ))
+      ) : (
+        <p className="self-center text-zinc-600">
+          {feedType === "following"
+            ? "You don't follow anyone yet."
+            : "Nothing to see here..."}
+        </p>
+      )}
     </div>
   );
 }
