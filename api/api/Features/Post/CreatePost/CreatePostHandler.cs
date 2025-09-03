@@ -13,7 +13,7 @@ public class CreatePostHandler
         _dbContext = dbContext;
     }
 
-    public async Task<PostDto?> Handle(string userId, CreatePostCommand request)
+    public async Task<PostDto?> Handle(string userId, CreatePostCommand request, string? coverImageUrl = null)
     {
         var newPost = new api.Models.Post
         {
@@ -21,7 +21,7 @@ public class CreatePostHandler
             Content = request.Content,
             UserId = userId,
             CreatedAt = DateTime.UtcNow,
-            CoverImageUrl = request.CoverImageUrl,
+            CoverImageUrl = coverImageUrl ?? "",
             WordCount = request.Content.Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries).Length
         };
         

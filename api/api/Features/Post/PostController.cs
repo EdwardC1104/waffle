@@ -6,6 +6,7 @@ using api.Features.Post.GetPosts;
 using api.Features.Post.UpdatePost;
 using api.Features.Post.WordCount;
 using api.Features.User;
+using api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.Post;
@@ -20,8 +21,9 @@ public class PostController : ControllerBase
     private readonly DeletePostHandler _deletePost;
     private readonly GetPostHandler _getPostHandler;
     private readonly TodaysWordCountHandler _todaysWordCountHandler;
+    private readonly S3Service _s3Service;
 
-    public PostController(GetPostsHandler getPostsHandler, CreatePostHandler createPost, UpdatePostHandler updatePost, DeletePostHandler deletePost, GetPostHandler getPostHandler, TodaysWordCountHandler todaysWordCountHandler)
+    public PostController(GetPostsHandler getPostsHandler, CreatePostHandler createPost, UpdatePostHandler updatePost, DeletePostHandler deletePost, GetPostHandler getPostHandler, TodaysWordCountHandler todaysWordCountHandler, S3Service s3Service)
     {
         _getPostsHandler = getPostsHandler;
         _createPost = createPost;
@@ -29,6 +31,7 @@ public class PostController : ControllerBase
         _deletePost = deletePost;
         _getPostHandler = getPostHandler;
         _todaysWordCountHandler = todaysWordCountHandler;
+        _s3Service = s3Service;
     }
 
     [HttpPost("/api/user/post/list")]
@@ -55,7 +58,7 @@ public class PostController : ControllerBase
     }
     
     [HttpPost("create")]
-    public async Task<IActionResult> CreatePost([FromBody] CreatePostCommand request)
+    public async Task<IActionResult> CreatePost([FromForm] CreatePostCommand command, [FromForm] IFormFile? coverImage)
     {
         if (User.Identity is not { IsAuthenticated: true, Name: not null })
         {
@@ -68,7 +71,36 @@ public class PostController : ControllerBase
             return Unauthorized(new { message = "Not logged in" });
         }
 
-        var response = await _createPost.Handle(userId, request);
+        string? coverImageUrl = null;
+
+        if (coverImage != null && coverImage.Length > 0)
+        {
+            // Validate file type (only images allowed for cover images)
+            var allowedImageTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
+            if (!allowedImageTypes.Contains(coverImage.ContentType))
+            {
+                return BadRequest(new { message = "Cover image must be a valid image file (JPEG, PNG, GIF, or WebP)" });
+            }
+        
+            // Validate file size (max 5MB for cover images)
+            const int maxFileSize = 5 * 1024 * 1024; // 5MB
+            if (coverImage.Length > maxFileSize)
+            {
+                return BadRequest(new { message = "Cover image size exceeds the maximum allowed size of 5MB" });
+            }
+        
+            try
+            {
+                using var stream = coverImage.OpenReadStream();
+                coverImageUrl = await _s3Service.UploadFileAsync(stream, coverImage.FileName, coverImage.ContentType);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Failed to upload cover image", error = ex.Message });
+            }
+        }
+
+        var response = await _createPost.Handle(userId, command, coverImageUrl);
         
         if (response == null)
         {
@@ -79,7 +111,7 @@ public class PostController : ControllerBase
     }
 
     [HttpPost("update")]
-    public async Task<IActionResult> UpdatePost([FromBody] UpdatePostCommand request)
+    public async Task<IActionResult> UpdatePost([FromForm] UpdatePostCommand command, [FromForm] IFormFile? coverImage)
     {
         if (User.Identity is not { IsAuthenticated: true, Name: not null })
         {
@@ -91,8 +123,37 @@ public class PostController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
+        
+        string? coverImageUrl = null;
 
-        var response = await _updatePost.Handle(userId, request);
+        if (coverImage != null && coverImage.Length > 0)
+        {
+            // Validate file type (only images allowed for cover images)
+            var allowedImageTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
+            if (!allowedImageTypes.Contains(coverImage.ContentType))
+            {
+                return BadRequest(new { message = "Cover image must be a valid image file (JPEG, PNG, GIF, or WebP)" });
+            }
+        
+            // Validate file size (max 5MB for cover images)
+            const int maxFileSize = 5 * 1024 * 1024; // 5MB
+            if (coverImage.Length > maxFileSize)
+            {
+                return BadRequest(new { message = "Cover image size exceeds the maximum allowed size of 5MB" });
+            }
+        
+            try
+            {
+                using var stream = coverImage.OpenReadStream();
+                coverImageUrl = await _s3Service.UploadFileAsync(stream, coverImage.FileName, coverImage.ContentType);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Failed to upload cover image", error = ex.Message });
+            }
+        }
+
+        var response = await _updatePost.Handle(userId, command, coverImageUrl);
         
         if (response == null)
         {
