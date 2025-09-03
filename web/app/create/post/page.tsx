@@ -36,7 +36,7 @@ function CreatePostForm({ user }: { user: { username: string } }) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl px-4 py-8 flex-1 w-full">
       <PostForm
         onSubmit={handleFormSubmit}
         submitButtonText="Publish"

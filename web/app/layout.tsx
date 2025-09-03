@@ -15,10 +15,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen">
+      <body className="antialiased min-h-screen flex flex-col">
         <AuthProvider>
           <Navbar />
-          <main className="px-2 sm:px-4 lg:px-8 py-6">{children}</main>
+          <main className="px-2 sm:px-4 lg:px-8 py-6 flex flex-1 flex-col items-center">
+            {children}
+          </main>
         </AuthProvider>
       </body>
     </html>

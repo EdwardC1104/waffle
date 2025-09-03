@@ -19,5 +19,5 @@ export default function Home() {
     }
   }, [isAuthenticated, isLoading, router]);
 
-  return <LoadingSpinner fullPage center />;
+  return <LoadingSpinner center />;
 }

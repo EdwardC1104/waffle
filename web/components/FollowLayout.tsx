@@ -25,12 +25,12 @@ export default function FollowLayout({
   type,
 }: FollowLayoutProps) {
   if (loading) {
-    return <LoadingSpinner text={`Loading ${type}...`} fullPage center />;
+    return <LoadingSpinner text={`Loading ${type}...`} center />;
   }
 
   if (error || !user) {
     return (
-      <div className="min-h-screen">
+      <div className="flex-1 w-full">
         <div className="w-full max-w-[1476px] mx-auto flex justify-center items-center px-4 sm:px-6 lg:px-8 py-6">
           <ErrorMessage
             title={error ? `Failed to load ${type}` : "User not found"}
@@ -50,7 +50,7 @@ export default function FollowLayout({
     : `${count} following`;
 
   return (
-    <div className="min-h-screen">
+    <div className="flex-1 w-full">
       <div className="w-full max-w-[1476px] mx-auto flex justify-center items-start px-4 sm:px-6 lg:px-8 py-6">
         <div className="w-full max-w-[600px]">
           <div className="mb-6">

@@ -8,7 +8,7 @@ export default function PopularPage() {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
-    return <LoadingSpinner text="Loading..." fullPage center />;
+    return <LoadingSpinner text="Loading..." center />;
   }
 
   return <FeedLayout feedType="popular" user={user || undefined} />;

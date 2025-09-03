@@ -27,7 +27,7 @@ export function AuthenticatedRoute({
   }, [isAuthenticated, isLoading, router, redirectTo]);
 
   if (isLoading) {
-    return <LoadingSpinner text={loadingText} fullPage center />;
+    return <LoadingSpinner text={loadingText} center />;
   }
 
   if (!isAuthenticated || !user) {

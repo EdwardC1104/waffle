@@ -109,7 +109,7 @@ function EditPostContent({
 
   if (error && !post) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8 flex-1 w-full">
         <ErrorMessage
           title="Failed to Load Post"
           message={error}
@@ -124,7 +124,7 @@ function EditPostContent({
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-8 flex-1 w-full">
       <PostForm
         initialTitle={post.title}
         initialContent={post.content}
