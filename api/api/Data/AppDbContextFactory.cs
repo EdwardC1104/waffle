@@ -20,7 +20,7 @@ namespace api.Data
 
             // Build connection string from environment variables
             var host = Environment.GetEnvironmentVariable("HOST");
-            var port = Environment.GetEnvironmentVariable("PORT");
+            var port = Environment.GetEnvironmentVariable("DB_PORT");
             var database = Environment.GetEnvironmentVariable("DATABASE");
             var username = Environment.GetEnvironmentVariable("USERNAME");
             var password = Environment.GetEnvironmentVariable("PASSWORD");

@@ -78,9 +78,9 @@ export default function Feed({ feedType, username }: FeedProps) {
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
-      {posts.map((post) => (
+      {posts.length > 0 ? posts.map((post) => (
         <PostCard key={post.id} post={post} onPostUpdate={handlePostUpdate} />
-      ))}
+      )) : <p className="self-center text-zinc-600">{feedType === "following" ? "You don't follow anyone yet." : "Nothing to see here..."}</p>}
     </div>
   );
 }
