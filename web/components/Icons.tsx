@@ -206,3 +206,21 @@ export const SavedPostsIcon = ({ size = 20, className = "" }: IconProps) => (
     />
   </svg>
 );
+
+export const PlusIcon = ({ size = 24, className = "" }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    className={className}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      stroke="currentColor"
+      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+    />
+  </svg>
+);
