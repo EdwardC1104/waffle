@@ -6,7 +6,7 @@ import {
   validateImage,
 } from "@/utils/imageUtils";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BackButton from "./BackButton";
 import ErrorMessage from "./ErrorMessage";
 import { ImageIcon } from "./Icons";
@@ -52,11 +52,39 @@ export default function PostForm({
     initialImage || null
   );
 
+  const titleRef = useRef<HTMLTextAreaElement>(null);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize textarea utility
+  const autoResize = (element: HTMLTextAreaElement) => {
+    element.style.height = "auto";
+    element.style.height = `${element.scrollHeight}px`;
+  };
+
+  // Auto-resize effects
+  useEffect(() => {
+    if (titleRef.current) autoResize(titleRef.current);
+  }, [title]);
+
+  useEffect(() => {
+    if (contentRef.current) autoResize(contentRef.current);
+  }, [content]);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (titleRef.current) autoResize(titleRef.current);
+      if (contentRef.current) autoResize(contentRef.current);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate the image
     const validation = validateImage(file, 5); // 5MB limit
     if (!validation.isValid) {
       onErrorChange(validation.error || "Invalid image file");
@@ -64,10 +92,9 @@ export default function PostForm({
     }
 
     try {
-      // Convert to base64 using utility function
       const base64String = await convertToBase64(file);
       setImagePreview(base64String);
-      onErrorChange(null); // Clear any previous errors
+      onErrorChange(null);
     } catch (err) {
       console.error("Failed to process image:", err);
       onErrorChange("Failed to process the selected image");
@@ -76,13 +103,10 @@ export default function PostForm({
 
   const removeImage = () => {
     setImagePreview(null);
-    // Clear the file input
     const fileInput = document.getElementById(
       "image-upload"
     ) as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = "";
-    }
+    if (fileInput) fileInput.value = "";
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -97,20 +121,30 @@ export default function PostForm({
     }
   };
 
+  // Computed values
   const progress = Math.min(content.length / minChars, 1);
   const canPublish = title.trim() && content.trim().length >= minChars;
 
   const getButtonText = () => {
-    if (isSubmitting) {
-      return `${submitButtonText}...`;
-    }
-    if (canPublish) {
-      return submitButtonText;
-    }
+    if (isSubmitting) return `${submitButtonText}...`;
+    if (canPublish) return submitButtonText;
     if (content.trim().length < minChars) {
       return `Keep writing - ${content.trim().length}/${minChars}`;
     }
     return "Add a title";
+  };
+
+  const buttonStyle = {
+    color: canPublish && !isSubmitting ? "#fff" : "#374151",
+    background: "none",
+    border: "none",
+  };
+
+  const fillStyle = {
+    width: `${progress * 100}%`,
+    background: canPublish ? "#374151" : "#9ca3af",
+    transitionProperty: "width, background",
+    zIndex: 1,
   };
 
   return (
@@ -128,26 +162,20 @@ export default function PostForm({
           </h1>
         </div>
 
+        {/* Desktop Submit Button */}
         <button
           onClick={handleSubmit}
           disabled={!canPublish || isSubmitting}
-          className="relative overflow-hidden px-6 py-2.5 rounded-full font-medium text-sm transition-all shadow-md"
-          style={{
-            color: canPublish && !isSubmitting ? "#fff" : "#374151",
-            background: "none",
-            border: "none",
-          }}
+          className="hidden sm:flex relative overflow-hidden px-6 py-2.5 rounded-full font-medium text-sm transition-all shadow-md z-0"
+          style={buttonStyle}
         >
-          {/* Animated fill */}
           <span
-            className="absolute left-0 top-0 h-full rounded-full z-0 transition-all duration-500"
-            style={{
-              width: `${progress * 100}%`,
-              background: canPublish ? "#374151" : "#9ca3af",
-              transitionProperty: "width, background",
-            }}
+            className="absolute left-0 top-0 h-full rounded-full transition-all duration-500"
+            style={fillStyle}
           />
-          <span className="relative z-10">{getButtonText()}</span>
+          <span className="relative" style={{ zIndex: 2 }}>
+            {getButtonText()}
+          </span>
         </button>
       </div>
 
@@ -162,17 +190,20 @@ export default function PostForm({
           />
         )}
 
+        {/* Title Input */}
         <div>
           <textarea
+            ref={titleRef}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Title your post..."
-            className="w-full text-3xl sm:text-4xl font-bold font-serif text-zinc-700 placeholder:text-zinc-400 border-none outline-none resize-none bg-transparent leading-tight"
+            className="w-full text-3xl sm:text-4xl font-bold font-serif text-zinc-700 placeholder:text-zinc-400 border-none outline-none resize-none bg-transparent leading-tight overflow-hidden"
             rows={2}
             style={{ minHeight: "80px" }}
           />
         </div>
 
+        {/* Image Upload Section */}
         <div className="space-y-4">
           {imagePreview ? (
             <div className="relative">
@@ -187,6 +218,7 @@ export default function PostForm({
                 type="button"
                 onClick={removeImage}
                 className="absolute top-3 right-3 bg-black/50 text-white rounded-full p-2 hover:bg-black/70 transition-colors"
+                aria-label="Remove image"
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path
@@ -228,40 +260,38 @@ export default function PostForm({
           )}
         </div>
 
+        {/* Content Input */}
         <div>
           <textarea
+            ref={contentRef}
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="Begin writing..."
-            className="w-full min-h-[400px] text-lg font-serif text-zinc-700 placeholder:text-zinc-400 border-none outline-none resize-none bg-transparent leading-relaxed"
+            className="w-full min-h-[400px] text-lg font-serif text-zinc-700 placeholder:text-zinc-400 border-none outline-none resize-none bg-transparent leading-relaxed overflow-hidden"
             style={{ fontFamily: '"PT Serif", Georgia, serif' }}
           />
         </div>
 
-        <div className="flex justify-between items-center pt-4 border-t border-zinc-200">
+        {/* Bottom Section */}
+        <div className="flex justify-between items-center pt-4">
           <div className="text-sm text-zinc-500">
             {content.length} characters
           </div>
 
+          {/* Mobile Submit Button */}
           <button
             type="submit"
             disabled={!canPublish || isSubmitting}
-            className="relative overflow-hidden sm:hidden px-6 py-2.5 rounded-full font-medium text-sm transition-all shadow-md"
-            style={{
-              color: canPublish && !isSubmitting ? "#fff" : "#374151",
-              background: "none",
-              border: "none",
-            }}
+            className="flex sm:hidden relative overflow-hidden px-6 py-2.5 rounded-full font-medium text-sm transition-all shadow-md z-0"
+            style={buttonStyle}
           >
             <span
-              className="absolute left-0 top-0 h-full rounded-full z-0 transition-all duration-500"
-              style={{
-                width: `${progress * 100}%`,
-                background: canPublish ? "#374151" : "#9ca3af",
-                transitionProperty: "width, background",
-              }}
+              className="absolute left-0 top-0 h-full rounded-full transition-all duration-500"
+              style={fillStyle}
             />
-            <span className="relative z-10">{getButtonText()}</span>
+            <span className="relative" style={{ zIndex: 2 }}>
+              {getButtonText()}
+            </span>
           </button>
         </div>
       </form>
