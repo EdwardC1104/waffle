@@ -17,6 +17,8 @@ public class GetFollowingFeedHandler
     {
         var posts = await _context.Posts
             .Include(p => p.User)
+            .Where(p => _context.Follows
+                .Any(f => f.FollowerId == userId && f.FolloweeId == p.UserId))
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
 
