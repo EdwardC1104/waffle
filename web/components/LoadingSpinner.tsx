@@ -2,7 +2,6 @@ interface LoadingSpinnerProps {
   size?: "sm" | "md" | "lg";
   text?: string;
   className?: string;
-  fullPage?: boolean;
   center?: boolean;
 }
 
@@ -10,7 +9,6 @@ export default function LoadingSpinner({
   size = "md",
   text = "Loading...",
   className = "",
-  fullPage = false,
   center = false,
 }: LoadingSpinnerProps) {
   const sizeClasses = {
@@ -21,7 +19,6 @@ export default function LoadingSpinner({
 
   const containerClasses = [
     "flex flex-col items-center justify-center",
-    fullPage && "min-h-screen",
     center && "w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6",
     className,
   ]

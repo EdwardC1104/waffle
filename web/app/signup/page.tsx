@@ -41,7 +41,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white relative">
+    <div className="flex-1 flex items-center justify-center relative">
       <div className="max-w-md w-full space-y-8 relative z-10">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-stone-900">
@@ -102,7 +102,8 @@ export default function SignupPage() {
             </button>
           </form>
 
-          <div className="relative">
+          {/* sso is not yet implemented */}
+          {/* <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-stone-300" />
             </div>
@@ -142,7 +143,7 @@ export default function SignupPage() {
               </svg>
               Sign up with GitHub
             </button>
-          </div>
+          </div> */}
 
           <div className="text-center mt-6">
             <p className="text-sm text-stone-600">

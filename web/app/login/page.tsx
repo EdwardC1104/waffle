@@ -33,7 +33,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white relative">
+    <div className="flex-1 flex items-center justify-center relative">
       <div className="max-w-md w-full space-y-8 relative z-10">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-stone-900">
@@ -77,7 +77,8 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="flex justify-end">
+          {/* sso is not yet implemented */}
+          {/* <div className="flex justify-end">
             <button className="text-sm text-blue-600 hover:text-blue-500 underline transition-colors">
               Forgot your password?
             </button>
@@ -123,7 +124,7 @@ export default function LoginPage() {
               </svg>
               Sign in with GitHub
             </button>
-          </div>
+          </div> */}
 
           <div className="text-center mt-6">
             <p className="text-sm text-stone-600">
