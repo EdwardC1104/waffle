@@ -1,4 +1,5 @@
 using api.Data;
+using api.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
 namespace api.Features.User.GetUser;
@@ -13,13 +14,13 @@ public class GetUserHandler
         _dbContext = dbContext;
     }
     
-    public async Task<UserDto?> Handle(GetUserQuery query)
+    public async Task<UserDto> Handle(GetUserQuery query)
     {
         var user = await _userManager.FindByNameAsync(query.Username);
 
         if (user == null)
         {
-            return null;
+            throw new ApiException(404, $"User with username {query.Username} not found");
         }
 
         return await user.ToDtoAsync(_dbContext);

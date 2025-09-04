@@ -28,12 +28,6 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUser([FromBody] GetUserQuery query)
     {
         var response = await _getUserHandler.Handle(query);
-        
-        if (response == null)
-        {
-            return NotFound(new { message = $"User with username '{query.Username}' not found" });
-        }
-        
         return Ok(response);
     }
 
@@ -56,20 +50,9 @@ public class UserController : ControllerBase
         if (profilePicture != null && profilePicture.Length > 0)
         {
             profilePictureUrl = await _s3Service.UploadImageAsync(profilePicture);
-
-            if (profilePictureUrl == null)
-            {
-                return StatusCode(500, new { message = "Failed to upload profile picture" });
-            }
         }
 
         var result = await _updateUserHandler.Handle(userId, request, profilePictureUrl);
-        
-        if (result == null)
-        {
-            return BadRequest(new { message = "Failed to update user. Username may already be taken or user not found." });
-        }
-        
         return Ok(result);
     }
 
@@ -87,13 +70,7 @@ public class UserController : ControllerBase
             return Unauthorized(new { message = "Not logged in" });
         }
 
-        var success = await _deleteUserHandler.Handle(userId);
-        
-        if (success)
-        {
-            return Ok(new { message = "User account deleted successfully" });
-        }
-        
-        return BadRequest(new { message = "Failed to delete user account" });
+        await _deleteUserHandler.Handle(userId);
+        return Ok(new { message = "User account deleted successfully" });
     }
 }

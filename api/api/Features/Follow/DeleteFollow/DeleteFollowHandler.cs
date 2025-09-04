@@ -1,4 +1,5 @@
 using api.Data;
+using api.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Features.Follow.DeleteFollow;
@@ -12,7 +13,7 @@ public class DeleteFollowHandler
         _context = context;
     }
 
-    public async Task<bool> Handle(string userId, DeleteFollowCommand command)
+    public async Task Handle(string userId, DeleteFollowCommand command)
     { 
         // Find the followee user by username
         var followeeUser = await _context.Users
@@ -20,7 +21,7 @@ public class DeleteFollowHandler
         
         if (followeeUser == null)
         {
-            return false; // Followee user not found
+            throw new ApiException(404, $"User with username {command.Following} not found");
         }
 
         // Find the existing follow relationship
@@ -29,13 +30,11 @@ public class DeleteFollowHandler
         
         if (existingFollow == null)
         {
-            return false; // Follow relationship doesn't exist
+            throw new ApiException(409, $"Not following user {command.Following}");
         }
 
         // Remove the follow relationship
         _context.Follows.Remove(existingFollow);
         await _context.SaveChangesAsync();
-
-        return true;
     }
 }

@@ -1,4 +1,5 @@
 using api.Data;
+using api.Exceptions;
 using api.Features.Post;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +14,7 @@ public class DeleteLikeHandler
         _dbContext = dbContext;
     }
 
-    public async Task<PostDto?> Handle(string userId, DeleteLikeCommand command)
+    public async Task<PostDto> Handle(string userId, DeleteLikeCommand command)
     {
         var post = await _dbContext.Posts
             .Include(p => p.User)
@@ -21,7 +22,7 @@ public class DeleteLikeHandler
         
         if (post == null)
         {
-            return null;
+            throw new ApiException(404, $"Post with id {command.PostId} not found");
         }
         
         var existingLike = await _dbContext.Likes
@@ -29,7 +30,7 @@ public class DeleteLikeHandler
         
         if (existingLike == null)
         {
-            return null; // Not liked
+            throw new ApiException(409, $"Don't already like post with id {command.PostId}");
         }
         
         _dbContext.Likes.Remove(existingLike);

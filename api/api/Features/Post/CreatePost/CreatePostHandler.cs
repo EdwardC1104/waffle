@@ -1,4 +1,5 @@
 using api.Data;
+using api.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using api.Features.User;
 
@@ -13,7 +14,7 @@ public class CreatePostHandler
         _dbContext = dbContext;
     }
 
-    public async Task<PostDto?> Handle(string userId, CreatePostCommand request, string? coverImageUrl = null)
+    public async Task<PostDto> Handle(string userId, CreatePostCommand request, string? coverImageUrl = null)
     {
         var newPost = new api.Models.Post
         {
@@ -32,8 +33,11 @@ public class CreatePostHandler
         var postWithUser = await _dbContext.Posts
             .Include(p => p.User)
             .FirstOrDefaultAsync(p => p.Id == newPost.Id);
-        
-        if (postWithUser == null) return null;
+
+        if (postWithUser == null)
+        {
+            throw new ApiException(500, "Failed to create post");
+        };
         
         // Return the created post with author information
         return await postWithUser.ToDtoAsync(userId, _dbContext);

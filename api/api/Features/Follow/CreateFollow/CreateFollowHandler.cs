@@ -1,4 +1,5 @@
 using api.Data;
+using api.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Features.Follow.CreateFollow;
@@ -12,14 +13,14 @@ public class CreateFollowHandler
         _context = context;
     }
 
-    public async Task<bool> Handle(string userId, CreateFollowQuery query)
+    public async Task Handle(string userId, CreateFollowCommand command)
     {
         var followeeUser = await _context.Users
-            .FirstOrDefaultAsync(u => u.UserName == query.Following);
+            .FirstOrDefaultAsync(u => u.UserName == command.Following);
         
         if (followeeUser == null)
         {
-            return false; // Followee user not found
+            throw new ApiException(404, $"User with username {command.Following} not found");
         }
 
         // Check if the follow relationship already exists
@@ -28,7 +29,7 @@ public class CreateFollowHandler
         
         if (existingFollow != null)
         {
-            return false; // Already following
+            throw new ApiException(409, $"Already following user {command.Following}");
         }
 
         // Create new follow relationship
@@ -41,7 +42,5 @@ public class CreateFollowHandler
 
         _context.Follows.Add(follow);
         await _context.SaveChangesAsync();
-
-        return true;
     }
 }
