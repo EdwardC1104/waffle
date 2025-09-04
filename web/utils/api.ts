@@ -2,12 +2,12 @@ import { Post, SearchResult, User } from "../types";
 
 // Post method overloaded to make body optional
 async function post<T>(endpoint: string): Promise<T>;
-async function post<T>(endpoint: string, body: FormData): Promise<T>;
+async function post<T>(endpoint: string, body: typeof FormData): Promise<T>;
 async function post<T, U>(endpoint: string, body: U): Promise<T>;
 async function post<T, U>(endpoint: string, body?: U): Promise<T> {
   const response = await fetch(`${endpoint}`, {
     method: "POST",
-    headers: {
+    headers: body instanceof FormData ? {} : {
       "Content-Type": "application/json",
     },
     credentials: "include",
@@ -124,7 +124,7 @@ export async function updateUserProfile(
     formData.append("profilePicture", profilePicture);
   }
 
-  return await post<User>("/api/user/update", formData as FormData);
+  return await post<User>("/api/user/update", formData);
 }
 
 export async function deleteUser(): Promise<void> {
@@ -145,7 +145,7 @@ export async function updatePost(
     formData.append("coverImage", coverImage);
   }
 
-  return await post<Post>(`/api/post/update`, formData as FormData);
+  return await post<Post>(`/api/post/update`, formData);
 }
 
 export async function deletePost(postId: number): Promise<void> {
@@ -165,7 +165,7 @@ export async function createNewPost(
     formData.append("coverImage", coverImage);
   }
 
-  return await post<Post>("/api/post/create", formData as FormData);
+  return await post<Post>("/api/post/create", formData);
 }
 
 // Auth functions with custom error handling

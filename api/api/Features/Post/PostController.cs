@@ -75,28 +75,10 @@ public class PostController : ControllerBase
 
         if (coverImage != null && coverImage.Length > 0)
         {
-            // Validate file type (only images allowed for cover images)
-            var allowedImageTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
-            if (!allowedImageTypes.Contains(coverImage.ContentType))
+            coverImageUrl = await _s3Service.UploadImageAsync(coverImage);
+            if (coverImageUrl == null)
             {
-                return BadRequest(new { message = "Cover image must be a valid image file (JPEG, PNG, GIF, or WebP)" });
-            }
-        
-            // Validate file size (max 5MB for cover images)
-            const int maxFileSize = 5 * 1024 * 1024; // 5MB
-            if (coverImage.Length > maxFileSize)
-            {
-                return BadRequest(new { message = "Cover image size exceeds the maximum allowed size of 5MB" });
-            }
-        
-            try
-            {
-                using var stream = coverImage.OpenReadStream();
-                coverImageUrl = await _s3Service.UploadFileAsync(stream, coverImage.FileName, coverImage.ContentType);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Failed to upload cover image", error = ex.Message });
+                return StatusCode(500, new { message = "Failed to upload cover image" });
             }
         }
 
@@ -128,28 +110,10 @@ public class PostController : ControllerBase
 
         if (coverImage != null && coverImage.Length > 0)
         {
-            // Validate file type (only images allowed for cover images)
-            var allowedImageTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
-            if (!allowedImageTypes.Contains(coverImage.ContentType))
+            coverImageUrl = await _s3Service.UploadImageAsync(coverImage);
+            if (coverImageUrl == null)
             {
-                return BadRequest(new { message = "Cover image must be a valid image file (JPEG, PNG, GIF, or WebP)" });
-            }
-        
-            // Validate file size (max 5MB for cover images)
-            const int maxFileSize = 5 * 1024 * 1024; // 5MB
-            if (coverImage.Length > maxFileSize)
-            {
-                return BadRequest(new { message = "Cover image size exceeds the maximum allowed size of 5MB" });
-            }
-        
-            try
-            {
-                using var stream = coverImage.OpenReadStream();
-                coverImageUrl = await _s3Service.UploadFileAsync(stream, coverImage.FileName, coverImage.ContentType);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Failed to upload cover image", error = ex.Message });
+                return StatusCode(500, new { message = "Failed to upload cover image" });
             }
         }
 

@@ -55,28 +55,11 @@ public class UserController : ControllerBase
 
         if (profilePicture != null && profilePicture.Length > 0)
         {
-            // Validate file type (only images allowed for cover images)
-            var allowedImageTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
-            if (!allowedImageTypes.Contains(profilePicture.ContentType))
+            profilePictureUrl = await _s3Service.UploadImageAsync(profilePicture);
+
+            if (profilePictureUrl == null)
             {
-                return BadRequest(new { message = "Profile picture must be a valid image file (JPEG, PNG, GIF, or WebP)" });
-            }
-        
-            // Validate file size (max 5MB for cover images)
-            const int maxFileSize = 5 * 1024 * 1024; // 5MB
-            if (profilePicture.Length > maxFileSize)
-            {
-                return BadRequest(new { message = "Profile picture size exceeds the maximum allowed size of 5MB" });
-            }
-        
-            try
-            {
-                using var stream = profilePicture.OpenReadStream();
-                profilePictureUrl = await _s3Service.UploadFileAsync(stream, profilePicture.FileName, profilePicture.ContentType);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Failed to upload profile picture", error = ex.Message });
+                return StatusCode(500, new { message = "Failed to upload profile picture" });
             }
         }
 

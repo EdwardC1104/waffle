@@ -16,6 +16,33 @@ public class S3Service
         _bucketName = _configuration["AWS_S3_BUCKET_NAME"] ?? throw new InvalidOperationException("AWS_S3_BUCKET_NAME is not configured");
     }
 
+    public async Task<string?> UploadImageAsync(IFormFile file)
+    {
+        // Validate file type (only images allowed for cover images)
+        var allowedImageTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
+        if (!allowedImageTypes.Contains(file.ContentType))
+        {
+            return null;
+        }
+        
+        const int maxFileSize = 10 * 1024 * 1024; // 10MB
+        if (file.Length > maxFileSize)
+        {
+            return null;
+        }
+        
+        try
+        {
+            using var stream = file.OpenReadStream();
+            var fileUrl = await UploadFileAsync(stream, file.FileName, file.ContentType);
+            return fileUrl;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public async Task<string> UploadFileAsync(Stream fileStream, string fileName, string contentType)
     {
         try
