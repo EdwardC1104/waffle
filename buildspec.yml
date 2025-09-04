@@ -17,7 +17,7 @@ phases:
       - echo "Publish started on `date`"
       - dotnet publish api/api/api.csproj --configuration Release --output ./publish_output
       - echo "Copying Elastic Beanstalk configuration..."
-      - cp -r .ebextensions ./publish_output
+      - cp -r .platform ./publish_output
 
 artifacts:
   files:
