@@ -85,7 +85,7 @@ export default function PostForm({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const validation = validateImage(file, 10); // 5MB limit
+    const validation = validateImage(file, 10); // 10MB limit
     if (!validation.isValid) {
       onErrorChange(validation.error || "Invalid image file");
       return;
