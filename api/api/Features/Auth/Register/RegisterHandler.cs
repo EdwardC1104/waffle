@@ -1,4 +1,5 @@
 using api.Data;
+using api.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using api.Features.User;
 
@@ -17,7 +18,7 @@ public class RegisterHandler
         _dbContext = dbContext;
     }
 
-    public async Task<(UserDto? response, IEnumerable<IdentityError>? errors)> Handle(RegisterCommand request)
+    public async Task<UserDto> Handle(RegisterCommand request)
     {
         var newUser = new api.Models.User
         {
@@ -31,12 +32,12 @@ public class RegisterHandler
         
         if (!result.Succeeded)
         {
-            return (null, result.Errors);
+            throw new ApiException(400, string.Join(" ", result.Errors.Select(e => e.Description)));
         }
 
         // Automatically sign in the user after successful registration
         await _signInManager.SignInAsync(newUser, isPersistent: false);
 
-        return (await newUser.ToDtoAsync(_dbContext), null);
+        return await newUser.ToDtoAsync(_dbContext);
     }
 }

@@ -24,7 +24,7 @@ public class LikeController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> Follow([FromBody] CreateLikeQuery query)
+    public async Task<IActionResult> Follow([FromBody] CreateLikeCommand command)
     {
         if (User.Identity is not { IsAuthenticated: true, Name: not null })
         {
@@ -37,14 +37,8 @@ public class LikeController : ControllerBase
             return Unauthorized(new { message = "Not logged in" });
         }
 
-        var result = await _createLikeHandler.Handle(userId, query);
-        
-        if (result != null)
-        {
-            return Ok(result);
-        }
-
-        return BadRequest(new { message = "Unable to like post. Post may not exist or you may already like the post." });
+        var result = await _createLikeHandler.Handle(userId, command);
+        return Ok(result);
     }
 
     [HttpPost("delete")]
@@ -62,12 +56,6 @@ public class LikeController : ControllerBase
         }
 
         var result = await _deleteLikeHandler.Handle(userId, command);
-        
-        if (result != null)
-        {
-            return Ok(result);
-        }
-
-        return BadRequest(new { message = "Unable to unlike post. Post may not exist or you may not like the post." });
+        return Ok(result);
     }
 }

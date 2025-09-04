@@ -1,4 +1,5 @@
 using api.Data;
+using api.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using api.Features.User;
 
@@ -17,19 +18,19 @@ public class LoginHandler
         _dbContext = dbContext;
     }
 
-    public async Task<UserDto?> Handle(LoginCommand request)
+    public async Task<UserDto> Handle(LoginCommand request)
     {
         var result = await _signInManager.PasswordSignInAsync(request.Username, request.Password, false, false);
         
         if (!result.Succeeded)
         {
-            return null;
+            throw new ApiException(401, "Incorrect username or password");
         }
 
         var user = await _userManager.FindByNameAsync(request.Username);
         if (user == null)
         {
-            return null;
+            throw new ApiException(500, "Couldn't find user");
         }
 
         return await user.ToDtoAsync(_dbContext);

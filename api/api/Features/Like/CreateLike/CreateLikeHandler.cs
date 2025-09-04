@@ -1,4 +1,5 @@
 using api.Data;
+using api.Exceptions;
 using api.Features.Post;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,15 +14,15 @@ public class CreateLikeHandler
         _dbContext = dbContext;
     }
 
-    public async Task<PostDto?> Handle(string userId, CreateLikeQuery query)
+    public async Task<PostDto> Handle(string userId, CreateLikeCommand command)
     {
         var post = await _dbContext.Posts
             .Include(p => p.User)
-            .FirstOrDefaultAsync(p => p.Id == query.PostId);
+            .FirstOrDefaultAsync(p => p.Id == command.PostId);
         
         if (post == null)
         {
-            return null;
+            throw new ApiException(404, $"Post with id {command.PostId} not found");
         }
         
         var existingLike = await _dbContext.Likes
@@ -29,7 +30,7 @@ public class CreateLikeHandler
         
         if (existingLike != null)
         {
-            return null; // Already liked
+            throw new ApiException(409, $"Already liked post with id {command.PostId}");
         }
         
         var like = new api.Models.Like

@@ -31,29 +31,13 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginCommand request)
     {
         var response = await _loginHandlerHandler.Handle(request);
-        
-        if (response == null)
-        {
-            return Unauthorized(new { message =  "Invalid username or password" });
-        }
-
         return Ok(response);
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterCommand request)
     {
-        var (response, errors) = await _registerHandlerHandler.Handle(request);
-        
-        if (response == null)
-        {
-            var errorMessage = errors != null 
-                ? string.Join(" ", errors.Select(e => e.Description)) 
-                : "Registration failed";
-
-            return BadRequest(new { message = errorMessage });
-        }
-
+        var response = await _registerHandlerHandler.Handle(request);
         return Created($"/api/user/{response.Username}", response);
     }
 
@@ -65,10 +49,6 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message =  "Not logged in" });
         }
         var response = await _getCurrentUserHandlerHandler.Handle(User);
-        if (response == null)
-        {
-            return NotFound(new { message = "User not found" });
-        }
         return Ok(response);
     }
 

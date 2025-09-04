@@ -27,6 +27,7 @@ using api.Features.User.GetUser;
 using api.Features.User.UpdateUser;
 using api.Models;
 using api.Services;
+using api.Middleware;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
@@ -131,6 +132,7 @@ builder.Services.AddScoped<SearchUsersAndPostsHandler>();
 
 var app = builder.Build();
 
+app.UseMiddleware<GlobalErrorHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

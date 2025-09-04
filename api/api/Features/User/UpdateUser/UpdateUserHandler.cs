@@ -1,4 +1,5 @@
 using api.Data;
+using api.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
 namespace api.Features.User.UpdateUser;
@@ -14,13 +15,13 @@ public class UpdateUserHandler
         _dbContext = dbContext;
     }
 
-    public async Task<UserDto?> Handle(string userId, UpdateUserCommand request, string? profilePictureUrl = null)
+    public async Task<UserDto> Handle(string userId, UpdateUserCommand request, string? profilePictureUrl = null)
     {
         var user = await _userManager.FindByIdAsync(userId);
         
         if (user == null)
         {
-            return null;
+            throw new ApiException(404, $"User with username {request.Username} not found");
         }
 
         // Update name if provided
@@ -35,7 +36,7 @@ public class UpdateUserHandler
             var existingUser = await _userManager.FindByNameAsync(request.Username);
             if (existingUser != null)
             {
-                return null; // Username already exists
+                throw new ApiException(409, $"User with username {request.Username} already exists");
             }
             user.UserName = request.Username;
         }
@@ -54,7 +55,7 @@ public class UpdateUserHandler
         
         if (!result.Succeeded)
         {
-            return null;
+            throw new ApiException(500, "Failed to update user");
         }
 
         return await user.ToDtoAsync(_dbContext);

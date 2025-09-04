@@ -1,5 +1,6 @@
 using Amazon.S3;
 using Amazon.S3.Model;
+using api.Exceptions;
 
 namespace api.Services;
 
@@ -16,19 +17,19 @@ public class S3Service
         _bucketName = _configuration["AWS_S3_BUCKET_NAME"] ?? throw new InvalidOperationException("AWS_S3_BUCKET_NAME is not configured");
     }
 
-    public async Task<string?> UploadImageAsync(IFormFile file)
+    public async Task<string> UploadImageAsync(IFormFile file)
     {
         // Validate file type (only images allowed for cover images)
         var allowedImageTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
         if (!allowedImageTypes.Contains(file.ContentType))
         {
-            return null;
+            throw new ApiException(415, "Invalid file type.");
         }
         
         const int maxFileSize = 10 * 1024 * 1024; // 10MB
         if (file.Length > maxFileSize)
         {
-            return null;
+            throw new ApiException(413, "File too large.");;
         }
         
         try
@@ -39,7 +40,7 @@ public class S3Service
         }
         catch
         {
-            return null;
+            throw new ApiException(500, "Failed to upload image.");
         }
     }
 

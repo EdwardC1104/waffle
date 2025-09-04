@@ -63,7 +63,7 @@ public class FollowController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> Follow([FromBody] CreateFollowQuery query)
+    public async Task<IActionResult> Follow([FromBody] CreateFollowCommand command)
     {
         if (User.Identity is not { IsAuthenticated: true, Name: not null })
         {
@@ -76,14 +76,8 @@ public class FollowController : ControllerBase
             return Unauthorized(new { message = "Not logged in" });
         }
 
-        var success = await _createFollowHandler.Handle(userId, query);
-        
-        if (success)
-        {
-            return Ok(new { message = "Successfully followed user" });
-        }
-
-        return BadRequest(new { message = "Unable to follow user. User may not exist or you may already be following them." });
+        await _createFollowHandler.Handle(userId, command);
+        return Ok(new { message = "Successfully followed user" });
     }
 
     [HttpPost("delete")]
@@ -100,13 +94,7 @@ public class FollowController : ControllerBase
             return Unauthorized(new { message = "Not logged in" });
         }
 
-        var success = await _deleteFollowHandler.Handle(userId, command);
-        
-        if (success)
-        {
-            return Ok(new { message = "Successfully unfollowed user" });
-        }
-
-        return BadRequest(new { message = "Unable to unfollow user. User may not exist or you may not be following them." });
+        await _deleteFollowHandler.Handle(userId, command);
+        return Ok(new { message = "Successfully unfollowed user" });
     }
 }

@@ -1,4 +1,5 @@
 using api.Data;
+using api.Exceptions;
 using api.Features.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,14 +14,17 @@ public class GetPostHandler
         _dbContext = dbContext;
     }
     
-    public async Task<PostDto?> Handle(GetPostQuery query)
+    public async Task<PostDto> Handle(GetPostQuery query)
     {
         // Fetch the post entity including the user
         var postEntity = await _dbContext.Posts
             .Include(p => p.User)
             .FirstOrDefaultAsync(p => p.Id == query.PostId);
 
-        if (postEntity == null) return null;
+        if (postEntity == null)
+        {
+            throw new ApiException(404, $"Post with id {query.PostId} not found");
+        }
 
         // Map to DTO asynchronously
         var postDto = await postEntity.ToDtoAsync(_dbContext);
@@ -28,14 +32,17 @@ public class GetPostHandler
         return postDto;
     }
     
-    public async Task<PostDto?> Handle(string userId, GetPostQuery query)
+    public async Task<PostDto> Handle(string userId, GetPostQuery query)
     {
         // Fetch the post entity including the user
         var postEntity = await _dbContext.Posts
             .Include(p => p.User)
             .FirstOrDefaultAsync(p => p.Id == query.PostId);
 
-        if (postEntity == null) return null;
+        if (postEntity == null)
+        {
+            throw new ApiException(404, $"Post with id {query.PostId} not found");
+        }
 
         // Map to DTO asynchronously
         var postDto = await postEntity.ToDtoAsync(userId, _dbContext);

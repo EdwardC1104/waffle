@@ -1,4 +1,5 @@
 using api.Data;
+using api.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Features.Post.UpdatePost;
@@ -12,7 +13,7 @@ public class UpdatePostHandler
         _dbContext = dbContext;
     }
 
-    public async Task<PostDto?> Handle(string userId, UpdatePostCommand request, string? coverImageUrl = null)
+    public async Task<PostDto> Handle(string userId, UpdatePostCommand request, string? coverImageUrl = null)
     {
         // Find the post and verify ownership
         var post = await _dbContext.Posts
@@ -21,7 +22,7 @@ public class UpdatePostHandler
         
         if (post == null)
         {
-            return null; // Post not found or user doesn't own it
+            throw new ApiException(404, $"Post with id {request.PostId} not found");
         }
         
         // Update only the fields that are provided

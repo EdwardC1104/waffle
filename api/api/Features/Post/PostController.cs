@@ -76,19 +76,9 @@ public class PostController : ControllerBase
         if (coverImage != null && coverImage.Length > 0)
         {
             coverImageUrl = await _s3Service.UploadImageAsync(coverImage);
-            if (coverImageUrl == null)
-            {
-                return StatusCode(500, new { message = "Failed to upload cover image" });
-            }
         }
 
         var response = await _createPost.Handle(userId, command, coverImageUrl);
-        
-        if (response == null)
-        {
-            return NotFound(new { message = $"User with id '{userId}' not found" });
-        }
-        
         return Created($"/api/post/get", response);
     }
 
@@ -111,19 +101,9 @@ public class PostController : ControllerBase
         if (coverImage != null && coverImage.Length > 0)
         {
             coverImageUrl = await _s3Service.UploadImageAsync(coverImage);
-            if (coverImageUrl == null)
-            {
-                return StatusCode(500, new { message = "Failed to upload cover image" });
-            }
         }
 
         var response = await _updatePost.Handle(userId, command, coverImageUrl);
-        
-        if (response == null)
-        {
-            return NotFound(new { message = "Post not found or you don't have permission to edit it" });
-        }
-        
         return Ok(response);
     }
 
@@ -145,11 +125,6 @@ public class PostController : ControllerBase
             response = await _getPostHandler.Handle(query);
         }
         
-        if (response == null)
-        {
-            return NotFound(new { message = $"Post with ID {query.PostId} not found" });
-        }
-        
         return Ok(response);
     }
 
@@ -167,14 +142,8 @@ public class PostController : ControllerBase
             return Unauthorized(new { message = "Not logged in" });
         }
 
-        var success = await _deletePost.Handle(userId, request);
-        
-        if (success)
-        {
-            return Ok(new { message = "Post deleted successfully" });
-        }
-        
-        return NotFound(new { message = "Post not found or you don't have permission to delete it" });
+        await _deletePost.Handle(userId, request);
+        return Ok(new { message = "Post deleted successfully" });
     }
 
     [HttpPost("count/today")]

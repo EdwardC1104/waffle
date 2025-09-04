@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using api.Data;
+using api.Exceptions;
 using api.Features.User;
 
 namespace api.Features.Auth.GetCurrentUser;
@@ -16,13 +17,19 @@ public class GetCurrentUserHandler
         _dbContext = dbContext;
     }
 
-    public async Task<UserDto?> Handle(ClaimsPrincipal user)
+    public async Task<UserDto> Handle(ClaimsPrincipal user)
     {
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId)) return null;
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new ApiException(401, "Unauthorized");
+        };
     
         var appUser = await _userManager.FindByIdAsync(userId);
-        if (appUser == null) return null;
+        if (appUser == null)
+        {
+            throw new ApiException(401, "Unauthorized");
+        };
     
         return await appUser.ToDtoAsync(_dbContext);
     }
