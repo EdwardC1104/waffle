@@ -17,7 +17,7 @@ export default function FollowButton({
   size = "sm",
 }: FollowButtonProps) {
   const router = useRouter();
-  const { user: currentUser, refetchUser } = useAuth();
+  const { user: currentUser } = useAuth();
   const [isFollowing, setIsFollowing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 

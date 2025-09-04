@@ -2,7 +2,7 @@ import { Post, SearchResult, User } from "../types";
 
 // Post method overloaded to make body optional
 async function post<T>(endpoint: string): Promise<T>;
-async function post<T>(endpoint: string, body: typeof FormData): Promise<T>;
+async function post<T>(endpoint: string, body: FormData): Promise<T>;
 async function post<T, U>(endpoint: string, body: U): Promise<T>;
 async function post<T, U>(endpoint: string, body?: U): Promise<T> {
   const response = await fetch(`${endpoint}`, {
