@@ -66,7 +66,7 @@ function EditPostContent({
   const handleUpdatePost = async (
     title: string,
     content: string,
-    imageUrl?: string
+    coverImage?: File
   ) => {
     if (!post) return;
 
@@ -74,7 +74,7 @@ function EditPostContent({
     setIsSubmitting(true);
 
     try {
-      await updatePost(post.id, title, content, imageUrl);
+      await updatePost(post.id, title, content, coverImage);
       router.replace(`/post/${post.id}`);
     } finally {
       setIsSubmitting(false);

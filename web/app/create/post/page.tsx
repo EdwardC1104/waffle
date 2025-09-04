@@ -22,13 +22,13 @@ function CreatePostForm({ user }: { user: { username: string } }) {
   const handleFormSubmit = async (
     title: string,
     content: string,
-    imageUrl?: string
+    coverImage?: File
   ) => {
     setError(null);
     setIsSubmitting(true);
 
     try {
-      await createNewPost(user.username, title, content, imageUrl);
+      await createNewPost(user.username, title, content, coverImage);
       router.push(`/profile/${user.username}`);
     } finally {
       setIsSubmitting(false);

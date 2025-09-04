@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  convertToBase64,
   getSupportedImageTypes,
   validateImage,
 } from "@/utils/imageUtils";
@@ -18,7 +17,7 @@ interface PostFormProps {
   onSubmit: (
     title: string,
     content: string,
-    imageUrl?: string
+    coverImage?: File
   ) => Promise<void>;
   submitButtonText: string;
   isSubmitting: boolean;
@@ -48,6 +47,7 @@ export default function PostForm({
 }: PostFormProps) {
   const [title, setTitle] = useState(initialTitle);
   const [content, setContent] = useState(initialContent);
+  const [coverImage, setCoverImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(
     initialImage || null
   );
@@ -85,24 +85,20 @@ export default function PostForm({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const validation = validateImage(file, 5); // 5MB limit
+    const validation = validateImage(file, 10); // 10MB limit
     if (!validation.isValid) {
       onErrorChange(validation.error || "Invalid image file");
       return;
     }
 
-    try {
-      const base64String = await convertToBase64(file);
-      setImagePreview(base64String);
-      onErrorChange(null);
-    } catch (err) {
-      console.error("Failed to process image:", err);
-      onErrorChange("Failed to process the selected image");
-    }
+    setCoverImage(file);
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const removeImage = () => {
     setImagePreview(null);
+    setCoverImage(null);
+    // Clear the file input
     const fileInput = document.getElementById(
       "image-upload"
     ) as HTMLInputElement;
@@ -114,7 +110,7 @@ export default function PostForm({
     onErrorChange(null);
 
     try {
-      await onSubmit(title, content, imagePreview || undefined);
+      await onSubmit(title, content, coverImage || undefined);
     } catch (err) {
       console.error("Failed to submit post:", err);
       onErrorChange(err instanceof Error ? err.message : "Failed to save post");

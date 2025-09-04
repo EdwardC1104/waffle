@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "ui-avatars.com",
       },
+      {
+        protocol: "https",
+        hostname: "waffle-images.s3.amazonaws.com",
+      }
     ],
   },
 };

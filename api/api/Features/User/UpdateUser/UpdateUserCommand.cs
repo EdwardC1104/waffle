@@ -8,6 +8,4 @@ public class UpdateUserCommand {
     
     [StringLength(100, ErrorMessage = "Username cannot exceed 100 characters")]
     public string? Username { get; set; }
-    
-    public string? ProfilePictureUrl { get; set; }
 }

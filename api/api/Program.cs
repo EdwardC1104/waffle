@@ -1,3 +1,4 @@
+using Amazon.S3;
 using api.Data;
 using api.Features.Auth.GetCurrentUser;
 using api.Features.Auth.GitHubLogin;
@@ -25,6 +26,7 @@ using api.Features.User.DeleteUser;
 using api.Features.User.GetUser;
 using api.Features.User.UpdateUser;
 using api.Models;
+using api.Services;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
@@ -33,6 +35,9 @@ using Microsoft.AspNetCore.Mvc;
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonS3>();
 
 builder.Services.AddAuthentication()
     .AddCookie() // You already have Identity cookies
@@ -89,6 +94,8 @@ builder.Services.ConfigureApplicationCookie(options =>
         return Task.CompletedTask;
     };
 });
+
+builder.Services.AddScoped<S3Service>();
 
 builder.Services.AddScoped<GetPostsHandler>();
 builder.Services.AddScoped<CreatePostHandler>();

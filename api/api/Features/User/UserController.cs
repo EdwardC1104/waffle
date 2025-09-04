@@ -2,6 +2,7 @@ using System.Security.Claims;
 using api.Features.User.DeleteUser;
 using api.Features.User.GetUser;
 using api.Features.User.UpdateUser;
+using api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.User;
@@ -13,12 +14,14 @@ public class UserController : ControllerBase
     private readonly GetUserHandler _getUserHandler;
     private readonly UpdateUserHandler _updateUserHandler;
     private readonly DeleteUserHandler _deleteUserHandler;
+    private readonly S3Service _s3Service;
 
-    public UserController(GetUserHandler getUserHandler, UpdateUserHandler updateUserHandler, DeleteUserHandler deleteUserHandler)
+    public UserController(GetUserHandler getUserHandler, UpdateUserHandler updateUserHandler, DeleteUserHandler deleteUserHandler, S3Service s3Service)
     {
         _getUserHandler = getUserHandler;
         _updateUserHandler = updateUserHandler;
         _deleteUserHandler = deleteUserHandler;
+        _s3Service = s3Service;
     }
 
     [HttpPost("get")]
@@ -35,7 +38,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("update")]
-    public async Task<IActionResult> UpdateUser([FromBody] UpdateUserCommand request)
+    public async Task<IActionResult> UpdateUser([FromForm] UpdateUserCommand request, [FromForm] IFormFile? profilePicture)
     {
         if (User.Identity is not { IsAuthenticated: true, Name: not null })
         {
@@ -47,8 +50,20 @@ public class UserController : ControllerBase
         {
             return Unauthorized(new { message = "Not logged in" });
         }
+        
+        string? profilePictureUrl = null;
 
-        var result = await _updateUserHandler.Handle(userId, request);
+        if (profilePicture != null && profilePicture.Length > 0)
+        {
+            profilePictureUrl = await _s3Service.UploadImageAsync(profilePicture);
+
+            if (profilePictureUrl == null)
+            {
+                return StatusCode(500, new { message = "Failed to upload profile picture" });
+            }
+        }
+
+        var result = await _updateUserHandler.Handle(userId, request, profilePictureUrl);
         
         if (result == null)
         {

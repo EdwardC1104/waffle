@@ -14,7 +14,7 @@ public class UpdateUserHandler
         _dbContext = dbContext;
     }
 
-    public async Task<UserDto?> Handle(string userId, UpdateUserCommand request)
+    public async Task<UserDto?> Handle(string userId, UpdateUserCommand request, string? profilePictureUrl = null)
     {
         var user = await _userManager.FindByIdAsync(userId);
         
@@ -41,9 +41,9 @@ public class UpdateUserHandler
         }
 
         // Update profile picture URL if provided
-        if (request.ProfilePictureUrl != null)
+        if (!string.IsNullOrEmpty(profilePictureUrl))
         {
-            user.ProfilePictureUrl = request.ProfilePictureUrl;
+            user.ProfilePictureUrl = profilePictureUrl;
         }
 
         // Update UpdatedAt on profile update

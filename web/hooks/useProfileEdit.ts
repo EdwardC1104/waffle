@@ -2,7 +2,6 @@
 
 import { User } from "@/types";
 import { deleteUser, updateUserProfile } from "@/utils/api";
-import { convertToBase64 } from "@/utils/imageUtils";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -15,8 +14,7 @@ interface UseProfileEditOptions {
 export interface ProfileEditFormData {
   name: string;
   username: string;
-  profilePicture: File | null;
-  profilePicturePreview: string;
+  profilePicture: File | undefined;
 }
 
 export default function useProfileEdit({
@@ -30,8 +28,7 @@ export default function useProfileEdit({
   const [formData, setFormData] = useState<ProfileEditFormData>({
     name: user.name || "",
     username: user.username || "",
-    profilePicture: null,
-    profilePicturePreview: user.profilePictureUrl || "",
+    profilePicture: undefined,
   });
 
   // UI state
@@ -47,11 +44,10 @@ export default function useProfileEdit({
   };
 
   // Handle profile picture change
-  const handleProfilePictureChange = (file: File, base64: string) => {
+  const handleProfilePictureChange = (file: File) => {
     setFormData((prev) => ({
       ...prev,
       profilePicture: file,
-      profilePicturePreview: base64,
     }));
     setError(null);
   };
@@ -63,7 +59,7 @@ export default function useProfileEdit({
   const hasChanges =
     formData.name !== user.name ||
     formData.username !== user.username ||
-    formData.profilePicture !== null;
+    formData.profilePicture !== undefined;
 
   // Submit handler
   const handleSubmit = async () => {
@@ -73,18 +69,11 @@ export default function useProfileEdit({
     setError(null);
 
     try {
-      let profilePictureUrl = user.profilePictureUrl;
-
-      // Convert profile picture to base64 if a new one was uploaded
-      if (formData.profilePicture) {
-        profilePictureUrl = await convertToBase64(formData.profilePicture);
-      }
-
       // Call the API to update user profile
       await updateUserProfile(
         formData.username,
         formData.name,
-        profilePictureUrl
+        formData.profilePicture
       );
 
       // Refetch user data to get updated info

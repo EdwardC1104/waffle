@@ -12,7 +12,7 @@ public class UpdatePostHandler
         _dbContext = dbContext;
     }
 
-    public async Task<PostDto?> Handle(string userId, UpdatePostCommand request)
+    public async Task<PostDto?> Handle(string userId, UpdatePostCommand request, string? coverImageUrl = null)
     {
         // Find the post and verify ownership
         var post = await _dbContext.Posts
@@ -30,17 +30,14 @@ public class UpdatePostHandler
             post.Title = request.Title;
         }
         
-        if (request.Content != null)
+        if (!string.IsNullOrEmpty(request.Content))
         {
             post.Content = request.Content;
             post.WordCount = post.Content.Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Length;
         }
         
-        if (request.CoverImageUrl != null)
-        {
-            post.CoverImageUrl = request.CoverImageUrl;
-        }
+        post.CoverImageUrl = coverImageUrl ?? "";
         
         // Update the modification timestamp
         post.UpdatedAt = DateTime.UtcNow;

@@ -1,13 +1,13 @@
 "use client";
 
 import { CheckIcon, ImageIcon } from "@/components/Icons";
-import { convertToBase64, validateImage } from "@/utils/imageUtils";
+import { validateImage } from "@/utils/imageUtils";
 import Image from "next/image";
 import { useRef } from "react";
 
 interface ProfilePictureUploadProps {
   currentImageUrl: string;
-  onImageChange: (file: File, base64: string) => void;
+  onImageChange: (file: File) => void;
   onError: (error: string) => void;
   hasNewImage: boolean;
   disabled?: boolean;
@@ -35,14 +35,7 @@ export default function ProfilePictureUpload({
       return;
     }
 
-    try {
-      // Convert to base64
-      const base64 = await convertToBase64(file);
-      onImageChange(file, base64);
-    } catch (err) {
-      onError("Failed to process image");
-      console.error("Error converting image to base64:", err);
-    }
+    onImageChange(file);
   };
 
   const handleButtonClick = () => {
@@ -60,7 +53,7 @@ export default function ProfilePictureUpload({
       <div className="flex items-center gap-6">
         <div className="relative">
           <Image
-            src={currentImageUrl}
+            src={currentImageUrl || "/Chicken.jpeg"}
             alt="Profile picture"
             width={80}
             height={80}

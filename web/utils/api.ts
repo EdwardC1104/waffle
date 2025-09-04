@@ -2,15 +2,16 @@ import { Post, SearchResult, User } from "../types";
 
 // Post method overloaded to make body optional
 async function post<T>(endpoint: string): Promise<T>;
+async function post<T>(endpoint: string, body: FormData): Promise<T>;
 async function post<T, U>(endpoint: string, body: U): Promise<T>;
 async function post<T, U>(endpoint: string, body?: U): Promise<T> {
   const response = await fetch(`${endpoint}`, {
     method: "POST",
-    headers: {
+    headers: body instanceof FormData ? {} : {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    ...(body !== undefined && { body: JSON.stringify(body) }),
+    ...(body !== undefined && { body: body instanceof FormData ? body : JSON.stringify(body) }),
   });
 
   if (!response.ok) {
@@ -114,16 +115,16 @@ export async function search(query: string): Promise<SearchResult[]> {
 export async function updateUserProfile(
   username: string,
   name: string,
-  profilePictureUrl: string
+  profilePicture: File | undefined
 ): Promise<User> {
-  return await post<
-    User,
-    { username: string; name: string; profilePictureUrl: string }
-  >(`/api/user/update`, {
-    username,
-    name,
-    profilePictureUrl,
-  });
+  const formData = new FormData();
+  formData.append("username", username);
+  formData.append("name", name);
+  if (profilePicture) {
+    formData.append("profilePicture", profilePicture);
+  }
+
+  return await post<User>("/api/user/update", formData);
 }
 
 export async function deleteUser(): Promise<void> {
@@ -134,17 +135,17 @@ export async function updatePost(
   postId: number,
   title: string,
   content: string,
-  coverImageUrl?: string
+  coverImage: File | undefined
 ): Promise<Post> {
-  return await post<
-    Post,
-    { postId: number; title: string; content: string; coverImageUrl?: string }
-  >(`/api/post/update`, {
-    postId,
-    title,
-    content,
-    ...(coverImageUrl && { coverImageUrl }),
-  });
+  const formData = new FormData();
+  formData.append("postId", postId.toString());
+  formData.append("title", title);
+  formData.append("content", content);
+  if (coverImage) {
+    formData.append("coverImage", coverImage);
+  }
+
+  return await post<Post>(`/api/post/update`, formData);
 }
 
 export async function deletePost(postId: number): Promise<void> {
@@ -155,17 +156,16 @@ export async function createNewPost(
   username: string,
   title: string,
   content: string,
-  coverImageUrl?: string
+  coverImage: File | undefined
 ): Promise<Post> {
-  return await post<
-    Post,
-    { username: string; title: string; content: string; coverImageUrl?: string }
-  >(`/api/post/create`, {
-    username,
-    title,
-    content,
-    ...(coverImageUrl && { coverImageUrl }),
-  });
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("content", content);
+  if (coverImage) {
+    formData.append("coverImage", coverImage);
+  }
+
+  return await post<Post>("/api/post/create", formData);
 }
 
 // Auth functions with custom error handling

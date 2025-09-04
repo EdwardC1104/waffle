@@ -8,18 +8,6 @@ export interface ImageValidationResult {
 }
 
 /**
- * Convert a File to base64 string
- */
-export const convertToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-    reader.readAsDataURL(file);
-  });
-};
-
-/**
  * Validate image file type and size
  */
 export const validateImage = (
