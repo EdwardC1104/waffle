@@ -35,7 +35,7 @@ export default function UserProfile({
   }[size];
 
   const userSectionClasses = {
-    sm: "flex items-center gap-2.5 min-w-0 flex-1",
+    sm: "flex items-center gap-2.5  flex-1",
     md: "flex justify-between items-center",
     lg: "flex flex-col gap-4",
   }[size];
@@ -117,7 +117,7 @@ export default function UserProfile({
       <div className={userSectionClasses}>
         {size === "lg" ? (
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 w-full">
-            <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="flex items-center gap-3  flex-1">
               <Image
                 src={
                   !user.profilePictureUrl
@@ -129,7 +129,7 @@ export default function UserProfile({
                 height={avatarSize}
                 className={`${avatarClasses} rounded-full object-cover`}
               />
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 ">
                 <p className={`text-stone-900 ${nameClasses}`}>{user.name}</p>
                 <p className={`text-zinc-600 ${usernameClasses}`}>
                   @{user.username}
@@ -156,11 +156,8 @@ export default function UserProfile({
         ) : (
           <>
             {size === "sm" ? (
-              <Link
-                href={`/profile/${user.username}`}
-                className="min-w-0 flex-1"
-              >
-                <button className="flex items-center gap-3 text-left cursor-pointer min-w-0 w-full">
+              <Link href={`/profile/${user.username}`} className=" flex-1">
+                <button className="flex items-center gap-3 text-left cursor-pointer  w-full">
                   <Image
                     src={
                       !user.profilePictureUrl
@@ -172,7 +169,7 @@ export default function UserProfile({
                     height={avatarSize}
                     className={`${avatarClasses} rounded-full object-cover flex-shrink-0`}
                   />
-                  <div className="min-w-0 flex-1">
+                  <div className=" flex-1">
                     <p className={`text-stone-900 ${nameClasses}`}>
                       {user.name}
                     </p>
