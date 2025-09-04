@@ -1,12 +1,13 @@
 import useAuth from "@/hooks/useAuth";
 import formatNumber from "@/utils/formatNumber";
 import Link from "next/dist/client/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { User } from "../types";
 import DropDown from "./DropDown";
 import FollowButton from "./FollowButton";
 import { EditIcon, LogoutIcon, SavedPostsIcon } from "./Icons";
+import AvatarImage from "./UserProfile/AvatarImage";
+import UserInfo from "./UserProfile/UserInfo";
 
 interface UserProfileProps {
   user: User;
@@ -24,10 +25,8 @@ export default function UserProfile({
   const router = useRouter();
   const { user: currentUser, logout } = useAuth();
 
-  // Check for currentUser
   const isCurrentUser = currentUser?.id === user.id;
 
-  // Dynamic classes based on size
   const containerClass = {
     sm: "flex justify-between items-center",
     md: "py-6 rounded-2xl flex flex-col gap-6",
@@ -38,30 +37,6 @@ export default function UserProfile({
     sm: "flex items-center gap-2.5  flex-1",
     md: "flex justify-between items-center",
     lg: "flex flex-col gap-4",
-  }[size];
-
-  const avatarClass = {
-    sm: "w-9 h-9",
-    md: "w-12 h-12",
-    lg: "w-20 h-20",
-  }[size];
-
-  const avatarSize = {
-    sm: 36,
-    md: 48,
-    lg: 80,
-  }[size];
-
-  const nameClass = {
-    sm: "text-xs font-medium",
-    md: "text-xs font-medium",
-    lg: "text-2xl font-bold",
-  }[size];
-
-  const usernameClass = {
-    sm: "text-xs font-normal",
-    md: "text-xs font-normal",
-    lg: "text-lg font-normal",
   }[size];
 
   const statsNumberClass = {
@@ -84,7 +59,6 @@ export default function UserProfile({
 
   const showStats = size !== "sm";
 
-  // Dropdown items for current user
   const dropdownItems = isCurrentUser
     ? [
         {
@@ -117,98 +91,67 @@ export default function UserProfile({
       <div className={userSectionClass}>
         {size === "lg" ? (
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 w-full">
-            <div className="flex items-center gap-3  flex-1">
-              <Image
-                src={
-                  !user.profilePictureUrl
-                    ? "/Chicken.jpeg"
-                    : user.profilePictureUrl
-                }
-                alt={user.name}
-                width={avatarSize}
-                height={avatarSize}
-                className={`${avatarClass} rounded-full object-cover`}
+            <div className="flex items-center gap-3 flex-1">
+              <AvatarImage
+                profilePictureUrl={user.profilePictureUrl}
+                name={user.name}
+                size={size}
               />
-              <div className="flex-1 ">
-                <p className={`text-stone-900 ${nameClass}`}>{user.name}</p>
-                <p className={`text-zinc-600 ${usernameClass}`}>
-                  @{user.username}
-                </p>
-              </div>
-              {currentUser && (
+              <UserInfo
+                name={user.name}
+                username={user.username}
+                size={size}
+                className="flex-1"
+              />
+              {isCurrentUser && (
                 <div className="flex flex-shrink-0">
-                  <DropDown
-                    userId={user.id}
-                    showForCurrentUserOnly={true}
-                    iconSize={iconSize}
-                    items={dropdownItems}
-                  />
+                  <DropDown iconSize={iconSize} items={dropdownItems} />
                 </div>
               )}
             </div>
-
             {!isCurrentUser && (
               <div className="flex justify-center sm:justify-end">
                 <FollowButton username={user.username} size="lg" />
               </div>
             )}
           </div>
+        ) : size === "sm" ? (
+          <Link href={`/profile/${user.username}`} className="flex-1">
+            <button className="flex items-center gap-3 text-left cursor-pointer w-full">
+              <AvatarImage
+                profilePictureUrl={user.profilePictureUrl}
+                name={user.name}
+                size={size}
+                className="flex-shrink-0"
+              />
+              <UserInfo
+                name={user.name}
+                username={user.username}
+                size={size}
+                className="flex-1"
+              />
+            </button>
+          </Link>
         ) : (
           <>
-            {size === "sm" ? (
-              <Link href={`/profile/${user.username}`} className=" flex-1">
-                <button className="flex items-center gap-3 text-left cursor-pointer  w-full">
-                  <Image
-                    src={
-                      !user.profilePictureUrl
-                        ? "/Chicken.jpeg"
-                        : user.profilePictureUrl
-                    }
-                    alt={user.name}
-                    width={avatarSize}
-                    height={avatarSize}
-                    className={`${avatarClass} rounded-full object-cover flex-shrink-0`}
-                  />
-                  <div className=" flex-1">
-                    <p className={`text-stone-900 ${nameClass}`}>{user.name}</p>
-                    <p className={`text-zinc-600 ${usernameClass} truncate`}>
-                      @{user.username}
-                    </p>
-                  </div>
-                </button>
-              </Link>
-            ) : (
-              <>
-                <Link href={`/profile/${user.username}`}>
-                  <button className="flex items-center gap-3 text-left cursor-pointer">
-                    <Image
-                      src={
-                        !user.profilePictureUrl
-                          ? "/Chicken.jpeg"
-                          : user.profilePictureUrl
-                      }
-                      alt={user.name}
-                      width={avatarSize}
-                      height={avatarSize}
-                      className={`${avatarClass} rounded-full object-cover`}
-                    />
-                    <div>
-                      <p className={`text-stone-900 ${nameClass}`}>
-                        {user.name}
-                      </p>
-                      <p className={`text-zinc-600 ${usernameClass}`}>
-                        @{user.username}
-                      </p>
-                    </div>
-                  </button>
-                </Link>
-                <DropDown
-                  userId={user.id}
-                  showForCurrentUserOnly={true}
-                  iconSize={iconSize}
-                  items={dropdownItems}
+            <Link href={`/profile/${user.username}`}>
+              <button className="flex items-center gap-3 text-left cursor-pointer">
+                <AvatarImage
+                  profilePictureUrl={user.profilePictureUrl}
+                  name={user.name}
+                  size={size}
                 />
-              </>
+                <UserInfo
+                  name={user.name}
+                  username={user.username}
+                  size={size}
+                />
+              </button>
+            </Link>
+            {isCurrentUser ? (
+              <DropDown iconSize={iconSize} items={dropdownItems} />
+            ) : (
+              <FollowButton username={user.username} size="sm" />
             )}
           </>
         )}
@@ -226,6 +169,7 @@ export default function UserProfile({
               Words
             </div>
           </div>
+
           <div className="flex-1 flex flex-col items-center gap-1">
             <Link href={`/profile/${user.username}/followers`}>
               <button className="flex flex-col items-center gap-1 hover:bg-gray-50 rounded-lg p-2 transition-colors">
@@ -242,6 +186,7 @@ export default function UserProfile({
               </button>
             </Link>
           </div>
+
           <div className="flex-1 flex flex-col items-center gap-1">
             <Link href={`/profile/${user.username}/following`}>
               <button className="flex flex-col items-center gap-1 hover:bg-gray-50 rounded-lg p-2 transition-colors">
