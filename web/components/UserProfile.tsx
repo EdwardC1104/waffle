@@ -28,19 +28,19 @@ export default function UserProfile({
   const isCurrentUser = currentUser?.id === user.id;
 
   // Dynamic classes based on size
-  const containerClasses = {
+  const containerClass = {
     sm: "flex justify-between items-center",
     md: "py-6 rounded-2xl flex flex-col gap-6",
     lg: "py-8 px-8 rounded-2xl flex flex-col gap-12",
   }[size];
 
-  const userSectionClasses = {
+  const userSectionClass = {
     sm: "flex items-center gap-2.5  flex-1",
     md: "flex justify-between items-center",
     lg: "flex flex-col gap-4",
   }[size];
 
-  const avatarClasses = {
+  const avatarClass = {
     sm: "w-9 h-9",
     md: "w-12 h-12",
     lg: "w-20 h-20",
@@ -52,25 +52,25 @@ export default function UserProfile({
     lg: 80,
   }[size];
 
-  const nameClasses = {
+  const nameClass = {
     sm: "text-xs font-medium",
     md: "text-xs font-medium",
     lg: "text-2xl font-bold",
   }[size];
 
-  const usernameClasses = {
+  const usernameClass = {
     sm: "text-xs font-normal",
     md: "text-xs font-normal",
     lg: "text-lg font-normal",
   }[size];
 
-  const statsNumberClasses = {
+  const statsNumberClass = {
     sm: "text-2xl font-bold",
     md: "text-2xl font-bold",
     lg: "text-4xl font-bold",
   }[size];
 
-  const statsLabelClasses = {
+  const statsLabelClass = {
     sm: "text-xs font-medium",
     md: "text-xs font-medium",
     lg: "text-base font-medium",
@@ -113,8 +113,8 @@ export default function UserProfile({
     : [];
 
   return (
-    <div className={`${containerClasses} ${containerClassName}`}>
-      <div className={userSectionClasses}>
+    <div className={`${containerClass} ${containerClassName}`}>
+      <div className={userSectionClass}>
         {size === "lg" ? (
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 w-full">
             <div className="flex items-center gap-3  flex-1">
@@ -127,11 +127,11 @@ export default function UserProfile({
                 alt={user.name}
                 width={avatarSize}
                 height={avatarSize}
-                className={`${avatarClasses} rounded-full object-cover`}
+                className={`${avatarClass} rounded-full object-cover`}
               />
               <div className="flex-1 ">
-                <p className={`text-stone-900 ${nameClasses}`}>{user.name}</p>
-                <p className={`text-zinc-600 ${usernameClasses}`}>
+                <p className={`text-stone-900 ${nameClass}`}>{user.name}</p>
+                <p className={`text-zinc-600 ${usernameClass}`}>
                   @{user.username}
                 </p>
               </div>
@@ -167,13 +167,11 @@ export default function UserProfile({
                     alt={user.name}
                     width={avatarSize}
                     height={avatarSize}
-                    className={`${avatarClasses} rounded-full object-cover flex-shrink-0`}
+                    className={`${avatarClass} rounded-full object-cover flex-shrink-0`}
                   />
                   <div className=" flex-1">
-                    <p className={`text-stone-900 ${nameClasses}`}>
-                      {user.name}
-                    </p>
-                    <p className={`text-zinc-600 ${usernameClasses} truncate`}>
+                    <p className={`text-stone-900 ${nameClass}`}>{user.name}</p>
+                    <p className={`text-zinc-600 ${usernameClass} truncate`}>
                       @{user.username}
                     </p>
                   </div>
@@ -192,13 +190,13 @@ export default function UserProfile({
                       alt={user.name}
                       width={avatarSize}
                       height={avatarSize}
-                      className={`${avatarClasses} rounded-full object-cover`}
+                      className={`${avatarClass} rounded-full object-cover`}
                     />
                     <div>
-                      <p className={`text-stone-900 ${nameClasses}`}>
+                      <p className={`text-stone-900 ${nameClass}`}>
                         {user.name}
                       </p>
-                      <p className={`text-zinc-600 ${usernameClasses}`}>
+                      <p className={`text-zinc-600 ${usernameClass}`}>
                         @{user.username}
                       </p>
                     </div>
@@ -220,11 +218,11 @@ export default function UserProfile({
         <div className="flex justify-center items-center">
           <div className="flex-1 flex flex-col items-center gap-1">
             <div
-              className={`text-center text-stone-900 ${statsNumberClasses} font-serif`}
+              className={`text-center text-stone-900 ${statsNumberClass} font-serif`}
             >
               {formatNumber(user.wordCount)}
             </div>
-            <div className={`text-center text-stone-900 ${statsLabelClasses}`}>
+            <div className={`text-center text-stone-900 ${statsLabelClass}`}>
               Words
             </div>
           </div>
@@ -232,12 +230,12 @@ export default function UserProfile({
             <Link href={`/profile/${user.username}/followers`}>
               <button className="flex flex-col items-center gap-1 hover:bg-gray-50 rounded-lg p-2 transition-colors">
                 <div
-                  className={`text-center text-stone-900 ${statsNumberClasses} font-serif`}
+                  className={`text-center text-stone-900 ${statsNumberClass} font-serif`}
                 >
                   {formatNumber(user.followerCount)}
                 </div>
                 <div
-                  className={`text-center text-stone-900 ${statsLabelClasses}`}
+                  className={`text-center text-stone-900 ${statsLabelClass}`}
                 >
                   Followers
                 </div>
@@ -248,12 +246,12 @@ export default function UserProfile({
             <Link href={`/profile/${user.username}/following`}>
               <button className="flex flex-col items-center gap-1 hover:bg-gray-50 rounded-lg p-2 transition-colors">
                 <div
-                  className={`text-center text-stone-900 ${statsNumberClasses} font-serif`}
+                  className={`text-center text-stone-900 ${statsNumberClass} font-serif`}
                 >
                   {user.followingCount}
                 </div>
                 <div
-                  className={`text-center text-stone-900 ${statsLabelClasses}`}
+                  className={`text-center text-stone-900 ${statsLabelClass}`}
                 >
                   Following
                 </div>
