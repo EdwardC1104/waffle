@@ -5,16 +5,14 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import PostCard from "@/components/PostCard";
 import UserProfile from "@/components/User/UserProfile";
 import WhoToFollow from "@/components/WhoToFollow";
-import WritePostCTA from "@/components/WritePostCTA";
+import WritePost from "@/components/Widgets/WritePost";
 import useAuth from "@/hooks/useAuth";
 import useProfile from "@/hooks/useProfile";
-import useTodayWordCount from "@/hooks/useTodayWordCount";
 
 export default function UserProfilePage() {
   const { user, posts, loading, error, refetch, handlePostUpdate } =
     useProfile("posts");
   const { user: currentUser } = useAuth();
-  const { todayWordCount } = useTodayWordCount();
 
   if (loading) {
     return <LoadingSpinner text="Loading profile..." center />;
@@ -39,7 +37,7 @@ export default function UserProfilePage() {
         {currentUser && currentUser.id !== user.id && (
           <UserProfile user={currentUser} />
         )}
-        <WritePostCTA todayWordCount={todayWordCount} />
+        <WritePost />
       </div>
 
       <div className="flex flex-col gap-8 w-full max-w-[600px] min-w-0">

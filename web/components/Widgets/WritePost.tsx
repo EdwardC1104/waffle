@@ -1,13 +1,10 @@
+import useTodayWordCount from "@/hooks/useTodayWordCount";
+import formatNumber from "@/utils/formatNumber";
 import Link from "next/link";
 
-interface WritePostCTAProps {
-  todayWordCount: number;
-}
-
-export default function WritePostCTA({ todayWordCount }: WritePostCTAProps) {
-  const formatNumber = (num: number) => {
-    return num.toLocaleString();
-  };
+/** Asks the user to write a post */
+export default function WritePost() {
+  const { todayWordCount } = useTodayWordCount();
 
   return (
     <div className="py-6 rounded-2xl flex flex-col gap-6">
@@ -22,10 +19,13 @@ export default function WritePostCTA({ todayWordCount }: WritePostCTAProps) {
             </span>
           ) : (
             <>
-              <span className="font-semibold">{formatNumber(todayWordCount)}</span>
+              <span className="font-semibold">
+                {formatNumber(todayWordCount, false)}
+              </span>
               <span className="font-normal">
                 {" "}
-                word{todayWordCount !== 1 ? "s" : ""} have been posted so far today - add yours.
+                word{todayWordCount !== 1 ? "s" : ""} have been posted so far
+                today - add yours.
               </span>
             </>
           )}
