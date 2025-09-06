@@ -1,13 +1,10 @@
 "use client";
 
-import {
-  getSupportedImageTypes,
-  validateImage,
-} from "@/utils/imageUtils";
+import { getSupportedImageTypes, validateImage } from "@/utils/imageUtils";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import BackButton from "./BackButton";
-import ErrorMessage from "./ErrorMessage";
+import ErrorMessage from "./General/ErrorMessage";
 import { ImageIcon } from "./Icons";
 
 interface PostFormProps {

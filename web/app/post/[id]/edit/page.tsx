@@ -1,7 +1,7 @@
 "use client";
 
-import { AuthenticatedRoute } from "@/components/AuthenticatedRoute";
-import ErrorMessage from "@/components/ErrorMessage";
+import { AuthenticatedRoute } from "@/components/General/AuthenticatedRoute";
+import ErrorMessage from "@/components/General/ErrorMessage";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostForm from "@/components/PostForm";
 import { Post } from "@/types";

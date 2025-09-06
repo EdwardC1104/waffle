@@ -1,7 +1,7 @@
 "use client";
 
 import BackButton from "@/components/BackButton";
-import ErrorMessage from "@/components/ErrorMessage";
+import ErrorMessage from "@/components/General/ErrorMessage";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostActions from "@/components/PostActions";
 import UserProfile from "@/components/UserProfile";

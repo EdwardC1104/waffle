@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthenticatedRoute } from "@/components/AuthenticatedRoute";
+import { AuthenticatedRoute } from "@/components/General/AuthenticatedRoute";
 import PostForm from "@/components/PostForm";
 import { createNewPost } from "@/utils/api";
 import { useRouter } from "next/navigation";

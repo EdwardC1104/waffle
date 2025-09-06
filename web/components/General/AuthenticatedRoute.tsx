@@ -4,7 +4,7 @@ import useAuth from "@/hooks/useAuth";
 import { User } from "@/types";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect } from "react";
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "../LoadingSpinner";
 
 interface AuthenticatedRouteProps {
   children: (user: User) => ReactNode;
@@ -12,6 +12,8 @@ interface AuthenticatedRouteProps {
   loadingText?: string;
 }
 
+/** Component that ensures its children are only rendered if the user is authenticated.
+ *  Otherwise, it redirects to the specified login page. */
 export function AuthenticatedRoute({
   children,
   redirectTo = "/login",

@@ -1,7 +1,7 @@
 "use client";
 
-import { AuthenticatedRoute } from "@/components/AuthenticatedRoute";
 import FeedLayout from "@/components/FeedLayout";
+import { AuthenticatedRoute } from "@/components/General/AuthenticatedRoute";
 
 export default function FollowingPage() {
   return (

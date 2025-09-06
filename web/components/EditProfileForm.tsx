@@ -1,8 +1,8 @@
 "use client";
 
-import ErrorMessage from "@/components/ErrorMessage";
 import FormActions from "@/components/FormActions";
 import FormField from "@/components/FormField";
+import ErrorMessage from "@/components/General/ErrorMessage";
 import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 import useProfileEdit from "@/hooks/useProfileEdit";
 import { User } from "@/types";
@@ -54,7 +54,11 @@ export default function EditProfileForm({
       <form onSubmit={onSubmit} className="border-b border-gray-100">
         {/* Profile Picture Section */}
         <ProfilePictureUpload
-          currentImageUrl={formData.profilePicture ? URL.createObjectURL(formData.profilePicture) : user.profilePictureUrl}
+          currentImageUrl={
+            formData.profilePicture
+              ? URL.createObjectURL(formData.profilePicture)
+              : user.profilePictureUrl
+          }
           onImageChange={handleProfilePictureChange}
           onError={setError}
           hasNewImage={formData.profilePicture !== null}

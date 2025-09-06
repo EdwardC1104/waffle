@@ -7,7 +7,7 @@ import {
   fetchFypFeed,
   fetchPopularFeed,
 } from "../utils/api";
-import ErrorMessage from "./ErrorMessage";
+import ErrorMessage from "./General/ErrorMessage";
 import LoadingSpinner from "./LoadingSpinner";
 import PostCard from "./PostCard";
 

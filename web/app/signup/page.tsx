@@ -1,6 +1,6 @@
 "use client";
 
-import ErrorMessage from "@/components/ErrorMessage";
+import ErrorMessage from "@/components/General/ErrorMessage";
 import TextInput from "@/components/TextInput";
 import useAuth from "@/hooks/useAuth";
 import Link from "next/link";
