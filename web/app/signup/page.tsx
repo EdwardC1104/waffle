@@ -1,7 +1,7 @@
 "use client";
 
 import ErrorMessage from "@/components/General/ErrorMessage";
-import TextInput from "@/components/TextInput";
+import TextInput from "@/components/General/TextInput";
 import useAuth from "@/hooks/useAuth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -64,31 +64,31 @@ export default function SignupPage() {
 
             <TextInput
               placeholder="Full Name"
-              onTextChange={setName}
+              onChange={setName}
               containerClassName="w-full"
             />
             <TextInput
               placeholder="Username"
-              onTextChange={setUsername}
+              onChange={setUsername}
               containerClassName="w-full"
             />
             <TextInput
               placeholder="Email"
               type="email"
-              onTextChange={setEmail}
+              onChange={setEmail}
               containerClassName="w-full"
             />
             <TextInput
               placeholder="Password"
               type="password"
-              onTextChange={setPassword}
+              onChange={setPassword}
               inputClassName="[text-security:disc] [-webkit-text-security:disc] font-bold"
               containerClassName="w-full"
             />
             <TextInput
               placeholder="Confirm Password"
               type="password"
-              onTextChange={setConfirmPassword}
+              onChange={setConfirmPassword}
               inputClassName="[text-security:disc] [-webkit-text-security:disc] font-bold"
               containerClassName="w-full"
             />

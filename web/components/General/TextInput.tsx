@@ -24,6 +24,7 @@ interface TextInputProps {
   "aria-describedby"?: string;
 }
 
+/** A styled text input. */
 const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
   (
     {
@@ -53,8 +54,6 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       onChange?.(e.target.value);
     };
 
-    const isControlled = value !== undefined;
-
     return (
       <div
         className={`px-3 py-2.5 bg-neutral-700/1 rounded-[99px] shadow-[inset_2px_4px_5px_0px_rgba(0,0,0,0.25)] inline-flex justify-start items-center gap-2 transition-opacity ${
@@ -71,8 +70,8 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           id={id}
           name={name}
           type={type}
-          value={isControlled ? value : undefined}
-          defaultValue={!isControlled ? defaultValue : undefined}
+          value={value}
+          defaultValue={defaultValue}
           onChange={handleChange}
           onFocus={onFocus}
           onBlur={onBlur}

@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { SearchIcon } from "./General/Icons";
-import TextInput from "./TextInput";
+import TextInput from "./General/TextInput";
 
 interface SearchBoxProps {
   isOpen: boolean;
@@ -125,7 +125,7 @@ export default function SearchBox({
             icon={<SearchIcon className="text-gray-400" size={20} />}
             placeholder="Search users and posts..."
             value={searchTerm}
-            onTextChange={onSearchChange}
+            onChange={onSearchChange}
             autoFocus={true}
             containerClassName="w-full"
           />

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { SearchIcon } from "./General/Icons";
+import TextInput from "./General/TextInput";
 import SearchBox from "./SearchBox";
-import TextInput from "./TextInput";
 
 interface SearchProps {
   className?: string;
@@ -38,7 +38,7 @@ export default function Search({ className = "" }: SearchProps) {
           icon={<SearchIcon className="text-gray-600" />}
           placeholder="Search"
           value={searchTerm}
-          onTextChange={setSearchTerm}
+          onChange={setSearchTerm}
           onFocus={handleSearchOpen}
           inputClassName="min-w-[120px]"
         />

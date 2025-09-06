@@ -1,7 +1,7 @@
 "use client";
 
 import ErrorMessage from "@/components/General/ErrorMessage";
-import TextInput from "@/components/TextInput";
+import TextInput from "@/components/General/TextInput";
 import useAuth from "@/hooks/useAuth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -57,13 +57,13 @@ export default function LoginPage() {
             <TextInput
               placeholder="Username"
               type="text"
-              onTextChange={setUsername}
+              onChange={setUsername}
               containerClassName="w-full"
             />
             <TextInput
               placeholder="Password"
               type="password"
-              onTextChange={setPassword}
+              onChange={setPassword}
               inputClassName="[text-security:disc] [-webkit-text-security:disc] font-bold"
               containerClassName="w-full"
             />

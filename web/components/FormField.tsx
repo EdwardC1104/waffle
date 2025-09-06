@@ -1,6 +1,6 @@
 "use client";
 
-import TextInput from "@/components/TextInput";
+import TextInput from "@/components/General/TextInput";
 
 interface FormFieldProps {
   label: string;
@@ -8,7 +8,7 @@ interface FormFieldProps {
   onChange: (value: string) => void;
   placeholder: string;
   helpText: string;
-  type?: "text" | "email" | "password" | "username";
+  type?: "text" | "email" | "password";
   disabled?: boolean;
   required?: boolean;
 }
@@ -49,14 +49,23 @@ export default function FormField({
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
       <TextInput
+        id={label.toLowerCase().replace(/\s+/g, "-")}
         type={type}
         placeholder={placeholder}
         value={value}
-        onTextChange={onChange}
+        onChange={onChange}
+        disabled={disabled}
+        required={required}
         containerClassName="w-full"
         inputClassName="w-full"
+        aria-describedby={`${label.toLowerCase().replace(/\s+/g, "-")}-help`}
       />
-      <p className="text-sm text-gray-500 mt-1">{helpText}</p>
+      <p
+        id={`${label.toLowerCase().replace(/\s+/g, "-")}-help`}
+        className="text-sm text-gray-500 mt-1"
+      >
+        {helpText}
+      </p>
     </div>
   );
 }
