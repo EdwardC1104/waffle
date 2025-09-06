@@ -4,9 +4,11 @@ import useAuth from "@/hooks/useAuth";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import FeedTabs from "./feed/FeedTabs";
-import Search from "./search/Search";
+import FeedTabs from "../feed/FeedTabs";
+import Search from "../search/Search";
+import { UserIcon } from "./Icons";
 
+/** Main navigation bar for the application. */
 export function Navbar() {
   const pathname = usePathname();
   const isFeedPage = pathname?.startsWith("/feed");
@@ -16,8 +18,9 @@ export function Navbar() {
     <nav className="bg-white border-b border-gray-100 sticky top-0 z-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
+          {/* Logo */}
           <div className="flex-shrink-0 flex-1">
-            <Link href="/" className="flex items-center space-x-2 flex-1">
+            <Link href="/" className="flex items-center space-x-2">
               <Image
                 src="/logo.svg"
                 alt="Waffle logo"
@@ -36,7 +39,6 @@ export function Navbar() {
 
           <div className="hidden lg:flex flex-shrink-0 flex-1 justify-end items-center space-x-4">
             {isAuthenticated && <Search />}
-
             {!isLoading && !isAuthenticated && (
               <div className="flex items-center space-x-4">
                 <Link
@@ -47,11 +49,10 @@ export function Navbar() {
                 </Link>
                 <Link
                   href="/signup"
-                  className="bg-stone-900 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-stone-800"
+                  className="bg-stone-900 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-stone-800 transition-colors"
                 >
                   Sign Up
                 </Link>
-                <div />
               </div>
             )}
           </div>
@@ -62,36 +63,13 @@ export function Navbar() {
                 <Link
                   href={`/profile/${user?.username || ""}`}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  aria-label="Profile"
                 >
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="text-gray-600"
-                  >
-                    <path
-                      d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <circle
-                      cx="12"
-                      cy="7"
-                      r="4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <UserIcon className="text-gray-600" />
                 </Link>
                 <Search />
               </>
             )}
-
             {!isAuthenticated && !isLoading && (
               <div className="flex items-center space-x-2">
                 <Link
@@ -102,7 +80,7 @@ export function Navbar() {
                 </Link>
                 <Link
                   href="/signup"
-                  className="bg-stone-900 text-white px-3 py-1.5 rounded-full text-sm font-medium hover:bg-stone-800"
+                  className="bg-stone-900 text-white px-3 py-1.5 rounded-full text-sm font-medium hover:bg-stone-800 transition-colors"
                 >
                   Sign Up
                 </Link>
