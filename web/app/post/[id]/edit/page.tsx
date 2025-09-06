@@ -4,6 +4,7 @@ import { AuthenticatedRoute } from "@/components/general/AuthenticatedRoute";
 import ErrorMessage from "@/components/general/ErrorMessage";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import PostForm from "@/components/PostForm";
+import useAuth from "@/hooks/useAuth";
 import { Post } from "@/types";
 import { deletePost, fetchPost, updatePost } from "@/utils/api";
 import { notFound, useRouter } from "next/navigation";
@@ -18,19 +19,15 @@ interface EditPostPageProps {
 export default function EditPostPage({ params }: EditPostPageProps) {
   return (
     <AuthenticatedRoute>
-      {(user) => <EditPostContent user={user} params={params} />}
+      <EditPostContent params={params} />
     </AuthenticatedRoute>
   );
 }
 
-function EditPostContent({
-  user,
-  params,
-}: {
-  user: { username: string };
-  params: Promise<{ id: string }>;
-}) {
+function EditPostContent({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
+  const { user } = useAuth();
+
   const resolvedParams = use(params);
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,7 +43,7 @@ function EditPostContent({
         const postData = await fetchPost(parseInt(resolvedParams.id));
 
         // Check if user owns this post
-        if (postData.author.username !== user.username) {
+        if (postData.author.username !== user?.username) {
           notFound();
           return;
         }
@@ -61,7 +58,11 @@ function EditPostContent({
     };
 
     getPost();
-  }, [resolvedParams.id, user.username]);
+  }, [resolvedParams.id, user?.username]);
+
+  if (!user) {
+    return null;
+  }
 
   const handleUpdatePost = async (
     title: string,

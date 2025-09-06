@@ -2,6 +2,7 @@
 
 import { AuthenticatedRoute } from "@/components/general/AuthenticatedRoute";
 import PostForm from "@/components/PostForm";
+import useAuth from "@/hooks/useAuth";
 import { createNewPost } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -9,15 +10,21 @@ import { useState } from "react";
 export default function CreatePostPage() {
   return (
     <AuthenticatedRoute>
-      {(user) => <CreatePostForm user={user} />}
+      <CreatePostForm />
     </AuthenticatedRoute>
   );
 }
 
-function CreatePostForm({ user }: { user: { username: string } }) {
+function CreatePostForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { user } = useAuth();
+
+  if (!user) {
+    return null;
+  }
 
   const handleFormSubmit = async (
     title: string,
