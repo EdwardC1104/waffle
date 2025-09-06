@@ -1,9 +1,9 @@
 "use client";
 
+import PostActions from "@/components/feed/PostActions";
 import BackButton from "@/components/general/BackButton";
 import ErrorMessage from "@/components/general/ErrorMessage";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
-import PostActions from "@/components/PostActions";
 import UserProfile from "@/components/user/UserProfile";
 import { Post } from "@/types";
 import { fetchPost } from "@/utils/api";

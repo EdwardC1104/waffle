@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Post } from "../types";
-import PostActions from "./PostActions";
+import PostActions from "./feed/PostActions";
 import UserProfile from "./user/UserProfile";
 
 interface PostCardProps {

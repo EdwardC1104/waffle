@@ -3,12 +3,20 @@ interface IconProps {
   className?: string;
 }
 
-export const HeartIcon = ({ size = 20, className = "" }: IconProps) => (
+interface HeartIconProps extends IconProps {
+  filled?: boolean;
+}
+
+export const HeartIcon = ({
+  size = 20,
+  className = "",
+  filled = false,
+}: HeartIconProps) => (
   <svg
     width={size}
     height={size}
     viewBox="0 0 20 20"
-    fill="none"
+    fill={filled ? "currentColor" : "none"}
     className={className}
   >
     <path
