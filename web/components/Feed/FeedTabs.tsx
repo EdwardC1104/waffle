@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+/** Displays the buttons that let you swap feed */
 export default function FeedTabs() {
   const pathname = usePathname();
 
