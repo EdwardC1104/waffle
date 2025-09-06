@@ -59,36 +59,32 @@ export default function PostActions({
       </button>
 
       {/* Reply Button */}
-      <button className="flex items-center gap-1 sm:gap-2 transition-all duration-200 group text-gray-600 hover:text-blue-500">
-        <ReplyIcon size={20} className="group-hover:text-blue-500" />
-        <span className="text-xs font-medium group-hover:text-blue-500">
-          {replies}
-        </span>
+      <button className="flex items-center gap-1 sm:gap-2 transition-all duration-200 text-gray-600 hover:text-blue-500">
+        <ReplyIcon size={20} className="hover:text-blue-500" />
+        <span className="text-xs font-medium">{replies}</span>
       </button>
 
       {/* Bookmark Button */}
-      <button className="flex items-center gap-1 sm:gap-2 transition-all duration-200 group text-gray-600 hover:text-yellow-600">
-        <BookmarkIcon size={20} className="group-hover:text-yellow-600" />
-        <span className="text-xs font-medium group-hover:text-yellow-600">
-          {formatNumber(bookmarks)}
-        </span>
+      <button className="flex items-center gap-1 sm:gap-2 transition-all duration-200 text-gray-600 hover:text-yellow-600">
+        <BookmarkIcon size={20} className="hover:text-yellow-600" />
+        <span className="text-xs font-medium">{formatNumber(bookmarks)}</span>
       </button>
 
       {/* Share Button */}
       <button
         onClick={sharePost}
-        className="flex items-center gap-1 sm:gap-2 transition-all duration-200 group text-gray-600 hover:text-green-600"
+        className="flex items-center gap-1 sm:gap-2 transition-all duration-200 text-gray-600 hover:text-green-600"
       >
-        <ShareIcon size={20} className="group-hover:text-green-600" />
+        <ShareIcon size={20} className="hover:text-green-600" />
       </button>
 
       {/* Edit Button - Only show for post owner */}
       {isOwner && (
         <Link
           href={`/post/${post.id}/edit`}
-          className="flex items-center gap-1 sm:gap-2 transition-all duration-200 group text-gray-600 hover:text-blue-600"
+          className="flex items-center gap-1 sm:gap-2 transition-all duration-200 text-gray-600 hover:text-blue-600"
         >
-          <EditIcon size={20} className="group-hover:text-blue-600" />
+          <EditIcon size={20} className="hover:text-blue-600" />
         </Link>
       )}
     </div>

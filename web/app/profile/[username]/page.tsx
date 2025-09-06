@@ -1,8 +1,8 @@
 "use client";
 
+import PostCard from "@/components/feed/PostCard";
 import ErrorMessage from "@/components/general/ErrorMessage";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
-import PostCard from "@/components/PostCard";
 import UserProfile from "@/components/user/UserProfile";
 import WhoToFollow from "@/components/WhoToFollow";
 import WritePost from "@/components/widgets/WritePost";

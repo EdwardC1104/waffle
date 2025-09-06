@@ -2,8 +2,8 @@ import { useFeed } from "../../hooks/useFeed";
 import { FeedType } from "../../types";
 import ErrorMessage from "../general/ErrorMessage";
 import LoadingSpinner from "../general/LoadingSpinner";
-import PostCard from "../PostCard";
 import EmptyFeed from "./EmptyFeed";
+import PostCard from "./PostCard";
 
 interface FeedProps {
   feedType: FeedType;
