@@ -3,9 +3,9 @@
 import { getSupportedImageTypes, validateImage } from "@/utils/imageUtils";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import BackButton from "./General/BackButton";
-import ErrorMessage from "./General/ErrorMessage";
-import { ImageIcon } from "./General/Icons";
+import BackButton from "./general/BackButton";
+import ErrorMessage from "./general/ErrorMessage";
+import { ImageIcon } from "./general/Icons";
 
 interface PostFormProps {
   initialTitle?: string;

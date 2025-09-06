@@ -1,10 +1,10 @@
 "use client";
 
-import BackButton from "@/components/General/BackButton";
-import ErrorMessage from "@/components/General/ErrorMessage";
+import BackButton from "@/components/general/BackButton";
+import ErrorMessage from "@/components/general/ErrorMessage";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostActions from "@/components/PostActions";
-import UserProfile from "@/components/User/UserProfile";
+import UserProfile from "@/components/user/UserProfile";
 import { Post } from "@/types";
 import { fetchPost } from "@/utils/api";
 import Image from "next/image";

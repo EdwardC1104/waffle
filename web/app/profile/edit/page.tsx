@@ -1,8 +1,8 @@
 "use client";
 
 import EditProfileForm from "@/components/EditProfileForm";
-import { AuthenticatedRoute } from "@/components/General/AuthenticatedRoute";
-import BackButton from "@/components/General/BackButton";
+import { AuthenticatedRoute } from "@/components/general/AuthenticatedRoute";
+import BackButton from "@/components/general/BackButton";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 

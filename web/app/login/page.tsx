@@ -1,7 +1,7 @@
 "use client";
 
-import ErrorMessage from "@/components/General/ErrorMessage";
-import TextInput from "@/components/General/TextInput";
+import ErrorMessage from "@/components/general/ErrorMessage";
+import TextInput from "@/components/general/TextInput";
 import useAuth from "@/hooks/useAuth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

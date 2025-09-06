@@ -1,7 +1,7 @@
 "use client";
 
-import Names from "@/components/User/Names";
-import ProfilePicture from "@/components/User/ProfilePicture";
+import Names from "@/components/user/Names";
+import ProfilePicture from "@/components/user/ProfilePicture";
 import { User } from "@/types";
 import Link from "next/link";
 

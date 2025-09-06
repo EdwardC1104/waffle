@@ -1,11 +1,11 @@
 "use client";
 
-import ErrorMessage from "@/components/General/ErrorMessage";
+import ErrorMessage from "@/components/general/ErrorMessage";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostCard from "@/components/PostCard";
-import UserProfile from "@/components/User/UserProfile";
+import UserProfile from "@/components/user/UserProfile";
 import WhoToFollow from "@/components/WhoToFollow";
-import WritePost from "@/components/Widgets/WritePost";
+import WritePost from "@/components/widgets/WritePost";
 import useAuth from "@/hooks/useAuth";
 import useProfile from "@/hooks/useProfile";
 

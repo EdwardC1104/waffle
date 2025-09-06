@@ -2,7 +2,7 @@ import { fetchFollowSuggestions } from "@/utils/api";
 import { useCallback, useEffect, useState } from "react";
 import { User } from "../types";
 import FollowButton from "./FollowButton";
-import UserProfile from "./User/UserProfile";
+import UserProfile from "./user/UserProfile";
 
 export default function WhoToFollow() {
   const [suggestedUsers, setSuggestedUsers] = useState<User[]>([]);

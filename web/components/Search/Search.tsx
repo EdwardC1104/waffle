@@ -2,7 +2,7 @@
 
 import { useSearch } from "@/hooks/useSearch";
 import { useState } from "react";
-import { SearchIcon } from "../General/Icons";
+import { SearchIcon } from "../general/Icons";
 import SearchInput from "./SearchInput";
 import SearchResults from "./SearchResults";
 

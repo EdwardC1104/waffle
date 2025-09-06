@@ -1,9 +1,9 @@
 "use client";
 
-import UserProfile from "@/components/User/UserProfile";
+import UserProfile from "@/components/user/UserProfile";
 import WhoToFollow from "@/components/WhoToFollow";
-import FloatingWriteButton from "@/components/Widgets/FloatingWriteButton";
-import WritePost from "@/components/Widgets/WritePost";
+import FloatingWriteButton from "@/components/widgets/FloatingWriteButton";
+import WritePost from "@/components/widgets/WritePost";
 import useAuth from "@/hooks/useAuth";
 
 export default function FeedLayout({

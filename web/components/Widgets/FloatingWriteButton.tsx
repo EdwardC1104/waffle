@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PlusIcon } from "../General/Icons";
+import { PlusIcon } from "../general/Icons";
 
 /** A button that allows users to create a new post - designed for mobile. */
 export default function FloatingWriteButton() {

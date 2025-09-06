@@ -1,4 +1,4 @@
-import UserProfile from "@/components/User/UserProfile";
+import UserProfile from "@/components/user/UserProfile";
 import { User } from "@/types";
 
 interface UserListComponentProps {

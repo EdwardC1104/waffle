@@ -4,13 +4,13 @@ import Link from "next/dist/client/link";
 import { useRouter } from "next/navigation";
 import { User } from "../../types";
 import FollowButton from "../FollowButton";
-import Dropdown from "../General/Dropdown";
+import Dropdown from "../general/Dropdown";
 import {
   EditIcon,
   LogoutIcon,
   MoreIcon,
   SavedPostsIcon,
-} from "../General/Icons";
+} from "../general/Icons";
 import Names from "./Names";
 import ProfilePicture from "./ProfilePicture";
 

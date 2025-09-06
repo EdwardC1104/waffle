@@ -1,8 +1,8 @@
 "use client";
 
 import FormActions from "@/components/FormActions";
-import ErrorMessage from "@/components/General/ErrorMessage";
-import FormField from "@/components/General/FormField";
+import ErrorMessage from "@/components/general/ErrorMessage";
+import FormField from "@/components/general/FormField";
 import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 import useProfileEdit from "@/hooks/useProfileEdit";
 import { User } from "@/types";

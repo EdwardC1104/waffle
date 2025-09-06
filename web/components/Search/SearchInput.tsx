@@ -1,8 +1,8 @@
 "use client";
 
 import { forwardRef } from "react";
-import { SearchIcon } from "../General/Icons";
-import TextInput from "../General/TextInput";
+import { SearchIcon } from "../general/Icons";
+import TextInput from "../general/TextInput";
 
 interface SearchInputProps {
   value: string;

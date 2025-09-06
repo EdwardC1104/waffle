@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckIcon, ImageIcon } from "@/components/General/Icons";
+import { CheckIcon, ImageIcon } from "@/components/general/Icons";
 import { validateImage } from "@/utils/imageUtils";
 import Image from "next/image";
 import { useRef } from "react";

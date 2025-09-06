@@ -1,7 +1,7 @@
 "use client";
 
-import Feed from "@/components/Feed/Feed";
-import { AuthenticatedRoute } from "@/components/General/AuthenticatedRoute";
+import Feed from "@/components/feed/Feed";
+import { AuthenticatedRoute } from "@/components/general/AuthenticatedRoute";
 
 export default function FYPPage() {
   return (

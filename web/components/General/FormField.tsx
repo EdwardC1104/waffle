@@ -1,6 +1,6 @@
 "use client";
 
-import TextInput from "@/components/General/TextInput";
+import TextInput from "@/components/general/TextInput";
 
 interface FormFieldProps {
   label?: string;
