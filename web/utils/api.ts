@@ -7,11 +7,16 @@ async function post<T, U>(endpoint: string, body: U): Promise<T>;
 async function post<T, U>(endpoint: string, body?: U): Promise<T> {
   const response = await fetch(`${endpoint}`, {
     method: "POST",
-    headers: body instanceof FormData ? {} : {
-      "Content-Type": "application/json",
-    },
+    headers:
+      body instanceof FormData
+        ? {}
+        : {
+            "Content-Type": "application/json",
+          },
     credentials: "include",
-    ...(body !== undefined && { body: body instanceof FormData ? body : JSON.stringify(body) }),
+    ...(body !== undefined && {
+      body: body instanceof FormData ? body : JSON.stringify(body),
+    }),
   });
 
   if (!response.ok) {
@@ -103,8 +108,8 @@ export async function unlikePost(postId: number): Promise<Post> {
   return await post<Post, { postId: number }>(`/api/like/delete`, { postId });
 }
 
-export async function search(query: string): Promise<SearchResult[]> {
-  return await post<SearchResult[], { query: string }>(
+export async function search(query: string): Promise<SearchResult> {
+  return await post<SearchResult, { query: string }>(
     `/api/search/search-users-and-posts`,
     {
       query,

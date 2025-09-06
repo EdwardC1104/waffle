@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import FeedTabs from "./FeedTabs";
-import Search from "./Search";
+import Search from "./Search/Search";
 
 export function Navbar() {
   const pathname = usePathname();
