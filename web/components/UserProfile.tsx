@@ -5,7 +5,12 @@ import { useRouter } from "next/navigation";
 import { User } from "../types";
 import FollowButton from "./FollowButton";
 import Dropdown from "./General/Dropdown";
-import { EditIcon, LogoutIcon, MoreIcon, SavedPostsIcon } from "./Icons";
+import {
+  EditIcon,
+  LogoutIcon,
+  MoreIcon,
+  SavedPostsIcon,
+} from "./General/Icons";
 import Names from "./User/Names";
 import ProfilePicture from "./User/ProfilePicture";
 

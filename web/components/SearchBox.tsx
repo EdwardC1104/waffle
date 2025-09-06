@@ -5,7 +5,7 @@ import { search } from "@/utils/api";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { SearchIcon } from "./Icons";
+import { SearchIcon } from "./General/Icons";
 import TextInput from "./TextInput";
 
 interface SearchBoxProps {

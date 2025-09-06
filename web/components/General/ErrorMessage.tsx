@@ -1,4 +1,4 @@
-import { AlertTriangleIcon } from "../Icons";
+import { AlertTriangleIcon } from "./Icons";
 
 interface ErrorMessageProps {
   title?: string;

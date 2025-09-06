@@ -13,7 +13,7 @@ import {
   HeartIcon,
   ReplyIcon,
   ShareIcon,
-} from "./Icons";
+} from "./General/Icons";
 
 interface PostActionsProps {
   post: Post;

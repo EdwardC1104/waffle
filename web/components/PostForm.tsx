@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import BackButton from "./General/BackButton";
 import ErrorMessage from "./General/ErrorMessage";
-import { ImageIcon } from "./Icons";
+import { ImageIcon } from "./General/Icons";
 
 interface PostFormProps {
   initialTitle?: string;

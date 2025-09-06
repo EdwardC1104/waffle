@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { ArrowLeftIcon } from "../Icons";
+import { ArrowLeftIcon } from "./Icons";
 
 interface BackButtonProps {
   className?: string;

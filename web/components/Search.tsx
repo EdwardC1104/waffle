@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { SearchIcon } from "./Icons";
+import { SearchIcon } from "./General/Icons";
 import SearchBox from "./SearchBox";
 import TextInput from "./TextInput";
 
