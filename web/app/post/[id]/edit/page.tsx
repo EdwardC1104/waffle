@@ -2,7 +2,7 @@
 
 import { AuthenticatedRoute } from "@/components/general/AuthenticatedRoute";
 import ErrorMessage from "@/components/general/ErrorMessage";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import LoadingSpinner from "@/components/general/LoadingSpinner";
 import PostForm from "@/components/PostForm";
 import { Post } from "@/types";
 import { deletePost, fetchPost, updatePost } from "@/utils/api";

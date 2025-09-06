@@ -4,7 +4,7 @@ import useAuth from "@/hooks/useAuth";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import FeedTabs from "./FeedTabs";
+import FeedTabs from "./feed/FeedTabs";
 import Search from "./search/Search";
 
 export function Navbar() {

@@ -5,17 +5,18 @@ interface LoadingSpinnerProps {
   center?: boolean;
 }
 
+/** A simple loading spinner with optional text */
 export default function LoadingSpinner({
   size = "md",
   text = "Loading...",
   className = "",
   center = false,
 }: LoadingSpinnerProps) {
-  const sizeClasses = {
+  const sizeClass = {
     sm: "h-4 w-4",
     md: "h-8 w-8",
     lg: "h-12 w-12",
-  };
+  }[size];
 
   const containerClasses = [
     "flex flex-col items-center justify-center",
@@ -28,7 +29,7 @@ export default function LoadingSpinner({
   return (
     <div className={containerClasses}>
       <div
-        className={`animate-spin rounded-full border-b-2 border-gray-900 ${sizeClasses[size]} mb-4`}
+        className={`animate-spin rounded-full border-b-2 border-gray-900 mb-4 ${sizeClass}`}
       />
       <p className="text-gray-600">{text}</p>
     </div>

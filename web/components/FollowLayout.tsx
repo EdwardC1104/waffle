@@ -2,7 +2,7 @@
 
 import BackButton from "@/components/general/BackButton";
 import ErrorMessage from "@/components/general/ErrorMessage";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import LoadingSpinner from "@/components/general/LoadingSpinner";
 import UserListComponent from "@/components/UserListComponent";
 import { User } from "@/types";
 import Link from "next/link";

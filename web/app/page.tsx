@@ -1,6 +1,6 @@
 "use client";
 
-import LoadingSpinner from "@/components/LoadingSpinner";
+import LoadingSpinner from "@/components/general/LoadingSpinner";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

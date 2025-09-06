@@ -1,7 +1,7 @@
 import { useFeed } from "../../hooks/useFeed";
 import { FeedType } from "../../types";
 import ErrorMessage from "../general/ErrorMessage";
-import LoadingSpinner from "../LoadingSpinner";
+import LoadingSpinner from "../general/LoadingSpinner";
 import PostCard from "../PostCard";
 import EmptyFeed from "./EmptyFeed";
 

@@ -3,7 +3,7 @@
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect } from "react";
-import LoadingSpinner from "../LoadingSpinner";
+import LoadingSpinner from "./LoadingSpinner";
 
 interface AuthenticatedRouteProps {
   children: ReactNode;

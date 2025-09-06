@@ -1,7 +1,7 @@
 "use client";
 
 import ErrorMessage from "@/components/general/ErrorMessage";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import LoadingSpinner from "@/components/general/LoadingSpinner";
 import PostCard from "@/components/PostCard";
 import UserProfile from "@/components/user/UserProfile";
 import WhoToFollow from "@/components/WhoToFollow";
