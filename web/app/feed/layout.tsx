@@ -1,18 +1,18 @@
 "use client";
 
-import { User } from "../types";
-import Feed from "./Feed";
-import UserProfile from "./User/UserProfile";
-import WhoToFollow from "./WhoToFollow";
-import FloatingWriteButton from "./Widgets/FloatingWriteButton";
-import WritePost from "./Widgets/WritePost";
+import UserProfile from "@/components/User/UserProfile";
+import WhoToFollow from "@/components/WhoToFollow";
+import FloatingWriteButton from "@/components/Widgets/FloatingWriteButton";
+import WritePost from "@/components/Widgets/WritePost";
+import useAuth from "@/hooks/useAuth";
 
-interface FeedLayoutProps {
-  feedType: "fyp" | "following" | "popular";
-  user?: User; // Optional for popular feed
-}
+export default function FeedLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { user } = useAuth();
 
-export default function FeedLayout({ feedType, user }: FeedLayoutProps) {
   return (
     <>
       <div className="w-full max-w-[1476px] mx-auto flex justify-center items-start gap-4 lg:gap-8 xl:gap-16 px-4 sm:px-6 lg:px-8 py-6">
@@ -24,7 +24,7 @@ export default function FeedLayout({ feedType, user }: FeedLayoutProps) {
         </div>
 
         <div className="flex flex-col gap-8 w-full max-w-[600px] min-w-0">
-          <Feed feedType={feedType} />
+          {children}
         </div>
 
         <div className="hidden md:flex w-60 flex-col gap-8 flex-shrink-0 sticky top-16">

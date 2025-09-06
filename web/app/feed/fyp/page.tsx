@@ -1,12 +1,12 @@
 "use client";
 
-import FeedLayout from "@/components/FeedLayout";
+import Feed from "@/components/Feed/Feed";
 import { AuthenticatedRoute } from "@/components/General/AuthenticatedRoute";
 
 export default function FYPPage() {
   return (
     <AuthenticatedRoute>
-      {(user) => <FeedLayout feedType="fyp" user={user} />}
+      <Feed feedType="fyp" />
     </AuthenticatedRoute>
   );
 }

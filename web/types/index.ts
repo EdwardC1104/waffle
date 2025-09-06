@@ -20,6 +20,8 @@ export type Post = {
   likedByAuthenticatedUser: boolean;
 };
 
+export type FeedType = "fyp" | "following" | "popular";
+
 export type SearchResult = {
   posts: Post[];
   users: User[];

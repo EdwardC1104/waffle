@@ -1,13 +1,12 @@
 "use client";
 
 import useAuth from "@/hooks/useAuth";
-import { User } from "@/types";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect } from "react";
 import LoadingSpinner from "../LoadingSpinner";
 
 interface AuthenticatedRouteProps {
-  children: (user: User) => ReactNode;
+  children: ReactNode;
   redirectTo?: string;
   loadingText?: string;
 }
@@ -36,5 +35,5 @@ export function AuthenticatedRoute({
     return null;
   }
 
-  return <>{children(user)}</>;
+  return <>{children}</>;
 }

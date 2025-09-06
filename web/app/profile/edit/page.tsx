@@ -4,19 +4,18 @@ import EditProfileForm from "@/components/EditProfileForm";
 import { AuthenticatedRoute } from "@/components/General/AuthenticatedRoute";
 import BackButton from "@/components/General/BackButton";
 import useAuth from "@/hooks/useAuth";
-import { User } from "@/types";
 import { useRouter } from "next/navigation";
 
 export default function EditProfilePage() {
   return (
     <AuthenticatedRoute loadingText="Loading profile...">
-      {(user) => <EditProfileContent user={user} />}
+      <EditProfileContent />
     </AuthenticatedRoute>
   );
 }
 
-function EditProfileContent({ user }: { user: User }) {
-  const { refetchUser, logout } = useAuth();
+function EditProfileContent() {
+  const { user, refetchUser, logout } = useAuth();
 
   const router = useRouter();
 
@@ -24,6 +23,8 @@ function EditProfileContent({ user }: { user: User }) {
     logout();
     router.push("/");
   };
+
+  if (!user) return null;
 
   return (
     <div className="flex-1 w-full">
