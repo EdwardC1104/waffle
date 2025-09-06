@@ -2,17 +2,17 @@ import useAuth from "@/hooks/useAuth";
 import formatNumber from "@/utils/formatNumber";
 import Link from "next/dist/client/link";
 import { useRouter } from "next/navigation";
-import { User } from "../types";
-import FollowButton from "./FollowButton";
-import Dropdown from "./General/Dropdown";
+import { User } from "../../types";
+import FollowButton from "../FollowButton";
+import Dropdown from "../General/Dropdown";
 import {
   EditIcon,
   LogoutIcon,
   MoreIcon,
   SavedPostsIcon,
-} from "./General/Icons";
-import Names from "./User/Names";
-import ProfilePicture from "./User/ProfilePicture";
+} from "../General/Icons";
+import Names from "./Names";
+import ProfilePicture from "./ProfilePicture";
 
 interface UserProfileProps {
   user: User;
@@ -22,6 +22,7 @@ interface UserProfileProps {
   showFollowButton?: boolean;
 }
 
+/** Displays information about a user in 3 different sizes. */
 export default function UserProfile({
   user,
   size = "md",

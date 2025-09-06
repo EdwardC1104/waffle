@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Post } from "../types";
 import PostActions from "./PostActions";
-import UserProfile from "./UserProfile";
+import UserProfile from "./User/UserProfile";
 
 interface PostCardProps {
   post: Post;

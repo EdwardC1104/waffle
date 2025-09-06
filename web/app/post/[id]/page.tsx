@@ -4,7 +4,7 @@ import BackButton from "@/components/General/BackButton";
 import ErrorMessage from "@/components/General/ErrorMessage";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PostActions from "@/components/PostActions";
-import UserProfile from "@/components/UserProfile";
+import UserProfile from "@/components/User/UserProfile";
 import { Post } from "@/types";
 import { fetchPost } from "@/utils/api";
 import Image from "next/image";

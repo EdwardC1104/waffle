@@ -4,7 +4,7 @@ import useTodayWordCount from "@/hooks/useTodayWordCount";
 import { User } from "../types";
 import Feed from "./Feed";
 import FloatingWriteButton from "./FloatingWriteButton";
-import UserProfile from "./UserProfile";
+import UserProfile from "./User/UserProfile";
 import WhoToFollow from "./WhoToFollow";
 import WritePostCTA from "./WritePostCTA";
 
