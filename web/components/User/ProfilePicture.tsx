@@ -25,7 +25,7 @@ export default function ProfilePicture({
   return (
     <Image
       src={url || "/Chicken.jpeg"}
-      alt={`Profile picture of ${name}`}
+      alt={`${name} profile picture`}
       width={avatarSize}
       height={avatarSize}
       style={{

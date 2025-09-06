@@ -1,11 +1,14 @@
 "use client";
 
 import { CheckIcon, ImageIcon } from "@/components/general/Icons";
+import ProfilePicture from "@/components/user/ProfilePicture";
 import { validateImage } from "@/utils/imageUtils";
-import Image from "next/image";
 import { useRef } from "react";
 
-interface ProfilePictureUploadProps {
+const ACCEPTED_IMAGE_TYPES = "image/*";
+const MAX_FILE_SIZE_TEXT = "JPG, PNG or GIF. Max size 5MB.";
+
+interface EditProfilePictureProps {
   currentImageUrl: string;
   onImageChange: (file: File) => void;
   onError: (error: string) => void;
@@ -13,32 +16,36 @@ interface ProfilePictureUploadProps {
   disabled?: boolean;
 }
 
-export default function ProfilePictureUpload({
+/** Allows you to upload a new profile picture image. */
+export default function EditProfilePicture({
   currentImageUrl,
   onImageChange,
   onError,
   hasNewImage,
   disabled = false,
-}: ProfilePictureUploadProps) {
+}: EditProfilePictureProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (
+  const handleFileSelection = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const selectedFile = event.target.files?.[0];
 
-    // Validate the image
-    const validation = validateImage(file);
+    if (!selectedFile) {
+      return;
+    }
+
+    const validation = validateImage(selectedFile);
+
     if (!validation.isValid) {
       onError(validation.error!);
       return;
     }
 
-    onImageChange(file);
+    onImageChange(selectedFile);
   };
 
-  const handleButtonClick = () => {
+  const triggerFileInput = () => {
     if (!disabled) {
       fileInputRef.current?.click();
     }
@@ -51,13 +58,13 @@ export default function ProfilePictureUpload({
       </h2>
 
       <div className="flex items-center gap-6">
+        {/* Profile Image Preview */}
         <div className="relative">
-          <Image
-            src={currentImageUrl || "/Chicken.jpeg"}
-            alt="Profile picture"
-            width={80}
-            height={80}
-            className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+          <ProfilePicture
+            url={currentImageUrl}
+            name="Your new"
+            size="lg"
+            className="border-2 border-gray-200"
           />
           {hasNewImage && (
             <div className="absolute -top-2 -right-2 w-6 h-6 bg-stone-900 rounded-full flex items-center justify-center">
@@ -66,26 +73,26 @@ export default function ProfilePictureUpload({
           )}
         </div>
 
+        {/* Upload Controls */}
         <div className="flex-1">
           <button
             type="button"
-            onClick={handleButtonClick}
+            onClick={triggerFileInput}
             disabled={disabled}
             className="px-8 py-3 bg-stone-900 rounded-full shadow-lg text-white text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
           >
             <ImageIcon size={16} />
             Change Picture
           </button>
-          <p className="text-sm text-gray-500 mt-2">
-            JPG, PNG or GIF. Max size 5MB.
-          </p>
+          <p className="text-sm text-gray-500 mt-2">{MAX_FILE_SIZE_TEXT}</p>
         </div>
 
+        {/* Hidden file input */}
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
-          onChange={handleFileChange}
+          accept={ACCEPTED_IMAGE_TYPES}
+          onChange={handleFileSelection}
           className="hidden"
           disabled={disabled}
         />

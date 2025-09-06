@@ -3,7 +3,7 @@
 import FormActions from "@/components/FormActions";
 import ErrorMessage from "@/components/general/ErrorMessage";
 import FormField from "@/components/general/FormField";
-import ProfilePictureUpload from "@/components/ProfilePictureUpload";
+import EditProfilePicture from "@/components/user/EditProfilePicture";
 import useProfileEdit from "@/hooks/useProfileEdit";
 import { User } from "@/types";
 
@@ -53,7 +53,7 @@ export default function EditProfileForm({
 
       <form onSubmit={onSubmit} className="border-b border-gray-100">
         {/* Profile Picture Section */}
-        <ProfilePictureUpload
+        <EditProfilePicture
           currentImageUrl={
             formData.profilePicture
               ? URL.createObjectURL(formData.profilePicture)
