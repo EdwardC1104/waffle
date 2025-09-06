@@ -1,16 +1,17 @@
-interface UserInfoProps {
+interface NamesProps {
   name: string;
   username: string;
   size: "sm" | "md" | "lg";
   className?: string;
 }
 
-export default function UserInfo({
+/** Displays a user's name and username in 3 different sizes. */
+export default function Names({
   name,
   username,
   size,
   className = "",
-}: UserInfoProps) {
+}: NamesProps) {
   const nameClass = {
     sm: "text-xs font-medium",
     md: "text-xs font-medium",
@@ -26,11 +27,7 @@ export default function UserInfo({
   return (
     <div className={className}>
       <p className={`text-stone-900 ${nameClass}`}>{name}</p>
-      <p
-        className={`text-zinc-600 font-normal ${usernameClass} ${
-          size === "sm" ? "truncate" : ""
-        }`}
-      >
+      <p className={`text-zinc-600 font-normal truncate ${usernameClass}`}>
         @{username}
       </p>
     </div>

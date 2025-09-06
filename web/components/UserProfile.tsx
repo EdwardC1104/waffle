@@ -6,8 +6,8 @@ import { User } from "../types";
 import DropDown from "./DropDown";
 import FollowButton from "./FollowButton";
 import { EditIcon, LogoutIcon, SavedPostsIcon } from "./Icons";
+import Names from "./User/Names";
 import ProfilePicture from "./User/ProfilePicture";
-import UserInfo from "./User/UserInfo";
 
 interface UserProfileProps {
   user: User;
@@ -97,7 +97,7 @@ export default function UserProfile({
                 name={user.name}
                 size={size}
               />
-              <UserInfo
+              <Names
                 name={user.name}
                 username={user.username}
                 size={size}
@@ -124,7 +124,7 @@ export default function UserProfile({
                 size={size}
                 className="flex-shrink-0"
               />
-              <UserInfo
+              <Names
                 name={user.name}
                 username={user.username}
                 size={size}
@@ -141,11 +141,7 @@ export default function UserProfile({
                   name={user.name}
                   size={size}
                 />
-                <UserInfo
-                  name={user.name}
-                  username={user.username}
-                  size={size}
-                />
+                <Names name={user.name} username={user.username} size={size} />
               </button>
             </Link>
             {isCurrentUser ? (
