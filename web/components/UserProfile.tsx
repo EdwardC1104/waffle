@@ -3,9 +3,9 @@ import formatNumber from "@/utils/formatNumber";
 import Link from "next/dist/client/link";
 import { useRouter } from "next/navigation";
 import { User } from "../types";
-import DropDown from "./DropDown";
 import FollowButton from "./FollowButton";
-import { EditIcon, LogoutIcon, SavedPostsIcon } from "./Icons";
+import Dropdown from "./General/Dropdown";
+import { EditIcon, LogoutIcon, MoreIcon, SavedPostsIcon } from "./Icons";
 import Names from "./User/Names";
 import ProfilePicture from "./User/ProfilePicture";
 
@@ -62,16 +62,19 @@ export default function UserProfile({
   const dropdownItems = isCurrentUser
     ? [
         {
+          id: "saved-posts",
           label: "Saved posts",
           onClick: () => router.push("/feed/popular"), // Temporary
           icon: <SavedPostsIcon size={16} />,
         },
         {
+          id: "edit-profile",
           label: "Edit Profile",
           onClick: () => router.push("/profile/edit"),
           icon: <EditIcon size={16} />,
         },
         {
+          id: "logout",
           label: "Logout",
           onClick: async () => {
             try {
@@ -82,6 +85,7 @@ export default function UserProfile({
             }
           },
           icon: <LogoutIcon size={16} />,
+          destructive: true,
         },
       ]
     : [];
@@ -105,7 +109,12 @@ export default function UserProfile({
               />
               {isCurrentUser && (
                 <div className="flex flex-shrink-0">
-                  <DropDown iconSize={iconSize} items={dropdownItems} />
+                  <Dropdown
+                    items={dropdownItems}
+                    trigger={
+                      <MoreIcon size={iconSize} className="text-stone-900" />
+                    }
+                  />
                 </div>
               )}
             </div>
@@ -145,7 +154,12 @@ export default function UserProfile({
               </button>
             </Link>
             {isCurrentUser ? (
-              <DropDown iconSize={iconSize} items={dropdownItems} />
+              <Dropdown
+                items={dropdownItems}
+                trigger={
+                  <MoreIcon size={iconSize} className="text-stone-900" />
+                }
+              />
             ) : (
               <FollowButton username={user.username} size="sm" />
             )}
