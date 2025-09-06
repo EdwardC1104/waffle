@@ -13,6 +13,7 @@ interface EditProfileFormProps {
   onUserDeleted: () => Promise<void>;
 }
 
+/** Allows the user to edit their profile information. */
 export default function EditProfileForm({
   user,
   onUserUpdated,
@@ -39,7 +40,6 @@ export default function EditProfileForm({
 
   return (
     <div className="bg-white shadow rounded-lg overflow-hidden">
-      {/* Error Message */}
       {error && (
         <div className="mx-8 mt-8">
           <ErrorMessage
@@ -52,7 +52,6 @@ export default function EditProfileForm({
       )}
 
       <form onSubmit={onSubmit} className="border-b border-gray-100">
-        {/* Profile Picture Section */}
         <EditProfilePicture
           currentImageUrl={
             formData.profilePicture
@@ -65,7 +64,6 @@ export default function EditProfileForm({
           disabled={isLoading}
         />
 
-        {/* Personal Information Section */}
         <div className="py-8 px-8">
           <h2 className="text-xl font-semibold text-stone-900 mb-6">
             Personal Information
@@ -93,7 +91,7 @@ export default function EditProfileForm({
             <FormField
               label="Email"
               value={user.email}
-              onChange={() => {}} // No-op since email can't be changed
+              onChange={() => {}}
               placeholder=""
               helpText="Email cannot be changed"
               disabled
@@ -101,17 +99,15 @@ export default function EditProfileForm({
           </div>
         </div>
 
-        {/* Action Buttons */}
         <FormActions
           onCancel={handleCancel}
-          onSubmit={() => {}} // Form handles submit via onSubmit
+          onSubmit={() => {}}
           isLoading={isLoading}
           isFormValid={isFormValid}
           hasChanges={hasChanges}
         />
       </form>
 
-      {/* Danger Zone - Outside of form since it's not part of profile editing */}
       <div className="py-8 px-8">
         <h2 className="text-xl font-semibold text-red-600 mb-4">Danger Zone</h2>
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
