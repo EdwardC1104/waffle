@@ -6,8 +6,8 @@ import { User } from "../types";
 import DropDown from "./DropDown";
 import FollowButton from "./FollowButton";
 import { EditIcon, LogoutIcon, SavedPostsIcon } from "./Icons";
-import AvatarImage from "./UserProfile/AvatarImage";
-import UserInfo from "./UserProfile/UserInfo";
+import ProfilePicture from "./User/ProfilePicture";
+import UserInfo from "./User/UserInfo";
 
 interface UserProfileProps {
   user: User;
@@ -92,8 +92,8 @@ export default function UserProfile({
         {size === "lg" ? (
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 w-full">
             <div className="flex items-center gap-3 flex-1">
-              <AvatarImage
-                profilePictureUrl={user.profilePictureUrl}
+              <ProfilePicture
+                url={user.profilePictureUrl}
                 name={user.name}
                 size={size}
               />
@@ -118,8 +118,8 @@ export default function UserProfile({
         ) : size === "sm" ? (
           <Link href={`/profile/${user.username}`} className="flex-1">
             <button className="flex items-center gap-3 text-left cursor-pointer w-full">
-              <AvatarImage
-                profilePictureUrl={user.profilePictureUrl}
+              <ProfilePicture
+                url={user.profilePictureUrl}
                 name={user.name}
                 size={size}
                 className="flex-shrink-0"
@@ -136,8 +136,8 @@ export default function UserProfile({
           <>
             <Link href={`/profile/${user.username}`}>
               <button className="flex items-center gap-3 text-left cursor-pointer">
-                <AvatarImage
-                  profilePictureUrl={user.profilePictureUrl}
+                <ProfilePicture
+                  url={user.profilePictureUrl}
                   name={user.name}
                   size={size}
                 />
