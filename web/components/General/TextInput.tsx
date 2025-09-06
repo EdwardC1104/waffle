@@ -1,12 +1,12 @@
 "use client";
 
-import { forwardRef } from "react";
+import { forwardRef, HTMLInputTypeAttribute } from "react";
 
 interface TextInputProps {
   placeholder?: string;
   value?: string;
   defaultValue?: string;
-  type?: "text" | "email" | "password";
+  type?: HTMLInputTypeAttribute;
   disabled?: boolean;
   required?: boolean;
   autoFocus?: boolean;
