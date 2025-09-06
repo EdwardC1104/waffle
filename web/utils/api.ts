@@ -1,22 +1,17 @@
 import { Post, SearchResult, User } from "../types";
 
-// Post method overloaded to make body optional
+/** Post method overloaded to make body optional */
 async function post<T>(endpoint: string): Promise<T>;
 async function post<T>(endpoint: string, body: FormData): Promise<T>;
 async function post<T, U>(endpoint: string, body: U): Promise<T>;
 async function post<T, U>(endpoint: string, body?: U): Promise<T> {
-  const response = await fetch(`${endpoint}`, {
+  const isFormData = body instanceof FormData;
+
+  const response = await fetch(endpoint, {
     method: "POST",
-    headers:
-      body instanceof FormData
-        ? {}
-        : {
-            "Content-Type": "application/json",
-          },
+    headers: isFormData ? {} : { "Content-Type": "application/json" },
     credentials: "include",
-    ...(body !== undefined && {
-      body: body instanceof FormData ? body : JSON.stringify(body),
-    }),
+    body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
   });
 
   if (!response.ok) {
