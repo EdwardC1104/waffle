@@ -82,7 +82,7 @@ export default function SearchResults({
         </div>
 
         {/* Search Results */}
-        <div className="max-h-96 overflow-y-auto">
+        <div className="max-h-96 overflow-y-auto overflow-x-hidden rounded-b-2xl lg:rounded-b-2xl">
           {showPlaceholder && (
             <div className="p-4 text-[#1C1C19]/50 text-center">
               Start typing to search for users and posts

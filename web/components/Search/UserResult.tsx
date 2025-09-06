@@ -16,7 +16,7 @@ export default function UserResult({ user, onResultClick }: UserResultProps) {
     <Link
       href={`/profile/${user.username}`}
       onClick={onResultClick}
-      className="flex items-center px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
+      className="flex items-center px-4 py-3 border-b hover:bg-gray-50 border-gray-100 last:border-b-0 transition-colors"
     >
       <div className="mr-3">
         <ProfilePicture
