@@ -1,6 +1,6 @@
 "use client";
 
-import BackButton from "@/components/BackButton";
+import BackButton from "@/components/General/BackButton";
 
 interface PageHeaderProps {
   title: string;
