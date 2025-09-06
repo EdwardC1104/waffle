@@ -1,5 +1,6 @@
 "use client";
 
+import CoverImage from "@/components/feed/CoverImage";
 import PostActions from "@/components/feed/PostActions";
 import BackButton from "@/components/general/BackButton";
 import ErrorMessage from "@/components/general/ErrorMessage";
@@ -7,7 +8,6 @@ import LoadingSpinner from "@/components/general/LoadingSpinner";
 import UserProfile from "@/components/user/UserProfile";
 import { Post } from "@/types";
 import { fetchPost } from "@/utils/api";
-import Image from "next/image";
 import { notFound, useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 
@@ -72,15 +72,14 @@ export default function PostPage({ params }: PostPageProps) {
 
       <article className="flex flex-col gap-8">
         {post.coverImageUrl && (
-          <div>
-            <Image
-              src={post.coverImageUrl}
-              alt=""
-              width={800}
-              height={400}
-              className="w-full h-64 sm:h-80 lg:h-96 rounded-lg object-cover"
-            />
-          </div>
+          <CoverImage
+            url={post.coverImageUrl}
+            alt={`Cover image for "${post.title}"`}
+            width={800}
+            height={400}
+            className="w-full h-64 sm:h-80 lg:h-96 rounded-lg object-cover"
+            priority={true}
+          />
         )}
 
         <header>

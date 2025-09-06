@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { Post } from "../../types";
 import UserProfile from "../user/UserProfile";
+import CoverImage from "./CoverImage";
 import PostActions from "./PostActions";
 
 interface PostCardProps {
@@ -49,16 +49,14 @@ export default function PostCard({
         aria-label={`Read full post: ${post.title}`}
       >
         {post.coverImageUrl && (
-          <div className="relative overflow-hidden rounded-lg">
-            <Image
-              src={post.coverImageUrl}
-              alt={`Cover image for "${post.title}"`}
-              width={COVER_IMAGE_DIMENSIONS.width}
-              height={COVER_IMAGE_DIMENSIONS.height}
-              className="w-full h-40 sm:h-48 md:h-52 object-cover transition-transform duration-200 group-hover:scale-[1.02]"
-              priority={false}
-            />
-          </div>
+          <CoverImage
+            url={post.coverImageUrl}
+            alt={`Cover image for "${post.title}"`}
+            width={COVER_IMAGE_DIMENSIONS.width}
+            height={COVER_IMAGE_DIMENSIONS.height}
+            className="w-full h-40 sm:h-48 md:h-52 object-cover transition-transform duration-200 group-hover:scale-[1.02]"
+            priority={false}
+          />
         )}
 
         <div className="space-y-2.5">
