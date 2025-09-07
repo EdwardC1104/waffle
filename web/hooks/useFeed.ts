@@ -15,8 +15,13 @@ interface UseFeedReturn {
 
 /** Hook that provides access to a given feed with caching. */
 export function useFeed(feedType: FeedType): UseFeedReturn {
-  const { feeds, loadFeed, refreshFeed, updatePostInAllFeeds, removePostFromAllFeeds } =
-    useFeedContext();
+  const {
+    feeds,
+    loadFeed,
+    refreshFeed,
+    updatePostInAllFeeds,
+    removePostFromAllFeeds,
+  } = useFeedContext();
 
   const feedState = feeds[feedType];
 
