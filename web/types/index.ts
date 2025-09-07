@@ -7,6 +7,7 @@ export type User = {
   followerCount: number;
   followingCount: number;
   wordCount: number;
+  followedByAuthenticatedUser: boolean;
 };
 
 export type Post = {

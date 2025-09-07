@@ -1,8 +1,8 @@
 "use client";
 
 import UserProfile from "@/components/user/UserProfile";
-import WhoToFollow from "@/components/WhoToFollow";
 import FloatingWriteButton from "@/components/widgets/FloatingWriteButton";
+import WhoToFollow from "@/components/widgets/WhoToFollow";
 import WritePost from "@/components/widgets/WritePost";
 import useAuth from "@/hooks/useAuth";
 

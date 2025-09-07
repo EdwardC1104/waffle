@@ -5,7 +5,6 @@ import formatNumber from "@/utils/formatNumber";
 import Link from "next/dist/client/link";
 import { useRouter } from "next/navigation";
 import { User } from "../../types";
-import FollowButton from "../FollowButton";
 import Dropdown from "../general/Dropdown";
 import {
   EditIcon,
@@ -13,6 +12,7 @@ import {
   MoreIcon,
   SavedPostsIcon,
 } from "../general/Icons";
+import FollowButton from "./FollowButton";
 import Names from "./Names";
 import ProfilePicture from "./ProfilePicture";
 
@@ -127,7 +127,11 @@ export default function UserProfile({
             </div>
             {!isCurrentUser && (
               <div className="flex justify-center sm:justify-end">
-                <FollowButton username={user.username} size="lg" />
+                <FollowButton
+                  username={user.username}
+                  size="lg"
+                  initialFollowState={user.followedByAuthenticatedUser}
+                />
               </div>
             )}
           </div>
@@ -168,7 +172,11 @@ export default function UserProfile({
                 }
               />
             ) : (
-              <FollowButton username={user.username} size="sm" />
+              <FollowButton
+                username={user.username}
+                size="sm"
+                initialFollowState={user.followedByAuthenticatedUser}
+              />
             )}
           </>
         )}

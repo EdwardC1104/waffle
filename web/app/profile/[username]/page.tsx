@@ -4,7 +4,7 @@ import PostCard from "@/components/feed/PostCard";
 import ErrorMessage from "@/components/general/ErrorMessage";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import UserProfile from "@/components/user/UserProfile";
-import WhoToFollow from "@/components/WhoToFollow";
+import WhoToFollow from "@/components/widgets/WhoToFollow";
 import WritePost from "@/components/widgets/WritePost";
 import useAuth from "@/hooks/useAuth";
 import useProfileUser from "@/hooks/useProfileUser";
