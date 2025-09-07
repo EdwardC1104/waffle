@@ -28,6 +28,7 @@ interface FeedContextType {
   loadFeed: (feedType: FeedType) => Promise<void>;
   refreshFeed: (feedType: FeedType) => Promise<void>;
   updatePostInAllFeeds: (updatedPost: Post) => void;
+  removePostFromAllFeeds: (postId: number) => void;
 }
 
 // Helper constants
@@ -160,11 +161,34 @@ export function FeedProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const removePostFromAllFeeds = useCallback((postId: number) => {
+    setFeeds((prev) => {
+      const updated = { ...prev };
+
+      // Remove the post from all feeds that contain it
+      for (const feedType of Object.keys(updated) as FeedType[]) {
+        const feed = updated[feedType];
+        if (!feed.loading || feed.posts.length > 0) {
+          const hasPost = feed.posts.some((post) => post.id === postId);
+          if (hasPost) {
+            updated[feedType] = {
+              ...feed,
+              posts: feed.posts.filter((post) => post.id !== postId),
+            };
+          }
+        }
+      }
+
+      return updated;
+    });
+  }, []);
+
   const value: FeedContextType = {
     feeds,
     loadFeed,
     refreshFeed,
     updatePostInAllFeeds,
+    removePostFromAllFeeds,
   };
 
   return <FeedContext.Provider value={value}>{children}</FeedContext.Provider>;

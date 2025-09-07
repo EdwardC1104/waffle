@@ -48,7 +48,7 @@ export default function PostFormButton({
       disabled={!validation.isValid || isSubmitting}
       className={`relative overflow-hidden px-6 py-2.5 rounded-full font-medium text-sm transition-all shadow-md z-0 ${className}`}
       style={{
-        color: validation.isValid && !isSubmitting ? "#fff" : "#374151",
+        color: validation.isValid ? "#fff" : "#374151",
         background: "none",
         border: "none",
       }}

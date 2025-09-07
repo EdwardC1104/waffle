@@ -1,5 +1,6 @@
 "use client";
 
+import { useFeedContext } from "@/contexts/FeedContext";
 import { Post } from "@/types";
 import { deletePost, fetchPost, updatePost } from "@/utils/api";
 import { useRouter } from "next/navigation";
@@ -32,6 +33,7 @@ export function useEditPost({
   username,
 }: UseEditPostOptions): UseEditPostReturn {
   const router = useRouter();
+  const { updatePostInAllFeeds, removePostFromAllFeeds } = useFeedContext();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -79,7 +81,19 @@ export function useEditPost({
       setIsSubmitting(true);
 
       try {
-        await updatePost(post.id, title, content, coverImage);
+        const updatedPost = await updatePost(
+          post.id,
+          title,
+          content,
+          coverImage
+        );
+
+        // Update the post in all feeds
+        updatePostInAllFeeds(updatedPost);
+
+        // Update the local post state
+        setPost(updatedPost);
+
         router.replace(`/post/${post.id}`);
       } catch (err) {
         console.error("Failed to update post:", err);
@@ -88,7 +102,7 @@ export function useEditPost({
         setIsSubmitting(false);
       }
     },
-    [post, isSubmitting, router]
+    [post, isSubmitting, updatePostInAllFeeds, router]
   );
 
   const handleDeletePost = useCallback(async () => {
@@ -105,13 +119,15 @@ export function useEditPost({
 
     try {
       await deletePost(post.id);
+      removePostFromAllFeeds(post.id);
+
       router.push(`/profile/${username}`);
     } catch (err) {
       console.error("Failed to delete post:", err);
       setError(err instanceof Error ? err.message : "Failed to delete post");
       setIsDeleting(false);
     }
-  }, [post, username, isDeleting, router]);
+  }, [post, username, isDeleting, removePostFromAllFeeds, router]);
 
   return {
     post,

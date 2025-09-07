@@ -10,11 +10,12 @@ interface UseFeedReturn {
   error: string | null;
   refresh: () => Promise<void>;
   updatePost: (updatedPost: Post) => void;
+  removePost: (postId: number) => void;
 }
 
 /** Hook that provides access to a given feed with caching. */
 export function useFeed(feedType: FeedType): UseFeedReturn {
-  const { feeds, loadFeed, refreshFeed, updatePostInAllFeeds } =
+  const { feeds, loadFeed, refreshFeed, updatePostInAllFeeds, removePostFromAllFeeds } =
     useFeedContext();
 
   const feedState = feeds[feedType];
@@ -45,11 +46,19 @@ export function useFeed(feedType: FeedType): UseFeedReturn {
     [updatePostInAllFeeds]
   );
 
+  const removePost = useCallback(
+    (postId: number) => {
+      removePostFromAllFeeds(postId);
+    },
+    [removePostFromAllFeeds]
+  );
+
   return {
     posts: feedState.posts,
     loading: feedState.loading,
     error: feedState.error,
     refresh,
     updatePost,
+    removePost,
   };
 }
