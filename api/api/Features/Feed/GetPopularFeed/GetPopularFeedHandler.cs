@@ -12,25 +12,8 @@ public class GetPopularFeedHandler
     {
         _context = context;
     }
-
-    public async Task<IEnumerable<PostDto>> Handle()
-    {
-        var posts = await _context.Posts
-            .Include(p => p.User)
-            .OrderByDescending(p => p.CreatedAt)
-            .ToListAsync();
-
-        var postDtos = new List<PostDto>();
-        foreach (var post in posts)
-        {
-            var postDto = await post.ToDtoAsync(_context);
-            postDtos.Add(postDto);
-        }
-
-        return postDtos;
-    }
     
-    public async Task<IEnumerable<PostDto>> Handle(string userId)
+    public async Task<IEnumerable<PostDto>> Handle(string? userId = null)
     {
         var posts = await _context.Posts
             .Include(p => p.User)
@@ -40,7 +23,7 @@ public class GetPopularFeedHandler
         var postDtos = new List<PostDto>();
         foreach (var post in posts)
         {
-            var postDto = await post.ToDtoAsync(userId, _context);
+            var postDto = await post.ToDtoAsync(_context, userId);
             postDtos.Add(postDto);
         }
 

@@ -40,6 +40,6 @@ public class CreatePostHandler
         };
         
         // Return the created post with author information
-        return await postWithUser.ToDtoAsync(userId, _dbContext);
+        return await postWithUser.ToDtoAsync(_dbContext, userId);
     }
 }

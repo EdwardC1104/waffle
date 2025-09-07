@@ -37,23 +37,8 @@ public class PostController : ControllerBase
     [HttpPost("/api/user/post/list")]
     public async Task<IActionResult> GetPosts([FromBody] GetPostsQuery query)
     {
-        IEnumerable<PostDto> response;
-        if (User.Identity is { IsAuthenticated: true, Name: not null })
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return Unauthorized(new { message = "Not logged in" });
-            }
-            
-            response = await _getPostsHandler.Handle(userId, query);
-
-        }
-        else
-        {
-            response = await _getPostsHandler.Handle(query);
-        }
-        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var response = await _getPostsHandler.Handle(query, userId);
         return Ok(response);
     }
     
@@ -110,21 +95,8 @@ public class PostController : ControllerBase
     [HttpPost("get")]
     public async Task<IActionResult> GetPost([FromBody] GetPostQuery query)
     {
-        PostDto? response = null;
-        if (User.Identity is { IsAuthenticated: true, Name: not null })
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return Unauthorized(new { message = "Not logged in" });
-            }
-            response = await _getPostHandler.Handle(userId, query);
-        }
-        else
-        {
-            response = await _getPostHandler.Handle(query);
-        }
-        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var response = await _getPostHandler.Handle(query, userId);
         return Ok(response);
     }
 

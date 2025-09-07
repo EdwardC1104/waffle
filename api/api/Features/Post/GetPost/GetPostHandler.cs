@@ -14,7 +14,7 @@ public class GetPostHandler
         _dbContext = dbContext;
     }
     
-    public async Task<PostDto> Handle(GetPostQuery query)
+    public async Task<PostDto> Handle(GetPostQuery query, string? userId = null)
     {
         // Fetch the post entity including the user
         var postEntity = await _dbContext.Posts
@@ -27,25 +27,7 @@ public class GetPostHandler
         }
 
         // Map to DTO asynchronously
-        var postDto = await postEntity.ToDtoAsync(_dbContext);
-
-        return postDto;
-    }
-    
-    public async Task<PostDto> Handle(string userId, GetPostQuery query)
-    {
-        // Fetch the post entity including the user
-        var postEntity = await _dbContext.Posts
-            .Include(p => p.User)
-            .FirstOrDefaultAsync(p => p.Id == query.PostId);
-
-        if (postEntity == null)
-        {
-            throw new ApiException(404, $"Post with id {query.PostId} not found");
-        }
-
-        // Map to DTO asynchronously
-        var postDto = await postEntity.ToDtoAsync(userId, _dbContext);
+        var postDto = await postEntity.ToDtoAsync(_dbContext, userId);
 
         return postDto;
     }
