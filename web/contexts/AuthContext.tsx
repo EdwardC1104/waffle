@@ -91,12 +91,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Refetch user function
   const refetchUser = async () => {
-    setIsLoading(true);
     await fetchUser();
   };
 
   // Check authentication status on mount
   useEffect(() => {
+    setIsLoading(true);
     fetchUser();
   }, []);
 
