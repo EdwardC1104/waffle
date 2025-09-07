@@ -39,7 +39,7 @@ public class SearchUsersAndPostsHandler
         var userDtos = new List<UserDto>();
         foreach (var user in users)
         {
-            var userDto = await user.ToDtoAsync(_dbContext);
+            var userDto = await user.ToDtoAsync(_dbContext, userId);
             userDtos.Add(userDto);
         }
 

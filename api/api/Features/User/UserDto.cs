@@ -11,7 +11,6 @@ public class UserDto
     public int FollowingCount { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    
     public int WordCount { get; set; }
-    
+    public bool FollowedByAuthenticatedUser { get; set; }
 }

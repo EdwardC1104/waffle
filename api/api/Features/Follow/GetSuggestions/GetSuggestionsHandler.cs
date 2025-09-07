@@ -13,7 +13,7 @@ public class GetSuggestionsHandler
         _context = context;
     }
 
-    public async Task<IEnumerable<UserDto>> Handle(string userId)
+    public async Task<IEnumerable<UserDto>> Handle(string? userId = null)
     {
         
         var users = await _context.Users
@@ -24,23 +24,7 @@ public class GetSuggestionsHandler
         var userDtos = new List<UserDto>();
         foreach (var user in users)
         {
-            var userDto = await user.ToDtoAsync(_context);
-            userDtos.Add(userDto);
-        }
-
-        return userDtos;
-    }
-    
-    public async Task<IEnumerable<UserDto>> Handle()
-    {
-        var users = await _context.Users
-            .Take(7)
-            .ToListAsync();
-
-        var userDtos = new List<UserDto>();
-        foreach (var user in users)
-        {
-            var userDto = await user.ToDtoAsync(_context);
+            var userDto = await user.ToDtoAsync(_context, userId);
             userDtos.Add(userDto);
         }
 

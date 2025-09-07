@@ -3,6 +3,7 @@ using api.Features.User.DeleteUser;
 using api.Features.User.GetUser;
 using api.Features.User.UpdateUser;
 using api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.User;
@@ -27,22 +28,19 @@ public class UserController : ControllerBase
     [HttpPost("get")]
     public async Task<IActionResult> GetUser([FromBody] GetUserQuery query)
     {
-        var response = await _getUserHandler.Handle(query);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var response = await _getUserHandler.Handle(query, userId);
         return Ok(response);
     }
 
+    [Authorize]
     [HttpPost("update")]
     public async Task<IActionResult> UpdateUser([FromForm] UpdateUserCommand request, [FromForm] IFormFile? profilePicture)
     {
-        if (User.Identity is not { IsAuthenticated: true, Name: not null })
-        {
-            return Unauthorized(new { message = "Not logged in" });
-        }
-        
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
-            return Unauthorized(new { message = "Not logged in" });
+            return StatusCode(500, new { message = "userId not found in claims" });
         }
         
         string? profilePictureUrl = null;
@@ -56,18 +54,14 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
+    [Authorize]
     [HttpPost("delete")]
     public async Task<IActionResult> DeleteUser()
     {
-        if (User.Identity is not { IsAuthenticated: true, Name: not null })
-        {
-            return Unauthorized(new { message = "Not logged in" });
-        }
-        
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
-            return Unauthorized(new { message = "Not logged in" });
+            return StatusCode(500, new { message = "userId not found in claims" });
         }
 
         await _deleteUserHandler.Handle(userId);

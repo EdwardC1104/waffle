@@ -13,7 +13,7 @@ public class GetFollowingHandler
         _context = context;
     }
 
-    public async Task<IEnumerable<UserDto>> Handle(GetFollowingQuery query)
+    public async Task<IEnumerable<UserDto>> Handle(GetFollowingQuery query, string? userId = null)
     {
         // Get all users who the specified user is following
         var followedUsers = await _context.Follows
@@ -25,7 +25,7 @@ public class GetFollowingHandler
         var userDtos = new List<UserDto>();
         foreach (var user in followedUsers)
         {
-            var userDto = await user.ToDtoAsync(_context);
+            var userDto = await user.ToDtoAsync(_context, userId);
             userDtos.Add(userDto);
         }
 

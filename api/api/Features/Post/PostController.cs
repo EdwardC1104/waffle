@@ -7,6 +7,7 @@ using api.Features.Post.UpdatePost;
 using api.Features.Post.WordCount;
 using api.Features.User;
 using api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.Post;
@@ -42,18 +43,14 @@ public class PostController : ControllerBase
         return Ok(response);
     }
     
+    [Authorize]
     [HttpPost("create")]
     public async Task<IActionResult> CreatePost([FromForm] CreatePostCommand command, [FromForm] IFormFile? coverImage)
     {
-        if (User.Identity is not { IsAuthenticated: true, Name: not null })
-        {
-            return Unauthorized(new { message = "Not logged in" });
-        }
-        
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
-            return Unauthorized(new { message = "Not logged in" });
+            return StatusCode(500, new { message = "userId not found in claims" });
         }
 
         string? coverImageUrl = null;
@@ -67,18 +64,14 @@ public class PostController : ControllerBase
         return Created($"/api/post/get", response);
     }
 
+    [Authorize]
     [HttpPost("update")]
     public async Task<IActionResult> UpdatePost([FromForm] UpdatePostCommand command, [FromForm] IFormFile? coverImage)
     {
-        if (User.Identity is not { IsAuthenticated: true, Name: not null })
-        {
-            return Unauthorized(new { message = "Not logged in" });
-        }
-        
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
-            return Unauthorized(new { message = "Not logged in" });
+            return StatusCode(500, new { message = "userId not found in claims" });
         }
         
         string? coverImageUrl = null;
@@ -100,18 +93,14 @@ public class PostController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize]
     [HttpPost("delete")]
     public async Task<IActionResult> DeletePost([FromBody] DeletePostCommand request)
     {
-        if (User.Identity is not { IsAuthenticated: true, Name: not null })
-        {
-            return Unauthorized(new { message = "Not logged in" });
-        }
-        
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
-            return Unauthorized(new { message = "Not logged in" });
+            return StatusCode(500, new { message = "userId not found in claims" });
         }
 
         await _deletePost.Handle(userId, request);
