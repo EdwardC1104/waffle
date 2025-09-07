@@ -10,8 +10,6 @@ export default function useTodayWordCount() {
   const hasInitialized = useRef(false);
 
   const fetchCount = useCallback(async () => {
-    if (isLoadingCount) return;
-
     setIsLoadingCount(true);
     try {
       const count = await fetchTodayCount();
@@ -22,7 +20,7 @@ export default function useTodayWordCount() {
     } finally {
       setIsLoadingCount(false);
     }
-  }, [isLoadingCount]);
+  }, []);
 
   useEffect(() => {
     if (!hasInitialized.current) {

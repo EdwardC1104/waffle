@@ -1,5 +1,6 @@
 import { getSupportedImageTypes, validateImage } from "@/utils/imageUtils";
 import Image from "next/image";
+import { useRef } from "react";
 import { ImageIcon } from "../general/Icons";
 
 interface ImageUploadProps {
@@ -18,6 +19,7 @@ export default function ImageUpload({
   onError,
   maxSizeMB = 10,
 }: ImageUploadProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -34,10 +36,9 @@ export default function ImageUpload({
   const handleRemoveImage = () => {
     onRemoveImage();
     // Clear the file input
-    const fileInput = document.getElementById(
-      "image-upload"
-    ) as HTMLInputElement;
-    if (fileInput) fileInput.value = "";
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   if (imagePreview) {
@@ -73,6 +74,7 @@ export default function ImageUpload({
   return (
     <div className="border-2 border-dashed border-zinc-300 rounded-lg p-8 text-center hover:border-zinc-400 transition-colors">
       <input
+        ref={fileInputRef}
         type="file"
         accept={getSupportedImageTypes()}
         onChange={handleFileChange}

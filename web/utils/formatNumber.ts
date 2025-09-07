@@ -10,13 +10,22 @@ const formatNumber = (num: number, useAbbreviation: boolean = true) => {
   }
 
   if (num >= 1000000000) {
-    return `${Math.floor(num / 1000000000)}B`;
+    const value = num / 1000000000;
+    return value % 1 === 0
+      ? `${Math.floor(value)}B`
+      : `${Math.round(value * 10) / 10}B`;
   }
   if (num >= 1000000) {
-    return `${Math.floor(num / 1000000)}M`;
+    const value = num / 1000000;
+    return value % 1 === 0
+      ? `${Math.floor(value)}M`
+      : `${Math.round(value * 10) / 10}M`;
   }
   if (num >= 1000) {
-    return `${Math.floor(num / 1000)}K`;
+    const value = num / 1000;
+    return value % 1 === 0
+      ? `${Math.floor(value)}K`
+      : `${Math.round(value * 10) / 10}K`;
   }
   return num.toString();
 };
