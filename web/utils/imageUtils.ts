@@ -12,7 +12,7 @@ export interface ImageValidationResult {
  */
 export const validateImage = (
   file: File,
-  maxSizeMB: number = 5
+  maxSizeMB: number = 10
 ): ImageValidationResult => {
   // Validate file type
   if (!file.type.startsWith("image/")) {
