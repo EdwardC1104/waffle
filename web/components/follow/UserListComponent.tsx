@@ -6,6 +6,7 @@ interface UserListComponentProps {
   emptyMessage?: string;
 }
 
+/** Displays a list of users or an empty state message if none are found. */
 export default function UserListComponent({
   users,
   emptyMessage = "No users found.",

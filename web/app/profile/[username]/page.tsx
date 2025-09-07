@@ -7,12 +7,34 @@ import UserProfile from "@/components/user/UserProfile";
 import WhoToFollow from "@/components/WhoToFollow";
 import WritePost from "@/components/widgets/WritePost";
 import useAuth from "@/hooks/useAuth";
-import useProfile from "@/hooks/useProfile";
+import useProfileUser from "@/hooks/useProfileUser";
+import useUserPosts from "@/hooks/useUserPosts";
+import { useParams } from "next/navigation";
 
 export default function UserProfilePage() {
-  const { user, posts, loading, error, refetch, handlePostUpdate } =
-    useProfile("posts");
+  const username = useParams().username;
+  const {
+    user,
+    loading: userLoading,
+    error: userError,
+    refetch: refetchUser,
+  } = useProfileUser(username);
+  const {
+    posts,
+    loading: postsLoading,
+    error: postsError,
+    refetch: refetchPosts,
+    handlePostUpdate,
+  } = useUserPosts(username);
   const { user: currentUser } = useAuth();
+
+  const loading = userLoading || postsLoading;
+  const error = userError || postsError;
+
+  const refetch = () => {
+    refetchUser();
+    refetchPosts();
+  };
 
   if (loading) {
     return <LoadingSpinner text="Loading profile..." center />;
