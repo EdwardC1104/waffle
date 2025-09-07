@@ -1,14 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { FeedType, Post } from "../types";
-import {
-  fetchFollowingFeed,
-  fetchFypFeed,
-  fetchPopularFeed,
-} from "../utils/api";
+import { useFeedContext } from "@/contexts/FeedContext";
+import { FeedType, Post } from "@/types";
+import { useCallback, useEffect } from "react";
 
-interface UseFeedState {
+interface UseFeedReturn {
   posts: Post[];
   loading: boolean;
   error: string | null;
@@ -16,61 +12,49 @@ interface UseFeedState {
   updatePost: (updatedPost: Post) => void;
 }
 
-const FEED_FETCHERS = {
-  popular: fetchPopularFeed,
-  following: fetchFollowingFeed,
-  fyp: fetchFypFeed,
-} as const;
+/**
+ * Hook that provides access to a specific feed with caching.
+ * Only fetches the feed the first time it's accessed.
+ */
+export function useFeed(feedType: FeedType): UseFeedReturn {
+  const { feeds, loadFeed, refreshFeed, updatePostInAllFeeds } =
+    useFeedContext();
 
-const FEED_ERROR_MESSAGES = {
-  popular: "Failed to load popular posts",
-  following: "Failed to load posts from people you follow",
-  fyp: "Failed to load your personalised feed",
-} as const;
+  const feedState = feeds[feedType];
 
-/** Manages the state and logic for fetching and updating the feed based on the selected feed type */
-export function useFeed(feedType: FeedType): UseFeedState {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchFeedData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const feedFetcher = FEED_FETCHERS[feedType];
-      const feedPosts = await feedFetcher();
-
-      setPosts(feedPosts);
-    } catch (err) {
-      console.error(`Failed to fetch ${feedType} feed:`, err);
-      const errorMessage =
-        err instanceof Error ? err.message : FEED_ERROR_MESSAGES[feedType];
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
+  // Load the feed when the hook is first used or when feeds are reset
+  useEffect(() => {
+    // Only load if not currently loading, hasn't been loaded yet, and no posts
+    if (
+      !feedState.loading &&
+      !feedState.hasLoaded &&
+      feedState.posts.length === 0
+    ) {
+      loadFeed(feedType);
     }
-  }, [feedType]);
+  }, [
+    feedType,
+    feedState.loading,
+    feedState.hasLoaded,
+    feedState.posts.length,
+    loadFeed,
+  ]);
 
   const refresh = useCallback(async () => {
-    await fetchFeedData();
-  }, [fetchFeedData]);
+    await refreshFeed(feedType);
+  }, [feedType, refreshFeed]);
 
-  const updatePost = useCallback((updatedPost: Post) => {
-    setPosts((prevPosts) =>
-      prevPosts.map((post) => (post.id === updatedPost.id ? updatedPost : post))
-    );
-  }, []);
-
-  useEffect(() => {
-    fetchFeedData();
-  }, [fetchFeedData]);
+  const updatePost = useCallback(
+    (updatedPost: Post) => {
+      updatePostInAllFeeds(updatedPost);
+    },
+    [updatePostInAllFeeds]
+  );
 
   return {
-    posts,
-    loading,
-    error,
+    posts: feedState.posts,
+    loading: feedState.loading,
+    error: feedState.error,
     refresh,
     updatePost,
   };

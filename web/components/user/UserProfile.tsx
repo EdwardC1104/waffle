@@ -87,7 +87,6 @@ export default function UserProfile({
           onClick: async () => {
             try {
               await logout();
-              router.push("/login");
             } catch (error) {
               console.error("Failed to logout:", error);
             }
