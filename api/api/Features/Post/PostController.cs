@@ -7,6 +7,7 @@ using api.Features.Post.UpdatePost;
 using api.Features.Post.WordCount;
 using api.Features.User;
 using api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.Post;
@@ -37,38 +38,19 @@ public class PostController : ControllerBase
     [HttpPost("/api/user/post/list")]
     public async Task<IActionResult> GetPosts([FromBody] GetPostsQuery query)
     {
-        IEnumerable<PostDto> response;
-        if (User.Identity is { IsAuthenticated: true, Name: not null })
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return Unauthorized(new { message = "Not logged in" });
-            }
-            
-            response = await _getPostsHandler.Handle(userId, query);
-
-        }
-        else
-        {
-            response = await _getPostsHandler.Handle(query);
-        }
-        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var response = await _getPostsHandler.Handle(query, userId);
         return Ok(response);
     }
     
+    [Authorize]
     [HttpPost("create")]
     public async Task<IActionResult> CreatePost([FromForm] CreatePostCommand command, [FromForm] IFormFile? coverImage)
     {
-        if (User.Identity is not { IsAuthenticated: true, Name: not null })
-        {
-            return Unauthorized(new { message = "Not logged in" });
-        }
-        
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
-            return Unauthorized(new { message = "Not logged in" });
+            return StatusCode(500, new { message = "userId not found in claims" });
         }
 
         string? coverImageUrl = null;
@@ -82,18 +64,14 @@ public class PostController : ControllerBase
         return Created($"/api/post/get", response);
     }
 
+    [Authorize]
     [HttpPost("update")]
     public async Task<IActionResult> UpdatePost([FromForm] UpdatePostCommand command, [FromForm] IFormFile? coverImage)
     {
-        if (User.Identity is not { IsAuthenticated: true, Name: not null })
-        {
-            return Unauthorized(new { message = "Not logged in" });
-        }
-        
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
-            return Unauthorized(new { message = "Not logged in" });
+            return StatusCode(500, new { message = "userId not found in claims" });
         }
         
         string? coverImageUrl = null;
@@ -110,36 +88,19 @@ public class PostController : ControllerBase
     [HttpPost("get")]
     public async Task<IActionResult> GetPost([FromBody] GetPostQuery query)
     {
-        PostDto? response = null;
-        if (User.Identity is { IsAuthenticated: true, Name: not null })
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return Unauthorized(new { message = "Not logged in" });
-            }
-            response = await _getPostHandler.Handle(userId, query);
-        }
-        else
-        {
-            response = await _getPostHandler.Handle(query);
-        }
-        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var response = await _getPostHandler.Handle(query, userId);
         return Ok(response);
     }
 
+    [Authorize]
     [HttpPost("delete")]
     public async Task<IActionResult> DeletePost([FromBody] DeletePostCommand request)
     {
-        if (User.Identity is not { IsAuthenticated: true, Name: not null })
-        {
-            return Unauthorized(new { message = "Not logged in" });
-        }
-        
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
-            return Unauthorized(new { message = "Not logged in" });
+            return StatusCode(500, new { message = "userId not found in claims" });
         }
 
         await _deletePost.Handle(userId, request);

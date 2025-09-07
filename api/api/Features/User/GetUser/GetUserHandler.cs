@@ -14,7 +14,7 @@ public class GetUserHandler
         _dbContext = dbContext;
     }
     
-    public async Task<UserDto> Handle(GetUserQuery query)
+    public async Task<UserDto> Handle(GetUserQuery query, string? userId = null)
     {
         var user = await _userManager.FindByNameAsync(query.Username);
 
@@ -23,6 +23,6 @@ public class GetUserHandler
             throw new ApiException(404, $"User with username {query.Username} not found");
         }
 
-        return await user.ToDtoAsync(_dbContext);
+        return await user.ToDtoAsync(_dbContext, userId);
     }
 }

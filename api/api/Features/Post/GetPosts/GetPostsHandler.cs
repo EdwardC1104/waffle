@@ -13,7 +13,7 @@ public class GetPostsHandler
         _dbContext = dbContext;
     }
     
-    public async Task<IEnumerable<PostDto>> Handle(GetPostsQuery query)
+    public async Task<IEnumerable<PostDto>> Handle(GetPostsQuery query, string? userId = null)
     {
         // Fetch posts including user
         var postsEntities = await _dbContext.Posts
@@ -26,26 +26,7 @@ public class GetPostsHandler
         var posts = new List<PostDto>();
         foreach (var post in postsEntities)
         {
-            posts.Add(await post.ToDtoAsync(_dbContext));
-        }
-
-        return posts;
-    }
-    
-    public async Task<IEnumerable<PostDto>> Handle(string userId, GetPostsQuery query)
-    {
-        // Fetch posts including user
-        var postsEntities = await _dbContext.Posts
-            .Where(p => p.User.UserName == query.Username)
-            .Include(p => p.User)
-            .OrderByDescending(p => p.CreatedAt)
-            .ToListAsync(); // fetch first
-
-        // Map to DTOs asynchronously
-        var posts = new List<PostDto>();
-        foreach (var post in postsEntities)
-        {
-            posts.Add(await post.ToDtoAsync(userId, _dbContext));
+            posts.Add(await post.ToDtoAsync(_dbContext, userId));
         }
 
         return posts;

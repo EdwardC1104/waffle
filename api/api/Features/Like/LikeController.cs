@@ -6,6 +6,7 @@ using api.Features.Follow.GetFollowing;
 using api.Features.Follow.GetSuggestions;
 using api.Features.Like.CreateLike;
 using api.Features.Like.DeleteLike;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.Like;
@@ -23,38 +24,28 @@ public class LikeController : ControllerBase
         _deleteLikeHandler = deleteLikeHandler;
     }
 
+    [Authorize]
     [HttpPost("create")]
     public async Task<IActionResult> Follow([FromBody] CreateLikeCommand command)
     {
-        if (User.Identity is not { IsAuthenticated: true, Name: not null })
-        {
-            return Unauthorized(new { message = "Not logged in" });
-        }
-        
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
-            return Unauthorized(new { message = "Not logged in" });
+            return StatusCode(500, new { message = "userId not found in claims" });
         }
-
         var result = await _createLikeHandler.Handle(userId, command);
         return Ok(result);
     }
 
+    [Authorize]
     [HttpPost("delete")]
     public async Task<IActionResult> Unfollow([FromBody] DeleteLikeCommand command)
     {
-        if (User.Identity is not { IsAuthenticated: true, Name: not null })
-        {
-            return Unauthorized(new { message = "Not logged in" });
-        }
-        
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
-            return Unauthorized(new { message = "Not logged in" });
+            return StatusCode(500, new { message = "userId not found in claims" });
         }
-
         var result = await _deleteLikeHandler.Handle(userId, command);
         return Ok(result);
     }

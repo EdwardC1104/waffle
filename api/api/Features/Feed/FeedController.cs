@@ -3,6 +3,7 @@ using api.Features.Feed.GetFollowingFeed;
 using api.Features.Feed.GetFypFeed;
 using api.Features.Feed.GetPopularFeed;
 using api.Features.Post;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.Feed;
@@ -22,36 +23,28 @@ public class FeedController : ControllerBase
         _getPopularFeedHandler = getPopularFeedHandler;
     }
 
+    [Authorize]
     [HttpPost("fyp")]
     public async Task<IActionResult> GetFypFeed()
     {
-        if (User.Identity is not { IsAuthenticated: true, Name: not null })
-        {
-            return Unauthorized(new { message = "Not logged in" });
-        }
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
-            return Unauthorized(new { message = "Not logged in" });
+            return StatusCode(500, new { message = "userId not found in claims" });
         }
-        
         var posts = await _getFypFeedHandler.Handle(userId);
         return Ok(posts);
     }
     
+    [Authorize]
     [HttpPost("following")]
     public async Task<IActionResult> GetFollowingFeed()
     {
-        if (User.Identity is not { IsAuthenticated: true, Name: not null })
-        {
-            return Unauthorized(new { message = "Not logged in" });
-        }
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
-            return Unauthorized(new { message = "Not logged in" });
+            return StatusCode(500, new { message = "userId not found in claims" });
         }
-
         var posts = await _getFollowingFeedHandler.Handle(userId);
         return Ok(posts);
     }
@@ -59,21 +52,8 @@ public class FeedController : ControllerBase
     [HttpPost("popular")]
     public async Task<IActionResult> GetPopularFeed()
     {
-        IEnumerable<PostDto> posts;
-        if (User.Identity is { IsAuthenticated: true, Name: not null })
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return Unauthorized(new { message = "Not logged in" });
-            }
-            
-            posts = await _getPopularFeedHandler.Handle(userId);
-        }
-        else
-        {
-            posts = await _getPopularFeedHandler.Handle();
-        }
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var posts = await _getPopularFeedHandler.Handle(userId);
         return Ok(posts);
     }
 }

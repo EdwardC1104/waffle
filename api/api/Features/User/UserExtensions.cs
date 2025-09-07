@@ -4,7 +4,7 @@ namespace api.Features.User;
 
 public static class UserExtensions
 {
-    public static async Task<UserDto> ToDtoAsync(this Models.User user, DbContext context)
+    public static async Task<UserDto> ToDtoAsync(this Models.User user, DbContext context, string? userId = null)
     {
         var followerCount = await context.Set<Models.Follow>()
             .CountAsync(f => f.FolloweeId == user.Id);
@@ -15,6 +15,9 @@ public static class UserExtensions
         var totalWordCount = await context.Set<Models.Post>()
             .Where(p => p.UserId == user.Id)
             .SumAsync(p => p.WordCount);
+        
+        var followedByAuthenticatedUser = userId != null && await context.Set<Models.Follow>()
+            .FirstOrDefaultAsync(f => f.FollowerId == userId && f.FolloweeId == user.Id) != null;
 
         return new UserDto
         {
@@ -27,7 +30,8 @@ public static class UserExtensions
             FollowingCount = followingCount,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt,
-            WordCount = totalWordCount
+            WordCount = totalWordCount,
+            FollowedByAuthenticatedUser = followedByAuthenticatedUser
         };
     }
 }

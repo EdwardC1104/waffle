@@ -46,6 +46,6 @@ public class UpdatePostHandler
         await _dbContext.SaveChangesAsync();
         
         // Return the updated post
-        return await post.ToDtoAsync(userId, _dbContext);
+        return await post.ToDtoAsync(_dbContext, userId);
     }
 }
