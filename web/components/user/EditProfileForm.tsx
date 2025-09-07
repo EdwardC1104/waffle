@@ -1,6 +1,5 @@
 "use client";
 
-import FormActions from "@/components/FormActions";
 import ErrorMessage from "@/components/general/ErrorMessage";
 import FormField from "@/components/general/FormField";
 import EditProfilePicture from "@/components/user/EditProfilePicture";
@@ -99,13 +98,24 @@ export default function EditProfileForm({
           </div>
         </div>
 
-        <FormActions
-          onCancel={handleCancel}
-          onSubmit={() => {}}
-          isLoading={isLoading}
-          isFormValid={isFormValid}
-          hasChanges={hasChanges}
-        />
+        <div className="px-8 py-6 bg-white flex justify-between items-center">
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="px-8 py-3 border border-stone-300 rounded-full shadow-sm text-sm font-semibold text-stone-900 bg-white hover:bg-stone-50 transition-colors"
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            disabled={!isFormValid || !hasChanges || isLoading}
+            className="px-8 py-3 bg-stone-900 rounded-full shadow-lg text-white text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+          >
+            {isLoading ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
       </form>
 
       <div className="py-8 px-8">
