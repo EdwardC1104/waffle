@@ -1,3 +1,5 @@
+"use client";
+
 import { User } from "@/types";
 import { fetchFollowing } from "@/utils/api";
 import { useCallback, useEffect, useState } from "react";
@@ -9,9 +11,7 @@ interface UseUserFollowingReturn {
   refetch: () => void;
 }
 
-/**
- * Hook for fetching users that a user is following
- */
+/** Hook for fetching users that a user is following */
 export default function useUserFollowing(
   username: string | string[] | undefined
 ): UseUserFollowingReturn {

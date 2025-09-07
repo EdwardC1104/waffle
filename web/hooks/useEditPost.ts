@@ -1,3 +1,5 @@
+"use client";
+
 import { Post } from "@/types";
 import { deletePost, fetchPost, updatePost } from "@/utils/api";
 import { useRouter } from "next/navigation";

@@ -1,5 +1,3 @@
-"use client";
-
 import Names from "@/components/user/Names";
 import ProfilePicture from "@/components/user/ProfilePicture";
 import { User } from "@/types";

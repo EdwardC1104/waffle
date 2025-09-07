@@ -1,3 +1,5 @@
+"use client";
+
 import useAuth from "@/hooks/useAuth";
 import formatNumber from "@/utils/formatNumber";
 import Link from "next/dist/client/link";

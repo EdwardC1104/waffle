@@ -1,3 +1,5 @@
+"use client";
+
 import { Post } from "@/types";
 import { fetchUserPosts } from "@/utils/api";
 import { useCallback, useEffect, useState } from "react";
@@ -10,9 +12,7 @@ interface UseUserPostsReturn {
   handlePostUpdate: (updatedPost: Post) => void;
 }
 
-/**
- * Hook for fetching a user's posts
- */
+/** Hook for fetching a user's posts */
 export default function useUserPosts(
   username: string | string[] | undefined
 ): UseUserPostsReturn {

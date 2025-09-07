@@ -1,3 +1,5 @@
+"use client";
+
 import { User } from "@/types";
 import { fetchUser } from "@/utils/api";
 import { useCallback, useEffect, useState } from "react";

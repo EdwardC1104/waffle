@@ -1,3 +1,5 @@
+"use client";
+
 import { useFeed } from "../../hooks/useFeed";
 import { FeedType } from "../../types";
 import ErrorMessage from "../general/ErrorMessage";

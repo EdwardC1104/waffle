@@ -1,3 +1,5 @@
+"use client";
+
 import { createNewPost } from "@/utils/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

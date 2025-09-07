@@ -1,3 +1,5 @@
+"use client";
+
 import { Post } from "@/types";
 import { likePost, unlikePost } from "@/utils/api";
 import { useRouter } from "next/navigation";

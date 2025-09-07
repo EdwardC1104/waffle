@@ -1,3 +1,5 @@
+"use client";
+
 import { fetchFollowSuggestions } from "@/utils/api";
 import { useCallback, useEffect, useState } from "react";
 import { User } from "../types";

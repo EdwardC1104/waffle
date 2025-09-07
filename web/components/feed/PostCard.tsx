@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { Post } from "../../types";
