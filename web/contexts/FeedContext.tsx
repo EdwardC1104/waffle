@@ -21,7 +21,6 @@ interface FeedState {
   posts: Post[];
   loading: boolean;
   error: string | null;
-  hasLoaded: boolean;
 }
 
 interface FeedContextType {
@@ -40,9 +39,8 @@ const FEED_FETCHERS = {
 
 const INITIAL_FEED_STATE: FeedState = {
   posts: [],
-  loading: false,
+  loading: true,
   error: null,
-  hasLoaded: false,
 };
 
 // Context
@@ -50,12 +48,13 @@ const FeedContext = createContext<FeedContextType | undefined>(undefined);
 
 // Provider
 export function FeedProvider({ children }: { children: ReactNode }) {
+  const { isAuthenticated, isLoading } = useAuth();
+
   const [feeds, setFeeds] = useState<Record<FeedType, FeedState>>(() => ({
     popular: { ...INITIAL_FEED_STATE },
     following: { ...INITIAL_FEED_STATE },
     fyp: { ...INITIAL_FEED_STATE },
   }));
-  const { isAuthenticated } = useAuth();
 
   const updateFeedState = useCallback(
     (feedType: FeedType, updates: Partial<FeedState>) => {
@@ -95,7 +94,6 @@ export function FeedProvider({ children }: { children: ReactNode }) {
           posts,
           loading: false,
           error: null,
-          hasLoaded: true,
         });
       } catch (error) {
         console.error(
@@ -109,7 +107,6 @@ export function FeedProvider({ children }: { children: ReactNode }) {
             error instanceof Error
               ? error.message
               : `Failed to load ${feedType} feed`,
-          hasLoaded: false,
         });
       }
     },
@@ -126,14 +123,16 @@ export function FeedProvider({ children }: { children: ReactNode }) {
     [fetchFeedData]
   );
 
-  // Reset feeds when authentication state changes
+  // Reset feeds when user logs in or out
   useEffect(() => {
-    setFeeds({
-      popular: { ...INITIAL_FEED_STATE },
-      following: { ...INITIAL_FEED_STATE },
-      fyp: { ...INITIAL_FEED_STATE },
-    });
-  }, [isAuthenticated]);
+    if (!isLoading) {
+      setFeeds({
+        popular: { ...INITIAL_FEED_STATE },
+        following: { ...INITIAL_FEED_STATE },
+        fyp: { ...INITIAL_FEED_STATE },
+      });
+    }
+  }, [isAuthenticated, isLoading]);
 
   const updatePostInAllFeeds = useCallback((updatedPost: Post) => {
     setFeeds((prev) => {
@@ -142,7 +141,7 @@ export function FeedProvider({ children }: { children: ReactNode }) {
       // Update the post in all feeds that contain it
       for (const feedType of Object.keys(updated) as FeedType[]) {
         const feed = updated[feedType];
-        if (feed.hasLoaded) {
+        if (!feed.loading || feed.posts.length > 0) {
           const postIndex = feed.posts.findIndex(
             (post) => post.id === updatedPost.id
           );

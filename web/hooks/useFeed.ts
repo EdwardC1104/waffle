@@ -12,31 +12,25 @@ interface UseFeedReturn {
   updatePost: (updatedPost: Post) => void;
 }
 
-/**
- * Hook that provides access to a specific feed with caching.
- * Only fetches the feed the first time it's accessed.
- */
+/** Hook that provides access to a given feed with caching. */
 export function useFeed(feedType: FeedType): UseFeedReturn {
   const { feeds, loadFeed, refreshFeed, updatePostInAllFeeds } =
     useFeedContext();
 
   const feedState = feeds[feedType];
 
-  // Load the feed when the hook is first used or when feeds are reset
   useEffect(() => {
-    // Only load if not currently loading, hasn't been loaded yet, and no posts
-    if (
-      !feedState.loading &&
-      !feedState.hasLoaded &&
-      feedState.posts.length === 0
-    ) {
+    // Only load if the feed hasn't been loaded yet
+    // A feed is considered "not loaded" if it's in the initial loading state
+    // (loading: true, no posts, no error)
+    if (feedState.loading && feedState.posts.length === 0 && !feedState.error) {
       loadFeed(feedType);
     }
   }, [
     feedType,
     feedState.loading,
-    feedState.hasLoaded,
     feedState.posts.length,
+    feedState.error,
     loadFeed,
   ]);
 

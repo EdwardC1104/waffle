@@ -21,14 +21,6 @@ const FEED_TITLES = {
 export default function Feed({ feedType }: FeedProps) {
   const { posts, loading, error, refresh, updatePost } = useFeed(feedType);
 
-  if (loading) {
-    return (
-      <LoadingSpinner
-        text={`Loading ${FEED_TITLES[feedType].toLowerCase()}...`}
-      />
-    );
-  }
-
   if (error) {
     return (
       <ErrorMessage
@@ -36,6 +28,14 @@ export default function Feed({ feedType }: FeedProps) {
         message={error}
         onRetry={refresh}
         showRetryButton={true}
+      />
+    );
+  }
+
+  if (loading) {
+    return (
+      <LoadingSpinner
+        text={`Loading ${FEED_TITLES[feedType].toLowerCase()}...`}
       />
     );
   }
