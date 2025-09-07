@@ -124,7 +124,7 @@ export default function EditProfileForm({
             disabled={isLoading}
             className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
           >
-            {isLoading ? "Deleting..." : "Delete Account"}
+            Delete Account
           </button>
         </div>
       </div>
