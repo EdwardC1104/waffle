@@ -1,11 +1,12 @@
 using api.Data;
 using api.Exceptions;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Features.User.DeleteUser;
 
-public class DeleteUserHandler
+public class DeleteUserHandler : IRequestHandler<DeleteUserCommand>
 {
     private readonly UserManager<Models.User> _userManager;
     private readonly SignInManager<Models.User> _signInManager;
@@ -18,13 +19,13 @@ public class DeleteUserHandler
         _dbContext = dbContext;
     }
 
-    public async Task Handle(string userId)
+    public async Task Handle(DeleteUserCommand command, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByIdAsync(command.UserId);
         
         if (user == null)
         {
-            throw new ApiException(404, $"User with id {userId} not found");
+            throw new ApiException(404, $"User with id {command.UserId} not found");
         }
 
         // Option 1: Hard delete (removes all data)

@@ -1,13 +1,13 @@
 using api.Data;
 using api.Features.Post;
 using api.Features.User;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Features.Search.SearchUsersAndPosts;
 
-
-public class SearchUsersAndPostsHandler
+public class SearchUsersAndPostsHandler : IRequestHandler<SearchUsersAndPostsQuery, SearchUsersAndPostsResponse>
 {
     private readonly AppDbContext _dbContext;
     private readonly UserManager<api.Models.User> _userManager;
@@ -18,28 +18,28 @@ public class SearchUsersAndPostsHandler
         _userManager = userManager;
     }
     
-    public async Task<SearchUsersAndPostsResponse> Handle(SearchUsersAndPostsQuery query, string? userId = null)
+    public async Task<SearchUsersAndPostsResponse> Handle(SearchUsersAndPostsQuery query, CancellationToken cancellationToken)
     {
         var posts = await _dbContext.Posts.Where(p => EF.Functions.ToTsVector("english", p.Title + " " + p.Content)
             .Matches(EF.Functions.PlainToTsQuery("english", query.Query)))
             .Include(p => p.User)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         var postDtos = new List<PostDto>();
         foreach (var post in posts)
         {
-            var postDto = await post.ToDtoAsync(_dbContext, userId);
+            var postDto = await post.ToDtoAsync(_dbContext, query.AuthenticatedUserId);
             postDtos.Add(postDto);
         }
         
         var users = await _dbContext.Users.Where(u => EF.Functions.ToTsVector("english", u.Name + " " + u.UserName)
             .Matches(EF.Functions.PlainToTsQuery("english", query.Query)))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
         
         var userDtos = new List<UserDto>();
         foreach (var user in users)
         {
-            var userDto = await user.ToDtoAsync(_dbContext, userId);
+            var userDto = await user.ToDtoAsync(_dbContext, query.AuthenticatedUserId);
             userDtos.Add(userDto);
         }
 

@@ -1,10 +1,11 @@
 using api.Data;
 using api.Exceptions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Features.Post.UpdatePost;
 
-public class UpdatePostHandler
+public class UpdatePostHandler : IRequestHandler<UpdatePostCommand, PostDto>
 {
     private readonly AppDbContext _dbContext;
     
@@ -13,12 +14,12 @@ public class UpdatePostHandler
         _dbContext = dbContext;
     }
 
-    public async Task<PostDto> Handle(string userId, UpdatePostCommand request, string? coverImageUrl = null)
+    public async Task<PostDto> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
     {
         // Find the post and verify ownership
         var post = await _dbContext.Posts
             .Include(p => p.User)
-            .FirstOrDefaultAsync(p => p.Id == request.PostId && p.UserId == userId);
+            .FirstOrDefaultAsync(p => p.Id == request.PostId && p.UserId == request.UserId, cancellationToken);
         
         if (post == null)
         {
@@ -38,14 +39,14 @@ public class UpdatePostHandler
                 .Length;
         }
         
-        post.CoverImageUrl = coverImageUrl ?? "";
+        post.CoverImageUrl = request.CoverImageUrl ?? "";
         
         // Update the modification timestamp
         post.UpdatedAt = DateTime.UtcNow;
         
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(cancellationToken);
         
         // Return the updated post
-        return await post.ToDtoAsync(_dbContext, userId);
+        return await post.ToDtoAsync(_dbContext, request.UserId);
     }
 }

@@ -1,11 +1,12 @@
 using api.Data;
 using api.Features.User;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
 namespace api.Features.Auth.GitHubLogin;
 
-public class GitHubLoginHandler
+public class GitHubLoginHandler : IRequestHandler<GitHubLoginCommand, UserDto?>
 {
     private readonly UserManager<api.Models.User> _userManager;
     private readonly SignInManager<api.Models.User> _signInManager;
@@ -18,20 +19,15 @@ public class GitHubLoginHandler
         _dbContext = dbContext;
     }
 
-    public async Task<UserDto?> Handle(ClaimsPrincipal gitHubUser)
+    public async Task<UserDto?> Handle(GitHubLoginCommand request, CancellationToken cancellationToken)
     {
-        var email = gitHubUser.FindFirst(ClaimTypes.Email)?.Value;
-        var gitHubId = gitHubUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var name = gitHubUser.FindFirst(ClaimTypes.Name)?.Value;
-        var userName = gitHubUser.FindFirst("login")?.Value ?? gitHubId;
-
-        if (string.IsNullOrEmpty(gitHubId))
+        if (string.IsNullOrEmpty(request.GitHubId))
         {
             return null;
         }
 
         // Check if user already exists with this GitHub ID
-        var existingUser = await _userManager.FindByLoginAsync("GitHub", gitHubId);
+        var existingUser = await _userManager.FindByLoginAsync("GitHub", request.GitHubId);
         
         if (existingUser != null)
         {
@@ -40,28 +36,13 @@ public class GitHubLoginHandler
             return await existingUser.ToDtoAsync(_dbContext);
         }
 
-        // // Check if user exists with this email
-        // if (!string.IsNullOrEmpty(email))
-        // {
-        //     var userByEmail = await _userManager.FindByEmailAsync(email);
-        //     if (userByEmail != null)
-        //     {
-        //         // Link GitHub account to existing user
-        //         await _userManager.AddLoginAsync(userByEmail, new UserLoginInfo("GitHub", gitHubId, "GitHub"));
-        //         await _signInManager.SignInAsync(userByEmail, isPersistent: false);
-        //         userByEmail.UpdatedAt = DateTime.UtcNow;
-        //         await _userManager.UpdateAsync(userByEmail);
-        //         return await userByEmail.ToDtoAsync(_dbContext);
-        //     }
-        // }
-
         // Create new user
         var newUser = new api.Models.User
         {
-            UserName = await GenerateUniqueUsername(userName ?? name ?? $"user_{gitHubId}"),
-            Email = email,
-            Name = name ?? userName ?? "GitHub User",
-            EmailConfirmed = !string.IsNullOrEmpty(email),
+            UserName = await GenerateUniqueUsername(request.UserName ?? request.Name ?? $"user_{request.GitHubId}"),
+            Email = request.Email,
+            Name = request.Name ?? request.UserName ?? "GitHub User",
+            EmailConfirmed = !string.IsNullOrEmpty(request.Email),
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
@@ -69,7 +50,7 @@ public class GitHubLoginHandler
         var result = await _userManager.CreateAsync(newUser);
         if (result.Succeeded)
         {
-            await _userManager.AddLoginAsync(newUser, new UserLoginInfo("GitHub", gitHubId, "GitHub"));
+            await _userManager.AddLoginAsync(newUser, new UserLoginInfo("GitHub", request.GitHubId, "GitHub"));
             await _signInManager.SignInAsync(newUser, isPersistent: false);
             return await newUser.ToDtoAsync(_dbContext);
         }

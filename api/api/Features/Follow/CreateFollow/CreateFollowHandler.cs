@@ -1,10 +1,11 @@
 using api.Data;
 using api.Exceptions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Features.Follow.CreateFollow;
 
-public class CreateFollowHandler
+public class CreateFollowHandler : IRequestHandler<CreateFollowCommand>
 {
     private readonly AppDbContext _context;
 
@@ -13,10 +14,10 @@ public class CreateFollowHandler
         _context = context;
     }
 
-    public async Task Handle(string userId, CreateFollowCommand command)
+    public async Task Handle(CreateFollowCommand command, CancellationToken cancellationToken)
     {
         var followeeUser = await _context.Users
-            .FirstOrDefaultAsync(u => u.UserName == command.Following);
+            .FirstOrDefaultAsync(u => u.UserName == command.Following, cancellationToken);
         
         if (followeeUser == null)
         {
@@ -25,7 +26,7 @@ public class CreateFollowHandler
 
         // Check if the follow relationship already exists
         var existingFollow = await _context.Follows
-            .FirstOrDefaultAsync(f => f.FollowerId == userId && f.FolloweeId == followeeUser.Id);
+            .FirstOrDefaultAsync(f => f.FollowerId == command.UserId && f.FolloweeId == followeeUser.Id, cancellationToken);
         
         if (existingFollow != null)
         {
@@ -35,12 +36,12 @@ public class CreateFollowHandler
         // Create new follow relationship
         var follow = new api.Models.Follow
         {
-            FollowerId = userId,
+            FollowerId = command.UserId,
             FolloweeId = followeeUser.Id,
             CreatedAt = DateTime.UtcNow
         };
 
         _context.Follows.Add(follow);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

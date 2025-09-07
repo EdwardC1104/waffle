@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using api.Features.Search.SearchUsersAndPosts;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.Search;
@@ -8,18 +9,19 @@ namespace api.Features.Search;
 [Route("api/search")]
 public class SearchController : ControllerBase
 {
-    private readonly SearchUsersAndPostsHandler _searchUsersAndPostsHandler;
+    private readonly IMediator _mediator;
 
-    public SearchController(SearchUsersAndPostsHandler searchUsersAndPostsHandler)
+    public SearchController(IMediator mediator)
     {
-        _searchUsersAndPostsHandler = searchUsersAndPostsHandler;
+        _mediator = mediator;
     }
 
     [HttpPost("search-users-and-posts")]
     public async Task<IActionResult> GetPosts([FromBody] SearchUsersAndPostsQuery query)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var response = await _searchUsersAndPostsHandler.Handle(query, userId);
+        query.AuthenticatedUserId = userId;
+        var response = await _mediator.Send(query);
         return Ok(response);
     }
 }

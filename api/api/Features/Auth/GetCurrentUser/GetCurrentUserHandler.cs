@@ -3,10 +3,11 @@ using System.Security.Claims;
 using api.Data;
 using api.Exceptions;
 using api.Features.User;
+using MediatR;
 
 namespace api.Features.Auth.GetCurrentUser;
 
-public class GetCurrentUserHandler
+public class GetCurrentUserHandler : IRequestHandler<GetCurrentUserQuery, UserDto>
 {
     private readonly UserManager<api.Models.User> _userManager;
     private readonly AppDbContext _dbContext;
@@ -17,19 +18,13 @@ public class GetCurrentUserHandler
         _dbContext = dbContext;
     }
 
-    public async Task<UserDto> Handle(ClaimsPrincipal user)
+    public async Task<UserDto> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
     {
-        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId))
-        {
-            throw new ApiException(401, "Unauthorized");
-        };
-    
-        var appUser = await _userManager.FindByIdAsync(userId);
+        var appUser = await _userManager.FindByIdAsync(request.UserId);
         if (appUser == null)
         {
             throw new ApiException(401, "Unauthorized");
-        };
+        }
     
         return await appUser.ToDtoAsync(_dbContext);
     }

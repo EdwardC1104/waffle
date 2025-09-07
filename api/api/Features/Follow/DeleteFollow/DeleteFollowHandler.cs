@@ -1,10 +1,11 @@
 using api.Data;
 using api.Exceptions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Features.Follow.DeleteFollow;
 
-public class DeleteFollowHandler
+public class DeleteFollowHandler : IRequestHandler<DeleteFollowCommand>
 {
     private readonly AppDbContext _context;
 
@@ -13,11 +14,11 @@ public class DeleteFollowHandler
         _context = context;
     }
 
-    public async Task Handle(string userId, DeleteFollowCommand command)
+    public async Task Handle(DeleteFollowCommand command, CancellationToken cancellationToken)
     { 
         // Find the followee user by username
         var followeeUser = await _context.Users
-            .FirstOrDefaultAsync(u => u.UserName == command.Following);
+            .FirstOrDefaultAsync(u => u.UserName == command.Following, cancellationToken);
         
         if (followeeUser == null)
         {
@@ -26,7 +27,7 @@ public class DeleteFollowHandler
 
         // Find the existing follow relationship
         var existingFollow = await _context.Follows
-            .FirstOrDefaultAsync(f => f.FollowerId == userId && f.FolloweeId == followeeUser.Id);
+            .FirstOrDefaultAsync(f => f.FollowerId == command.UserId && f.FolloweeId == followeeUser.Id, cancellationToken);
         
         if (existingFollow == null)
         {
@@ -35,6 +36,6 @@ public class DeleteFollowHandler
 
         // Remove the follow relationship
         _context.Follows.Remove(existingFollow);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

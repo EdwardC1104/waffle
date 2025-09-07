@@ -3,6 +3,7 @@ using api.Features.User.DeleteUser;
 using api.Features.User.GetUser;
 using api.Features.User.UpdateUser;
 using api.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,16 +13,12 @@ namespace api.Features.User;
 [Route("/api/user")]
 public class UserController : ControllerBase
 {
-    private readonly GetUserHandler _getUserHandler;
-    private readonly UpdateUserHandler _updateUserHandler;
-    private readonly DeleteUserHandler _deleteUserHandler;
+    private readonly IMediator _mediator;
     private readonly S3Service _s3Service;
 
-    public UserController(GetUserHandler getUserHandler, UpdateUserHandler updateUserHandler, DeleteUserHandler deleteUserHandler, S3Service s3Service)
+    public UserController(IMediator mediator, S3Service s3Service)
     {
-        _getUserHandler = getUserHandler;
-        _updateUserHandler = updateUserHandler;
-        _deleteUserHandler = deleteUserHandler;
+        _mediator = mediator;
         _s3Service = s3Service;
     }
 
@@ -29,7 +26,8 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUser([FromBody] GetUserQuery query)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var response = await _getUserHandler.Handle(query, userId);
+        query.AuthenticatedUserId = userId;
+        var response = await _mediator.Send(query);
         return Ok(response);
     }
 
@@ -50,7 +48,9 @@ public class UserController : ControllerBase
             profilePictureUrl = await _s3Service.UploadImageAsync(profilePicture);
         }
 
-        var result = await _updateUserHandler.Handle(userId, request, profilePictureUrl);
+        request.UserId = userId;
+        request.ProfilePictureUrl = profilePictureUrl;
+        var result = await _mediator.Send(request);
         return Ok(result);
     }
 
@@ -64,7 +64,7 @@ public class UserController : ControllerBase
             return StatusCode(500, new { message = "userId not found in claims" });
         }
 
-        await _deleteUserHandler.Handle(userId);
+        await _mediator.Send(new DeleteUserCommand { UserId = userId });
         return Ok(new { message = "User account deleted successfully" });
     }
 }

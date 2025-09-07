@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using MediatR;
 
 namespace api.Features.Post.GetPost;
 
-public class GetPostQuery
+public class GetPostQuery : IRequest<PostDto>
 {
     [Required(ErrorMessage = "PostId is required")]
     public int PostId { get; set; }
+    public string? AuthenticatedUserId { get; set; }
 }

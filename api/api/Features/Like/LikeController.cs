@@ -1,11 +1,7 @@
 using System.Security.Claims;
-using api.Features.Follow.CreateFollow;
-using api.Features.Follow.DeleteFollow;
-using api.Features.Follow.GetFollowers;
-using api.Features.Follow.GetFollowing;
-using api.Features.Follow.GetSuggestions;
 using api.Features.Like.CreateLike;
 using api.Features.Like.DeleteLike;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,38 +11,40 @@ namespace api.Features.Like;
 [Route("api/like")]
 public class LikeController : ControllerBase
 {
-    private readonly CreateLikeHandler _createLikeHandler;
-    private readonly DeleteLikeHandler _deleteLikeHandler;
+    private readonly IMediator _mediator;
 
-    public LikeController(CreateLikeHandler createLikeHandler, DeleteLikeHandler deleteLikeHandler)
+    public LikeController(IMediator mediator)
     {
-        _createLikeHandler = createLikeHandler;
-        _deleteLikeHandler = deleteLikeHandler;
+        _mediator = mediator;
     }
 
     [Authorize]
     [HttpPost("create")]
-    public async Task<IActionResult> Follow([FromBody] CreateLikeCommand command)
+    public async Task<IActionResult> CreateLike([FromBody] CreateLikeCommand command)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
             return StatusCode(500, new { message = "userId not found in claims" });
         }
-        var result = await _createLikeHandler.Handle(userId, command);
+        
+        command.UserId = userId;
+        var result = await _mediator.Send(command);
         return Ok(result);
     }
 
     [Authorize]
     [HttpPost("delete")]
-    public async Task<IActionResult> Unfollow([FromBody] DeleteLikeCommand command)
+    public async Task<IActionResult> DeleteLike([FromBody] DeleteLikeCommand command)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
         {
             return StatusCode(500, new { message = "userId not found in claims" });
         }
-        var result = await _deleteLikeHandler.Handle(userId, command);
+        
+        command.UserId = userId;
+        var result = await _mediator.Send(command);
         return Ok(result);
     }
 }

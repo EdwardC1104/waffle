@@ -1,10 +1,11 @@
 using api.Data;
 using api.Exceptions;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace api.Features.User.UpdateUser;
 
-public class UpdateUserHandler
+public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UserDto>
 {
     private readonly UserManager<Models.User> _userManager;
     private readonly AppDbContext _dbContext;
@@ -15,13 +16,13 @@ public class UpdateUserHandler
         _dbContext = dbContext;
     }
 
-    public async Task<UserDto> Handle(string userId, UpdateUserCommand request, string? profilePictureUrl = null)
+    public async Task<UserDto> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByIdAsync(request.UserId);
         
         if (user == null)
         {
-            throw new ApiException(404, $"User with username {request.Username} not found");
+            throw new ApiException(404, $"User not found");
         }
 
         // Update name if provided
@@ -42,9 +43,9 @@ public class UpdateUserHandler
         }
 
         // Update profile picture URL if provided
-        if (!string.IsNullOrEmpty(profilePictureUrl))
+        if (!string.IsNullOrEmpty(request.ProfilePictureUrl))
         {
-            user.ProfilePictureUrl = profilePictureUrl;
+            user.ProfilePictureUrl = request.ProfilePictureUrl;
         }
 
         // Update UpdatedAt on profile update
@@ -58,6 +59,6 @@ public class UpdateUserHandler
             throw new ApiException(500, "Failed to update user");
         }
 
-        return await user.ToDtoAsync(_dbContext);
+        return await user.ToDtoAsync(_dbContext, request.UserId);
     }
 }

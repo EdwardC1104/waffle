@@ -1,10 +1,11 @@
 using api.Data;
 using api.Features.User;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Features.Post.GetPosts;
 
-public class GetPostsHandler
+public class GetPostsHandler : IRequestHandler<GetPostsQuery, IEnumerable<PostDto>>
 {
     private readonly AppDbContext _dbContext;
     
@@ -13,20 +14,20 @@ public class GetPostsHandler
         _dbContext = dbContext;
     }
     
-    public async Task<IEnumerable<PostDto>> Handle(GetPostsQuery query, string? userId = null)
+    public async Task<IEnumerable<PostDto>> Handle(GetPostsQuery query, CancellationToken cancellationToken)
     {
         // Fetch posts including user
         var postsEntities = await _dbContext.Posts
             .Where(p => p.User.UserName == query.Username)
             .Include(p => p.User)
             .OrderByDescending(p => p.CreatedAt)
-            .ToListAsync(); // fetch first
+            .ToListAsync(cancellationToken);
 
         // Map to DTOs asynchronously
         var posts = new List<PostDto>();
         foreach (var post in postsEntities)
         {
-            posts.Add(await post.ToDtoAsync(_dbContext, userId));
+            posts.Add(await post.ToDtoAsync(_dbContext, query.AuthenticatedUserId));
         }
 
         return posts;
