@@ -5,13 +5,18 @@ async function post<T>(endpoint: string): Promise<T>;
 async function post<T>(endpoint: string, body: FormData): Promise<T>;
 async function post<T, U>(endpoint: string, body: U): Promise<T>;
 async function post<T, U>(endpoint: string, body?: U): Promise<T> {
-  const isFormData = body instanceof FormData;
-
   const response = await fetch(endpoint, {
     method: "POST",
-    headers: isFormData ? {} : { "Content-Type": "application/json" },
+    headers:
+      body instanceof FormData
+        ? {}
+        : {
+            "Content-Type": "application/json",
+          },
     credentials: "include",
-    body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
+    ...(body !== undefined && {
+      body: body instanceof FormData ? body : JSON.stringify(body),
+    }),
   });
 
   if (!response.ok) {
