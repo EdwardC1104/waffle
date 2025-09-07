@@ -28,8 +28,6 @@ public class PostController : ControllerBase
     [HttpPost("/api/user/post/list")]
     public async Task<IActionResult> GetPosts([FromBody] GetPostsQuery query)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        query.AuthenticatedUserId = userId;
         var response = await _mediator.Send(query);
         return Ok(response);
     }
@@ -38,12 +36,6 @@ public class PostController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> CreatePost([FromForm] CreatePostCommand command, [FromForm] IFormFile? coverImage)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null)
-        {
-            return StatusCode(500, new { message = "userId not found in claims" });
-        }
-
         string? coverImageUrl = null;
 
         if (coverImage != null && coverImage.Length > 0)
@@ -51,7 +43,6 @@ public class PostController : ControllerBase
             coverImageUrl = await _s3Service.UploadImageAsync(coverImage);
         }
 
-        command.UserId = userId;
         command.CoverImageUrl = coverImageUrl;
         var response = await _mediator.Send(command);
         return Created($"/api/post/get", response);
@@ -61,12 +52,6 @@ public class PostController : ControllerBase
     [HttpPost("update")]
     public async Task<IActionResult> UpdatePost([FromForm] UpdatePostCommand command, [FromForm] IFormFile? coverImage)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null)
-        {
-            return StatusCode(500, new { message = "userId not found in claims" });
-        }
-        
         string? coverImageUrl = null;
 
         if (coverImage != null && coverImage.Length > 0)
@@ -74,7 +59,6 @@ public class PostController : ControllerBase
             coverImageUrl = await _s3Service.UploadImageAsync(coverImage);
         }
 
-        command.UserId = userId;
         command.CoverImageUrl = coverImageUrl;
         var response = await _mediator.Send(command);
         return Ok(response);
@@ -83,8 +67,6 @@ public class PostController : ControllerBase
     [HttpPost("get")]
     public async Task<IActionResult> GetPost([FromBody] GetPostQuery query)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        query.AuthenticatedUserId = userId;
         var response = await _mediator.Send(query);
         return Ok(response);
     }
@@ -93,13 +75,6 @@ public class PostController : ControllerBase
     [HttpPost("delete")]
     public async Task<IActionResult> DeletePost([FromBody] DeletePostCommand request)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null)
-        {
-            return StatusCode(500, new { message = "userId not found in claims" });
-        }
-
-        request.UserId = userId;
         await _mediator.Send(request);
         return Ok(new { message = "Post deleted successfully" });
     }

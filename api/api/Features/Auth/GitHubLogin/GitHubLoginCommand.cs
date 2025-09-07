@@ -3,7 +3,7 @@ using MediatR;
 
 namespace api.Features.Auth.GitHubLogin;
 
-public class GitHubLoginCommand : IRequest<UserDto?>
+public record GitHubLoginCommand : IRequest<UserDto?>
 {
     public string? Email { get; set; }
     public string GitHubId { get; set; } = null!;

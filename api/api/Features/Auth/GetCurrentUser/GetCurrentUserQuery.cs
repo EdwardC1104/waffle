@@ -3,4 +3,4 @@ using MediatR;
 
 namespace api.Features.Auth.GetCurrentUser;
 
-public record GetCurrentUserQuery(string UserId) : IRequest<UserDto>;
+public record GetCurrentUserQuery : IRequest<UserDto>;

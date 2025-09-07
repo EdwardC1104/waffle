@@ -3,7 +3,7 @@ using MediatR;
 
 namespace api.Features.Post.UpdatePost;
 
-public class UpdatePostCommand : IRequest<PostDto>
+public record UpdatePostCommand : IRequest<PostDto>
 {
     [Required(ErrorMessage = "Post ID is required")]
     public int PostId { get; set; }
@@ -13,6 +13,5 @@ public class UpdatePostCommand : IRequest<PostDto>
     
     public string? Content { get; set; }
     
-    public string UserId { get; set; } = null!;
     public string? CoverImageUrl { get; set; }
 }

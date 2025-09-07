@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using api.Features.Follow.CreateFollow;
 using api.Features.Follow.DeleteFollow;
 using api.Features.Follow.GetFollowers;
@@ -24,16 +23,13 @@ public class FollowController : ControllerBase
     [HttpPost("suggestions")]
     public async Task<IActionResult> GetSuggestions()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var response = await _mediator.Send(new GetSuggestionsQuery(userId));
+        var response = await _mediator.Send(new GetSuggestionsQuery());
         return Ok(response);
     }
 
     [HttpPost("followers")]
     public async Task<IActionResult> GetFollowers([FromBody] GetFollowersQuery query)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        query.AuthenticatedUserId = userId;
         var response = await _mediator.Send(query);
         return Ok(response);
     }
@@ -41,8 +37,6 @@ public class FollowController : ControllerBase
     [HttpPost("following")]
     public async Task<IActionResult> GetFollowing([FromBody] GetFollowingQuery query)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        query.AuthenticatedUserId = userId;
         var response = await _mediator.Send(query);
         return Ok(response);
     }
@@ -51,13 +45,6 @@ public class FollowController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> Follow([FromBody] CreateFollowCommand command)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null)
-        {
-            return StatusCode(500, new { message = "userId not found in claims" });
-        }
-        
-        command.UserId = userId;
         await _mediator.Send(command);
         return Ok(new { message = "Successfully followed user" });
     }
@@ -66,13 +53,6 @@ public class FollowController : ControllerBase
     [HttpPost("delete")]
     public async Task<IActionResult> Unfollow([FromBody] DeleteFollowCommand command)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null)
-        {
-            return StatusCode(500, new { message = "userId not found in claims" });
-        }
-        
-        command.UserId = userId;
         await _mediator.Send(command);
         return Ok(new { message = "Successfully unfollowed user" });
     }

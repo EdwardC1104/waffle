@@ -2,7 +2,6 @@ using api.Data;
 using api.Features.User;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 
 namespace api.Features.Auth.GitHubLogin;
 
@@ -26,17 +25,14 @@ public class GitHubLoginHandler : IRequestHandler<GitHubLoginCommand, UserDto?>
             return null;
         }
 
-        // Check if user already exists with this GitHub ID
         var existingUser = await _userManager.FindByLoginAsync("GitHub", request.GitHubId);
         
         if (existingUser != null)
         {
-            // User exists, sign them in
             await _signInManager.SignInAsync(existingUser, isPersistent: false);
             return await existingUser.ToDtoAsync(_dbContext);
         }
 
-        // Create new user
         var newUser = new api.Models.User
         {
             UserName = await GenerateUniqueUsername(request.UserName ?? request.Name ?? $"user_{request.GitHubId}"),

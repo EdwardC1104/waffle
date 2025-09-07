@@ -27,6 +27,11 @@ public class GlobalErrorHandlingMiddleware
             await HandleExceptionAsync(context, ex);
         }
     }
+    
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
 
     private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
@@ -37,20 +42,13 @@ public class GlobalErrorHandlingMiddleware
             message = exception.Message
         };
 
-        switch (exception)
+        context.Response.StatusCode = exception switch
         {
-            case ApiException apiException:
-                context.Response.StatusCode = (int)apiException.StatusCode;
-                break;
-            default:
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                break;
-        }
+            ApiException apiException => apiException.StatusCode,
+            _ => (int)HttpStatusCode.InternalServerError
+        };
 
-        var jsonResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        });
+        var jsonResponse = JsonSerializer.Serialize(response, JsonSerializerOptions);
 
         await context.Response.WriteAsync(jsonResponse);
     }

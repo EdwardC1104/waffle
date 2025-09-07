@@ -40,13 +40,7 @@ public class AuthController : ControllerBase
     [HttpPost("me")]
     public async Task<IActionResult> Me()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null)
-        {
-            return StatusCode(500, new { message = "userId not found in claims" });
-        }
-        
-        var response = await _mediator.Send(new GetCurrentUserQuery(userId));
+        var response = await _mediator.Send(new GetCurrentUserQuery());
         return Ok(response);
     }
 

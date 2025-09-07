@@ -36,7 +36,6 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, UserDto>
             throw new ApiException(400, string.Join(" ", result.Errors.Select(e => e.Description)));
         }
 
-        // Automatically sign in the user after successful registration
         await _signInManager.SignInAsync(newUser, isPersistent: false);
 
         return await newUser.ToDtoAsync(_dbContext);

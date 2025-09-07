@@ -76,6 +76,8 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 builder.Services.AddScoped<S3Service>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<CurrentUserService>();
 
 
 var app = builder.Build();

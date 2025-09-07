@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Features.Post.WordCount;
 
-public record TodaysWordCountQuery : IRequest<int>;
-
 public class TodaysWordCountHandler : IRequestHandler<TodaysWordCountQuery, int>
 {
     private readonly AppDbContext _dbContext;

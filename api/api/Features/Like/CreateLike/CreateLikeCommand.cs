@@ -4,9 +4,8 @@ using MediatR;
 
 namespace api.Features.Like.CreateLike;
 
-public class CreateLikeCommand : IRequest<PostDto>
+public record CreateLikeCommand : IRequest<PostDto>
 {
     [Required(ErrorMessage = "PostId is required")]
     public int PostId { get; set; }
-    public string UserId { get; set; } = null!;
 }

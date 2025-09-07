@@ -1,5 +1,6 @@
 using api.Data;
 using api.Exceptions;
+using api.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -9,29 +10,31 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UserDto>
 {
     private readonly UserManager<Models.User> _userManager;
     private readonly AppDbContext _dbContext;
+    private readonly CurrentUserService _currentUserService;
 
-    public UpdateUserHandler(UserManager<Models.User> userManager, AppDbContext dbContext)
+    public UpdateUserHandler(UserManager<Models.User> userManager, AppDbContext dbContext, CurrentUserService currentUserService)
     {
         _userManager = userManager;
         _dbContext = dbContext;
+        _currentUserService = currentUserService;
     }
 
     public async Task<UserDto> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByIdAsync(request.UserId);
+        var userId = _currentUserService.GetRequiredUserId();
+        
+        var user = await _userManager.FindByIdAsync(userId);
         
         if (user == null)
         {
             throw new ApiException(404, $"User not found");
         }
 
-        // Update name if provided
         if (!string.IsNullOrEmpty(request.Name))
         {
             user.Name = request.Name;
         }
 
-        // Update username if provided and not already taken
         if (!string.IsNullOrEmpty(request.Username) && request.Username != user.UserName)
         {
             var existingUser = await _userManager.FindByNameAsync(request.Username);
@@ -42,16 +45,13 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UserDto>
             user.UserName = request.Username;
         }
 
-        // Update profile picture URL if provided
         if (!string.IsNullOrEmpty(request.ProfilePictureUrl))
         {
             user.ProfilePictureUrl = request.ProfilePictureUrl;
         }
 
-        // Update UpdatedAt on profile update
         user.UpdatedAt = DateTime.UtcNow;
 
-        // Use UserManager to update the user
         var result = await _userManager.UpdateAsync(user);
         
         if (!result.Succeeded)
@@ -59,6 +59,6 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, UserDto>
             throw new ApiException(500, "Failed to update user");
         }
 
-        return await user.ToDtoAsync(_dbContext, request.UserId);
+        return await user.ToDtoAsync(_dbContext, userId);
     }
 }

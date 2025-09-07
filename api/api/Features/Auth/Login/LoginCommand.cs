@@ -4,7 +4,7 @@ using MediatR;
 
 namespace api.Features.Auth.Login;
 
-public class LoginCommand : IRequest<UserDto>
+public record LoginCommand : IRequest<UserDto>
 {
     [Required(ErrorMessage = "Username is required")]
     public string Username { get; set; } = string.Empty;

@@ -25,8 +25,6 @@ public class UserController : ControllerBase
     [HttpPost("get")]
     public async Task<IActionResult> GetUser([FromBody] GetUserQuery query)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        query.AuthenticatedUserId = userId;
         var response = await _mediator.Send(query);
         return Ok(response);
     }
@@ -35,20 +33,13 @@ public class UserController : ControllerBase
     [HttpPost("update")]
     public async Task<IActionResult> UpdateUser([FromForm] UpdateUserCommand request, [FromForm] IFormFile? profilePicture)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null)
-        {
-            return StatusCode(500, new { message = "userId not found in claims" });
-        }
-        
         string? profilePictureUrl = null;
 
         if (profilePicture != null && profilePicture.Length > 0)
         {
             profilePictureUrl = await _s3Service.UploadImageAsync(profilePicture);
         }
-
-        request.UserId = userId;
+        
         request.ProfilePictureUrl = profilePictureUrl;
         var result = await _mediator.Send(request);
         return Ok(result);
@@ -58,13 +49,7 @@ public class UserController : ControllerBase
     [HttpPost("delete")]
     public async Task<IActionResult> DeleteUser()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null)
-        {
-            return StatusCode(500, new { message = "userId not found in claims" });
-        }
-
-        await _mediator.Send(new DeleteUserCommand { UserId = userId });
+        await _mediator.Send(new DeleteUserCommand());
         return Ok(new { message = "User account deleted successfully" });
     }
 }

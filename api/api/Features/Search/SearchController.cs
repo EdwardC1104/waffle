@@ -19,8 +19,6 @@ public class SearchController : ControllerBase
     [HttpPost("search-users-and-posts")]
     public async Task<IActionResult> GetPosts([FromBody] SearchUsersAndPostsQuery query)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        query.AuthenticatedUserId = userId;
         var response = await _mediator.Send(query);
         return Ok(response);
     }

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace api.Features.Auth.Register;
 
-public class RegisterCommand : IRequest<UserDto>
+public record RegisterCommand : IRequest<UserDto>
 {
     [Required(ErrorMessage = "Name is required")]
     [StringLength(100, MinimumLength = 1, ErrorMessage = "Name must be between 1 and 100 characters")]

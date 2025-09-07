@@ -1,6 +1,7 @@
 using api.Data;
 using api.Features.Post;
 using api.Features.User;
+using api.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,11 +12,13 @@ public class SearchUsersAndPostsHandler : IRequestHandler<SearchUsersAndPostsQue
 {
     private readonly AppDbContext _dbContext;
     private readonly UserManager<api.Models.User> _userManager;
+    private readonly CurrentUserService _currentUserService;
     
-    public SearchUsersAndPostsHandler(AppDbContext dbContext, UserManager<api.Models.User> userManager)
+    public SearchUsersAndPostsHandler(AppDbContext dbContext, UserManager<api.Models.User> userManager, CurrentUserService currentUserService)
     {
         _dbContext = dbContext;
         _userManager = userManager;
+        _currentUserService = currentUserService;
     }
     
     public async Task<SearchUsersAndPostsResponse> Handle(SearchUsersAndPostsQuery query, CancellationToken cancellationToken)
@@ -24,11 +27,13 @@ public class SearchUsersAndPostsHandler : IRequestHandler<SearchUsersAndPostsQue
             .Matches(EF.Functions.PlainToTsQuery("english", query.Query)))
             .Include(p => p.User)
             .ToListAsync(cancellationToken);
+        
+        var userId = _currentUserService.GetUserIdOrNull();
 
         var postDtos = new List<PostDto>();
         foreach (var post in posts)
         {
-            var postDto = await post.ToDtoAsync(_dbContext, query.AuthenticatedUserId);
+            var postDto = await post.ToDtoAsync(_dbContext, userId);
             postDtos.Add(postDto);
         }
         
@@ -39,7 +44,7 @@ public class SearchUsersAndPostsHandler : IRequestHandler<SearchUsersAndPostsQue
         var userDtos = new List<UserDto>();
         foreach (var user in users)
         {
-            var userDto = await user.ToDtoAsync(_dbContext, query.AuthenticatedUserId);
+            var userDto = await user.ToDtoAsync(_dbContext, userId);
             userDtos.Add(userDto);
         }
 

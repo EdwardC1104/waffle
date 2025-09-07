@@ -3,9 +3,8 @@ using MediatR;
 
 namespace api.Features.Post.GetPost;
 
-public class GetPostQuery : IRequest<PostDto>
+public record GetPostQuery : IRequest<PostDto>
 {
     [Required(ErrorMessage = "PostId is required")]
     public int PostId { get; set; }
-    public string? AuthenticatedUserId { get; set; }
 }
