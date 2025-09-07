@@ -30,7 +30,6 @@ function EditProfileContent() {
     <div className="flex-1 w-full">
       <div className="w-full max-w-[1476px] mx-auto flex justify-center items-start px-4 sm:px-6 lg:px-8 py-6">
         <div className="w-full max-w-[600px]">
-          {/* Header */}
           <div className="mb-8">
             <BackButton
               text="Back to Profile"

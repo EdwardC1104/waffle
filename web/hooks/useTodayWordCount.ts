@@ -3,6 +3,7 @@
 import { fetchTodayCount } from "@/utils/api";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+/** Hook to fetch today's word count */
 export default function useTodayWordCount() {
   const [todayWordCount, setTodayWordCount] = useState<number>(0);
   const [isLoadingCount, setIsLoadingCount] = useState<boolean>(false);
