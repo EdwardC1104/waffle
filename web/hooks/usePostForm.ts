@@ -109,6 +109,7 @@ export function usePostForm({
       title,
       content,
       coverImage,
+      imagePreview,
       onSubmit,
       onError,
       validation.isValid,

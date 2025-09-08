@@ -147,7 +147,7 @@ export async function updatePost(
   formData.append("postId", postId.toString());
   formData.append("title", title);
   formData.append("content", content);
-  formData.append("deleteCoverImage", deleteCoverImage);
+  formData.append("deleteCoverImage", deleteCoverImage.toString());
   if (coverImage) {
     formData.append("coverImage", coverImage);
   }

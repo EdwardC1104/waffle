@@ -45,7 +45,7 @@ public class UpdatePostHandler : IRequestHandler<UpdatePostCommand, PostDto>
         if (request.DeleteCoverImage)
         {
             post.CoverImageUrl = "";
-        }  else if (!string.IsNullOrEmpty(request.CoverImageUrl))
+        } else if (!string.IsNullOrEmpty(request.CoverImageUrl))
         {
             post.CoverImageUrl = request.CoverImageUrl;
         }
