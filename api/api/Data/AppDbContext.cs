@@ -45,13 +45,13 @@ public class AppDbContext : IdentityDbContext<User>
             .HasOne(f => f.Follower)
             .WithMany()
             .HasForeignKey(f => f.FollowerId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
             
         modelBuilder.Entity<Follow>()
             .HasOne(f => f.Followee)
             .WithMany()
             .HasForeignKey(f => f.FolloweeId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<Like>()
             .HasKey(l => new { l.UserId, l.PostId });
