@@ -13,5 +13,7 @@ public record UpdatePostCommand : IRequest<PostDto>
     
     public string? Content { get; set; }
     
+    public bool DeleteCoverImage { get; set; } = false;
+    
     public string? CoverImageUrl { get; set; }
 }

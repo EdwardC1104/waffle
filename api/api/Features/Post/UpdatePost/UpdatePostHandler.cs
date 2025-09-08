@@ -41,8 +41,14 @@ public class UpdatePostHandler : IRequestHandler<UpdatePostCommand, PostDto>
             post.WordCount = post.Content.Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Length;
         }
-        
-        post.CoverImageUrl = request.CoverImageUrl ?? "";
+
+        if (request.DeleteCoverImage)
+        {
+            post.CoverImageUrl = "";
+        }  else if (!string.IsNullOrEmpty(request.CoverImageUrl))
+        {
+            post.CoverImageUrl = request.CoverImageUrl;
+        }
         
         post.UpdatedAt = DateTime.UtcNow;
         
