@@ -71,9 +71,11 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 
-// MediatR auto-discovers all handlers - no manual registration needed
 builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+{
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    cfg.LicenseKey = builder.Configuration["MEDIATR_LICENSE_KEY"];
+});
 
 builder.Services.AddScoped<S3Service>();
 builder.Services.AddHttpContextAccessor();
