@@ -1,9 +1,9 @@
-using System.Security.Claims;
 using api.Features.Follow.CreateFollow;
 using api.Features.Follow.DeleteFollow;
 using api.Features.Follow.GetFollowers;
 using api.Features.Follow.GetFollowing;
 using api.Features.Follow.GetSuggestions;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,42 +13,31 @@ namespace api.Features.Follow;
 [Route("api/follow")]
 public class FollowController : ControllerBase
 {
-    private readonly GetSuggestionsHandler _getSuggestionsHandler;
-    private readonly GetFollowersHandler _getFollowersHandler;
-    private readonly GetFollowingHandler _getFollowingHandler;
-    private readonly CreateFollowHandler _createFollowHandler;
-    private readonly DeleteFollowHandler _deleteFollowHandler;
+    private readonly IMediator _mediator;
 
-    public FollowController(GetSuggestionsHandler getSuggestionsHandler, GetFollowersHandler getFollowersHandler, GetFollowingHandler getFollowingHandler, CreateFollowHandler createFollowHandler, DeleteFollowHandler deleteFollowHandler)
+    public FollowController(IMediator mediator)
     {
-        _getSuggestionsHandler = getSuggestionsHandler;
-        _getFollowersHandler = getFollowersHandler;
-        _getFollowingHandler = getFollowingHandler;
-        _createFollowHandler = createFollowHandler;
-        _deleteFollowHandler = deleteFollowHandler;
+        _mediator = mediator;
     }
 
     [HttpPost("suggestions")]
     public async Task<IActionResult> GetSuggestions()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var response = await _getSuggestionsHandler.Handle(userId);
+        var response = await _mediator.Send(new GetSuggestionsQuery());
         return Ok(response);
     }
 
     [HttpPost("followers")]
     public async Task<IActionResult> GetFollowers([FromBody] GetFollowersQuery query)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var response = await _getFollowersHandler.Handle(query, userId);
+        var response = await _mediator.Send(query);
         return Ok(response);
     }
 
     [HttpPost("following")]
     public async Task<IActionResult> GetFollowing([FromBody] GetFollowingQuery query)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var response = await _getFollowingHandler.Handle(query, userId);
+        var response = await _mediator.Send(query);
         return Ok(response);
     }
 
@@ -56,12 +45,7 @@ public class FollowController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> Follow([FromBody] CreateFollowCommand command)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null)
-        {
-            return StatusCode(500, new { message = "userId not found in claims" });
-        }
-        await _createFollowHandler.Handle(userId, command);
+        await _mediator.Send(command);
         return Ok(new { message = "Successfully followed user" });
     }
 
@@ -69,12 +53,7 @@ public class FollowController : ControllerBase
     [HttpPost("delete")]
     public async Task<IActionResult> Unfollow([FromBody] DeleteFollowCommand command)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null)
-        {
-            return StatusCode(500, new { message = "userId not found in claims" });
-        }
-        await _deleteFollowHandler.Handle(userId, command);
+        await _mediator.Send(command);
         return Ok(new { message = "Successfully unfollowed user" });
     }
 }

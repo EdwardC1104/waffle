@@ -1,11 +1,12 @@
 using api.Data;
 using api.Exceptions;
-using Microsoft.AspNetCore.Identity;
 using api.Features.User;
+using MediatR;
+using Microsoft.AspNetCore.Identity;
 
 namespace api.Features.Auth.Login;
 
-public class LoginHandler
+public class LoginHandler : IRequestHandler<LoginCommand, UserDto>
 {
     private readonly SignInManager<api.Models.User> _signInManager;
     private readonly UserManager<api.Models.User> _userManager;
@@ -18,7 +19,7 @@ public class LoginHandler
         _dbContext = dbContext;
     }
 
-    public async Task<UserDto> Handle(LoginCommand request)
+    public async Task<UserDto> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         var result = await _signInManager.PasswordSignInAsync(request.Username, request.Password, false, false);
         

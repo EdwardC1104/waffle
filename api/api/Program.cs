@@ -1,30 +1,5 @@
 using Amazon.S3;
 using api.Data;
-using api.Features.Auth.GetCurrentUser;
-using api.Features.Auth.GitHubLogin;
-using api.Features.Auth.Login;
-using api.Features.Auth.Logout;
-using api.Features.Auth.Register;
-using api.Features.Follow.GetFollowers;
-using api.Features.Follow.GetFollowing;
-using api.Features.Follow.GetSuggestions;
-using api.Features.Post.CreatePost;
-using api.Features.Feed.GetFollowingFeed;
-using api.Features.Feed.GetFypFeed;
-using api.Features.Feed.GetPopularFeed;
-using api.Features.Follow.CreateFollow;
-using api.Features.Follow.DeleteFollow;
-using api.Features.Like.CreateLike;
-using api.Features.Like.DeleteLike;
-using api.Features.Post.DeletePost;
-using api.Features.Post.GetPost;
-using api.Features.Post.GetPosts;
-using api.Features.Post.UpdatePost;
-using api.Features.Post.WordCount;
-using api.Features.Search.SearchUsersAndPosts;
-using api.Features.User.DeleteUser;
-using api.Features.User.GetUser;
-using api.Features.User.UpdateUser;
 using api.Models;
 using api.Services;
 using api.Middleware;
@@ -41,7 +16,7 @@ builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();
 
 builder.Services.AddAuthentication()
-    .AddCookie() // You already have Identity cookies
+    .AddCookie()
     .AddGitHub(options =>
     {
         options.ClientId = builder.Configuration["GITHUB_CLIENT_ID"];
@@ -96,39 +71,16 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    cfg.LicenseKey = builder.Configuration["MEDIATR_LICENSE_KEY"];
+});
+
 builder.Services.AddScoped<S3Service>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<CurrentUserService>();
 
-builder.Services.AddScoped<GetPostsHandler>();
-builder.Services.AddScoped<CreatePostHandler>();
-builder.Services.AddScoped<GetPostHandler>();
-builder.Services.AddScoped<UpdatePostHandler>();
-builder.Services.AddScoped<DeletePostHandler>();
-builder.Services.AddScoped<TodaysWordCountHandler>();
-
-builder.Services.AddScoped<GetUserHandler>();
-builder.Services.AddScoped<UpdateUserHandler>();
-builder.Services.AddScoped<DeleteUserHandler>();
-
-builder.Services.AddScoped<LoginHandler>();
-builder.Services.AddScoped<RegisterHandler>();
-builder.Services.AddScoped<GetCurrentUserHandler>();
-builder.Services.AddScoped<LogoutHandler>();
-builder.Services.AddScoped<GitHubLoginHandler>();
-
-builder.Services.AddScoped<GetFollowingFeedHandler>();
-builder.Services.AddScoped<GetFypFeedHandler>();
-builder.Services.AddScoped<GetPopularFeedHandler>();
-
-builder.Services.AddScoped<GetSuggestionsHandler>();
-builder.Services.AddScoped<GetFollowersHandler>();
-builder.Services.AddScoped<GetFollowingHandler>();
-builder.Services.AddScoped<CreateFollowHandler>();
-builder.Services.AddScoped<DeleteFollowHandler>();
-
-builder.Services.AddScoped<CreateLikeHandler>();
-builder.Services.AddScoped<DeleteLikeHandler>();
-
-builder.Services.AddScoped<SearchUsersAndPostsHandler>();
 
 var app = builder.Build();
 

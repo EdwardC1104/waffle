@@ -1,24 +1,30 @@
 using api.Data;
 using api.Exceptions;
 using api.Features.Post;
+using api.Services;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Features.Like.DeleteLike;
 
-public class DeleteLikeHandler
+public class DeleteLikeHandler : IRequestHandler<DeleteLikeCommand, PostDto>
 {
     private readonly AppDbContext _dbContext;
+    private readonly CurrentUserService _currentUserService;
 
-    public DeleteLikeHandler(AppDbContext dbContext)
+    public DeleteLikeHandler(AppDbContext dbContext, CurrentUserService currentUserService)
     {
         _dbContext = dbContext;
+        _currentUserService = currentUserService;
     }
 
-    public async Task<PostDto> Handle(string userId, DeleteLikeCommand command)
+    public async Task<PostDto> Handle(DeleteLikeCommand command, CancellationToken cancellationToken)
     {
+        var userId = _currentUserService.GetRequiredUserId();
+
         var post = await _dbContext.Posts
             .Include(p => p.User)
-            .FirstOrDefaultAsync(p => p.Id == command.PostId);
+            .FirstOrDefaultAsync(p => p.Id == command.PostId, cancellationToken);
         
         if (post == null)
         {
@@ -26,7 +32,7 @@ public class DeleteLikeHandler
         }
         
         var existingLike = await _dbContext.Likes
-            .FirstOrDefaultAsync(l => l.UserId == userId && l.PostId == post.Id);
+            .FirstOrDefaultAsync(l => l.UserId == userId && l.PostId == post.Id, cancellationToken);
         
         if (existingLike == null)
         {
@@ -34,9 +40,8 @@ public class DeleteLikeHandler
         }
         
         _dbContext.Likes.Remove(existingLike);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
-        // Return the updated post with the user's like status
         return await post.ToDtoAsync(_dbContext, userId);
     }
 }

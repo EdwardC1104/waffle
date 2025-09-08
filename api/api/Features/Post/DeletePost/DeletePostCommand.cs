@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using MediatR;
 
 namespace api.Features.Post.DeletePost;
 
-public class DeletePostCommand
+public record DeletePostCommand : IRequest
 {
     [Required(ErrorMessage = "Post ID is required")]
     public int PostId { get; set; }

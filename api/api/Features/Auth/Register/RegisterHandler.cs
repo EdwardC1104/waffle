@@ -1,11 +1,12 @@
 using api.Data;
 using api.Exceptions;
-using Microsoft.AspNetCore.Identity;
 using api.Features.User;
+using MediatR;
+using Microsoft.AspNetCore.Identity;
 
 namespace api.Features.Auth.Register;
 
-public class RegisterHandler
+public class RegisterHandler : IRequestHandler<RegisterCommand, UserDto>
 {
     private readonly UserManager<api.Models.User> _userManager;
     private readonly SignInManager<api.Models.User> _signInManager;
@@ -18,7 +19,7 @@ public class RegisterHandler
         _dbContext = dbContext;
     }
 
-    public async Task<UserDto> Handle(RegisterCommand request)
+    public async Task<UserDto> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         var newUser = new api.Models.User
         {
@@ -35,7 +36,6 @@ public class RegisterHandler
             throw new ApiException(400, string.Join(" ", result.Errors.Select(e => e.Description)));
         }
 
-        // Automatically sign in the user after successful registration
         await _signInManager.SignInAsync(newUser, isPersistent: false);
 
         return await newUser.ToDtoAsync(_dbContext);

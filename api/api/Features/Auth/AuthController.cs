@@ -1,9 +1,12 @@
+using System.Security.Claims;
 using api.Features.Auth.GetCurrentUser;
 using api.Features.Auth.GitHubLogin;
 using api.Features.Auth.Login;
 using api.Features.Auth.Logout;
 using api.Features.Auth.Register;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Features.Auth;
@@ -12,50 +15,39 @@ namespace api.Features.Auth;
 [Route("/api/auth")]
 public class AuthController : ControllerBase
 {
-    private readonly LoginHandler _loginHandlerHandler;
-    private readonly RegisterHandler _registerHandlerHandler;
-    private readonly GetCurrentUserHandler _getCurrentUserHandlerHandler;
-    private readonly LogoutHandler _logoutHandlerHandler;
-    private readonly GitHubLoginHandler _gitHubLoginHandler;
+    private readonly IMediator _mediator;
 
-    public AuthController(LoginHandler loginHandlerHandler, RegisterHandler registerHandlerHandler, GetCurrentUserHandler getCurrentUserHandlerHandler, LogoutHandler logoutHandlerHandler, GitHubLoginHandler gitHubLoginHandler)
+    public AuthController(IMediator mediator)
     {
-        _loginHandlerHandler = loginHandlerHandler;
-        _registerHandlerHandler = registerHandlerHandler;
-        _getCurrentUserHandlerHandler = getCurrentUserHandlerHandler;
-        _logoutHandlerHandler = logoutHandlerHandler;
-        _gitHubLoginHandler = gitHubLoginHandler;
+        _mediator = mediator;
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginCommand request)
     {
-        var response = await _loginHandlerHandler.Handle(request);
+        var response = await _mediator.Send(request);
         return Ok(response);
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterCommand request)
     {
-        var response = await _registerHandlerHandler.Handle(request);
+        var response = await _mediator.Send(request);
         return Created($"/api/user/{response.Username}", response);
     }
 
+    [Authorize]
     [HttpPost("me")]
     public async Task<IActionResult> Me()
     {
-        if (!User.Identity?.IsAuthenticated ?? true)
-        {
-            return Unauthorized(new { message =  "Not logged in" });
-        }
-        var response = await _getCurrentUserHandlerHandler.Handle(User);
+        var response = await _mediator.Send(new GetCurrentUserQuery());
         return Ok(response);
     }
 
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        await _logoutHandlerHandler.Handle();
+        await _mediator.Send(new LogoutCommand());
         return Ok(new { message = "Successfully logged out" });
     }
     
@@ -77,7 +69,16 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = "GitHub authentication failed" });
         }
 
-        var user = await _gitHubLoginHandler.Handle(authenticateResult.Principal);
+        var gitHubUser = authenticateResult.Principal;
+        var command = new GitHubLoginCommand
+        {
+            Email = gitHubUser.FindFirst(ClaimTypes.Email)?.Value,
+            GitHubId = gitHubUser.FindFirst(ClaimTypes.NameIdentifier)?.Value!,
+            Name = gitHubUser.FindFirst(ClaimTypes.Name)?.Value,
+            UserName = gitHubUser.FindFirst("login")?.Value
+        };
+
+        var user = await _mediator.Send(command);
         
         if (user == null)
         {

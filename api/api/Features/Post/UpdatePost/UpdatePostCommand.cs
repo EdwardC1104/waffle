@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using MediatR;
 
 namespace api.Features.Post.UpdatePost;
 
-public class UpdatePostCommand
+public record UpdatePostCommand : IRequest<PostDto>
 {
     [Required(ErrorMessage = "Post ID is required")]
     public int PostId { get; set; }
@@ -11,4 +12,6 @@ public class UpdatePostCommand
     public string? Title { get; set; }
     
     public string? Content { get; set; }
+    
+    public string? CoverImageUrl { get; set; }
 }
