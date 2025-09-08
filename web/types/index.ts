@@ -7,6 +7,7 @@ export type User = {
   followerCount: number;
   followingCount: number;
   wordCount: number;
+  followedByAuthenticatedUser: boolean;
 };
 
 export type Post = {
@@ -19,6 +20,8 @@ export type Post = {
   likeCount: number;
   likedByAuthenticatedUser: boolean;
 };
+
+export type FeedType = "fyp" | "following" | "popular";
 
 export type SearchResult = {
   posts: Post[];

@@ -1,20 +1,40 @@
 "use client";
 
-import ErrorMessage from "@/components/ErrorMessage";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import PostCard from "@/components/PostCard";
-import UserProfile from "@/components/UserProfile";
-import WhoToFollow from "@/components/WhoToFollow";
-import WritePostCTA from "@/components/WritePostCTA";
+import PostCard from "@/components/feed/PostCard";
+import ErrorMessage from "@/components/general/ErrorMessage";
+import LoadingSpinner from "@/components/general/LoadingSpinner";
+import UserProfile from "@/components/user/UserProfile";
+import WhoToFollow from "@/components/widgets/WhoToFollow";
+import WritePost from "@/components/widgets/WritePost";
 import useAuth from "@/hooks/useAuth";
-import useProfile from "@/hooks/useProfile";
-import useTodayWordCount from "@/hooks/useTodayWordCount";
+import useProfileUser from "@/hooks/useProfileUser";
+import useUserPosts from "@/hooks/useUserPosts";
+import { useParams } from "next/navigation";
 
 export default function UserProfilePage() {
-  const { user, posts, loading, error, refetch, handlePostUpdate } =
-    useProfile("posts");
+  const username = useParams().username;
+  const {
+    user,
+    loading: userLoading,
+    error: userError,
+    refetch: refetchUser,
+  } = useProfileUser(username);
+  const {
+    posts,
+    loading: postsLoading,
+    error: postsError,
+    refetch: refetchPosts,
+    handlePostUpdate,
+  } = useUserPosts(username);
   const { user: currentUser } = useAuth();
-  const { todayWordCount } = useTodayWordCount();
+
+  const loading = userLoading || postsLoading;
+  const error = userError || postsError;
+
+  const refetch = () => {
+    refetchUser();
+    refetchPosts();
+  };
 
   if (loading) {
     return <LoadingSpinner text="Loading profile..." center />;
@@ -39,7 +59,7 @@ export default function UserProfilePage() {
         {currentUser && currentUser.id !== user.id && (
           <UserProfile user={currentUser} />
         )}
-        <WritePostCTA todayWordCount={todayWordCount} />
+        <WritePost />
       </div>
 
       <div className="flex flex-col gap-8 w-full max-w-[600px] min-w-0">

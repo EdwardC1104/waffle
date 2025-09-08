@@ -14,28 +14,44 @@ interface UseProfileEditOptions {
 export interface ProfileEditFormData {
   name: string;
   username: string;
-  profilePicture: File | undefined;
+  profilePicture: File | null;
 }
 
+const CONFIRMATION_MESSAGE =
+  "Are you sure you want to delete your account? This action cannot be undone.";
+
+const createInitialFormData = (user: User): ProfileEditFormData => ({
+  name: user.name || "",
+  username: user.username || "",
+  profilePicture: null,
+});
+
+const validateForm = (formData: ProfileEditFormData): boolean => {
+  return formData.name.trim().length > 0 && formData.username.trim().length > 0;
+};
+
+const hasFormChanges = (formData: ProfileEditFormData, user: User): boolean => {
+  return (
+    formData.name !== user.name ||
+    formData.username !== user.username ||
+    formData.profilePicture !== null
+  );
+};
+
+/** Provides logic for editing a user's profile. */
 export default function useProfileEdit({
   user,
   onUserUpdated,
   onUserDeleted,
 }: UseProfileEditOptions) {
   const router = useRouter();
+  const [formData, setFormData] = useState<ProfileEditFormData>(() =>
+    createInitialFormData(user)
+  );
 
-  // Form state
-  const [formData, setFormData] = useState<ProfileEditFormData>({
-    name: user.name || "",
-    username: user.username || "",
-    profilePicture: undefined,
-  });
-
-  // UI state
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Update individual form fields
   const updateField = <K extends keyof ProfileEditFormData>(
     field: K,
     value: ProfileEditFormData[K]
@@ -43,25 +59,19 @@ export default function useProfileEdit({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Handle profile picture change
   const handleProfilePictureChange = (file: File) => {
-    setFormData((prev) => ({
-      ...prev,
-      profilePicture: file,
-    }));
+    setFormData((prev) => ({ ...prev, profilePicture: file }));
     setError(null);
   };
 
-  // Validation
-  const isFormValid =
-    formData.name.trim().length > 0 && formData.username.trim().length > 0;
+  const isFormValid = validateForm(formData);
+  const hasChanges = hasFormChanges(formData, user);
 
-  const hasChanges =
-    formData.name !== user.name ||
-    formData.username !== user.username ||
-    formData.profilePicture !== undefined;
+  const handleError = (err: unknown, defaultMessage: string) => {
+    console.error(defaultMessage, err);
+    setError(err instanceof Error ? err.message : defaultMessage);
+  };
 
-  // Submit handler
   const handleSubmit = async () => {
     if (!isFormValid || !hasChanges) return;
 
@@ -69,38 +79,26 @@ export default function useProfileEdit({
     setError(null);
 
     try {
-      // Call the API to update user profile
       await updateUserProfile(
         formData.username,
         formData.name,
-        formData.profilePicture
+        formData.profilePicture || undefined
       );
-
-      // Refetch user data to get updated info
       await onUserUpdated();
-
-      // Redirect back to profile immediately
       router.push(`/profile/${formData.username}`);
     } catch (err) {
-      console.error("Failed to update profile:", err);
-      setError(err instanceof Error ? err.message : "Failed to update profile");
+      handleError(err, "Failed to update profile");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Cancel handler
   const handleCancel = () => {
     router.push(`/profile/${user.username}`);
   };
 
-  // Delete handler
   const handleDelete = async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete your account? This action cannot be undone."
-    );
-
-    if (!confirmed) return;
+    if (!window.confirm(CONFIRMATION_MESSAGE)) return;
 
     setIsLoading(true);
     setError(null);
@@ -109,8 +107,7 @@ export default function useProfileEdit({
       await deleteUser();
       await onUserDeleted();
     } catch (err) {
-      console.error("Failed to delete user:", err);
-      setError(err instanceof Error ? err.message : "Failed to delete account");
+      handleError(err, "Failed to delete account");
     } finally {
       setIsLoading(false);
     }

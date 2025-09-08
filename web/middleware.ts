@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+/** Middleware to rewrite API requests to the backend server. */
 export function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/api/")) {
     if (!process.env.API_URL) {
