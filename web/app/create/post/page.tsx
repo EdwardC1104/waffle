@@ -19,7 +19,7 @@ export default function CreatePostPage() {
     <AuthenticatedRoute>
       <div className="max-w-4xl px-4 py-8 flex-1 w-full">
         <PostForm
-          onSubmit={handleCreatePost}
+          onSubmit={(title, content, _, coverImage) => handleCreatePost(title, content, coverImage)}
           submitButtonText="Publish"
           isSubmitting={isSubmitting}
           error={error}

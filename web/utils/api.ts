@@ -140,12 +140,14 @@ export async function updatePost(
   postId: number,
   title: string,
   content: string,
+  deleteCoverImage: boolean,
   coverImage: File | undefined
 ): Promise<Post> {
   const formData = new FormData();
   formData.append("postId", postId.toString());
   formData.append("title", title);
   formData.append("content", content);
+  formData.append("deleteCoverImage", deleteCoverImage.toString());
   if (coverImage) {
     formData.append("coverImage", coverImage);
   }

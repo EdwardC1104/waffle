@@ -14,6 +14,7 @@ interface PostFormProps {
   onSubmit: (
     title: string,
     content: string,
+    deleteCoverImage: boolean,
     coverImage?: File
   ) => Promise<void>;
   submitButtonText: string;
