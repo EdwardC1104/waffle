@@ -22,6 +22,7 @@ interface UseEditPostReturn {
   handleUpdatePost: (
     title: string,
     content: string,
+    deleteCoverImage: boolean,
     coverImage?: File
   ) => Promise<void>;
   handleDeletePost: () => Promise<void>;
@@ -74,7 +75,7 @@ export function useEditPost({
   }, [postId, username]);
 
   const handleUpdatePost = useCallback(
-    async (title: string, content: string, coverImage?: File) => {
+    async (title: string, content: string, deleteCoverImage: boolean, coverImage?: File) => {
       if (!post || isSubmitting) return;
 
       setError(null);
@@ -85,6 +86,7 @@ export function useEditPost({
           post.id,
           title,
           content,
+          deleteCoverImage,
           coverImage
         );
 

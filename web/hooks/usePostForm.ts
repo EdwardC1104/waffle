@@ -9,6 +9,7 @@ interface UsePostFormOptions {
   onSubmit: (
     title: string,
     content: string,
+    deleteCoverImage: boolean,
     coverImage?: File
   ) => Promise<void>;
   onError: (error: string | null) => void;
@@ -96,7 +97,7 @@ export function usePostForm({
       setIsSubmitting(true);
 
       try {
-        await onSubmit(title.trim(), content.trim(), coverImage || undefined);
+        await onSubmit(title.trim(), content.trim(), imagePreview === null, coverImage || undefined);
       } catch (err) {
         console.error("Failed to submit post:", err);
         onError(err instanceof Error ? err.message : "Failed to save post");
