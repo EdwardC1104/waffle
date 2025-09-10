@@ -27,7 +27,7 @@ export function AuthenticatedRoute({
       const redirectUrl = `${redirectTo}?redirect=${encodeURIComponent(desiredPath)}`;
       router.replace(redirectUrl);
     }
-  }, [isAuthenticated, isLoading, router, redirectTo]);
+  }, [isAuthenticated, isLoading, router, redirectTo, desiredPath]);
 
   if (isLoading) {
     return <LoadingSpinner text={loadingText} center />;

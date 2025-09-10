@@ -28,7 +28,7 @@ export default function useLike({ post, onPostUpdate }: UseLikeProps) {
     if (isLoading) return;
 
     if (!isAuthenticated) {
-      const redirectUrl = `/login/?redirect=${encodeURIComponent(`/post/${post.id}`)}`;
+      const redirectUrl = `/login?redirect=${encodeURIComponent(`/post/${post.id}`)}`;
       router.replace(redirectUrl);
       return;
     }
