@@ -1,7 +1,7 @@
 "use client";
 
 import useAuth from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { ReactNode, useEffect } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 
@@ -20,10 +20,12 @@ export function AuthenticatedRoute({
 }: AuthenticatedRouteProps) {
   const { isAuthenticated, isLoading, user } = useAuth();
   const router = useRouter();
+  const desiredPath = usePathname();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace(redirectTo);
+      const redirectUrl = `${redirectTo}?redirect=${encodeURIComponent(desiredPath)}`;
+      router.replace(redirectUrl);
     }
   }, [isAuthenticated, isLoading, router, redirectTo]);
 

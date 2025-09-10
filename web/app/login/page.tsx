@@ -6,7 +6,7 @@ import AuthRedirectLink from "@/components/auth/AuthRedirectLink";
 import SubmitButton from "@/components/auth/SubmitButton";
 import TextInput from "@/components/general/TextInput";
 import useAuth from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const { login, isLoading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +29,9 @@ export default function LoginPage() {
     const result = await login(username, password);
 
     if (result.success) {
-      router.push("/feed/following");
+      // Redirect user to the page they were attempting to access - default to following feed
+      const redirectTo = searchParams.get("redirect") || "/feed/following";
+      router.push(redirectTo);
     } else {
       setError(result.error || "Login failed");
     }
