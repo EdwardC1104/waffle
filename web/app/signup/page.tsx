@@ -8,6 +8,7 @@ import TextInput from "@/components/general/TextInput";
 import useAuth from "@/hooks/useAuth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { isValidRedirectUrl, DEFAULT_REDIRECT_URL } from "@/utils/allowList";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -38,7 +39,10 @@ export default function SignupPage() {
 
     if (result.success) {
       // Redirect user to the page they were attempting to access - default to following feed
-      const redirectTo = searchParams.get("redirect") || "/feed/following";
+      const redirectParam = searchParams.get("redirect");
+      const redirectTo = redirectParam && isValidRedirectUrl(redirectParam) 
+        ? redirectParam 
+        : DEFAULT_REDIRECT_URL;
       router.push(redirectTo);
     } else {
       setError(result.error || "Registration failed");
