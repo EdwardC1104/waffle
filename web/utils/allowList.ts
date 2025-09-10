@@ -1,28 +1,8 @@
 // Validate that the redirect URL is one of the allowed paths to prevent open redirect vulnerabilities
 export function isValidRedirectUrl(url: string): boolean {
 
-  /* The following checks before the allow list are to improve speed by rejecting obviously bad URLs early.
-  They are hopefully redundant with a comprehensive allow list. */
-
-  // Reject invalid URLs
+  // Reject obviously invalid URLs for speed
   if (!url || typeof url !== 'string' || !url.startsWith('/')) {
-    return false;
-  }
-
-  // Decode URL to catch encoded attacks
-  let decodedUrl: string;
-  try {
-    decodedUrl = decodeURIComponent(url);
-  } catch {
-    return false; // Invalid encoding
-  }
-
-  // Additional safety checks on decoded URL
-  if (decodedUrl.includes('://') || 
-      decodedUrl.startsWith('//') || 
-      decodedUrl.includes('\\') ||
-      decodedUrl.toLowerCase().includes('javascript:') ||
-      decodedUrl.toLowerCase().includes('data:')) {
     return false;
   }
 

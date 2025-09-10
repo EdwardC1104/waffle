@@ -1,5 +1,6 @@
+import { useRedirectParam } from "@/hooks/useRedirectParam";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+
 
 interface AuthRedirectLinkProps {
   mode: "login" | "signup";
@@ -8,13 +9,10 @@ interface AuthRedirectLinkProps {
 /** Link to move between login and signup pages. */
 export default function AuthRedirectLink({ mode }: AuthRedirectLinkProps) {
   // Get any parameters in the URL
-  const searchParams = useSearchParams();
-
-  // Get any redirect query param to preserve it when we move between pages
-  const desiredPath = searchParams.toString();
+  const redirectTo = useRedirectParam();
 
   // If there's a desired path, we need to prefix it with a '?' for the URL
-  const desiredPathPrefixed = desiredPath ? `?${desiredPath}` : "";
+  const desiredPathPrefixed = redirectTo ? `?${redirectTo}` : "";
 
   if (mode === "login") {
     return (
