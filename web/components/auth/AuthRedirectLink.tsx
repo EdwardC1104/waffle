@@ -11,8 +11,8 @@ export default function AuthRedirectLink({ mode }: AuthRedirectLinkProps) {
   // Get any parameters in the URL
   const redirectTo = useRedirectParam();
 
-  // If there's a desired path, we need to prefix it with a '?' for the URL
-  const desiredPathPrefixed = redirectTo ? `?${redirectTo}` : "";
+  // If there's a desired path, we need to format it as a query parameter and encode it
+  const desiredPathPrefixed = redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : "";
 
   if (mode === "login") {
     return (
