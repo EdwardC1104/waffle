@@ -1,9 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { isValidRedirectUrl, DEFAULT_REDIRECT_URL } from "@/utils/allowList";
+import { useEffect, useState } from "react";
 
-/* Custom hook to extract and validate the 'redirect' query parameter from the URL. */
+// Default redirect URL if none provided or invalid
+const DEFAULT_REDIRECT_URL = "/feed/following";
+
+// Validate that the redirect URL is relative to our site to prevent open redirect vulnerabilities
+function isValidRedirectUrl(url: string): boolean {
+  return !!(url && typeof url === "string" && url.startsWith("/"));
+}
+
+/*  Custom hook to extract and validate the 'redirect' query parameter from the URL.
+    Wanted to avoid a suspense wrapper...
+*/
 export function useRedirectParam() {
   const [redirectTo, setRedirectTo] = useState(DEFAULT_REDIRECT_URL);
 
