@@ -1,7 +1,6 @@
 import { useRedirectParam } from "@/hooks/useRedirectParam";
 import Link from "next/link";
 
-
 interface AuthRedirectLinkProps {
   mode: "login" | "signup";
 }
@@ -12,7 +11,9 @@ export default function AuthRedirectLink({ mode }: AuthRedirectLinkProps) {
   const redirectTo = useRedirectParam();
 
   // If there's a desired path, we need to format it as a query parameter and encode it
-  const desiredPathPrefixed = redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : "";
+  const desiredPathPrefixed = redirectTo
+    ? `?redirect=${encodeURIComponent(redirectTo)}`
+    : "";
 
   if (mode === "login") {
     return (

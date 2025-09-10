@@ -24,7 +24,9 @@ export function AuthenticatedRoute({
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      const redirectUrl = `${redirectTo}?redirect=${encodeURIComponent(desiredPath)}`;
+      const redirectUrl = `${redirectTo}?redirect=${encodeURIComponent(
+        desiredPath
+      )}`;
       router.replace(redirectUrl);
     }
   }, [isAuthenticated, isLoading, router, redirectTo, desiredPath]);
