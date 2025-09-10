@@ -30,7 +30,9 @@ export default function FollowButton({
 
   const handleFollowToggle = async () => {
     if (!currentUser) {
-      router.replace("/login");
+      const desiredPath = `/profile/${username}`;
+      const redirectUrl = `/login?redirect=${encodeURIComponent(desiredPath)}`;
+      router.push(redirectUrl);
       return;
     }
 

@@ -11,10 +11,6 @@ export default function CreatePostPage() {
     username: user?.username,
   });
 
-  if (!user) {
-    return null;
-  }
-
   return (
     <AuthenticatedRoute>
       <div className="max-w-4xl px-4 py-8 flex-1 w-full">

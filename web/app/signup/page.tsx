@@ -8,6 +8,7 @@ import TextInput from "@/components/general/TextInput";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useRedirectParam } from "@/hooks/useRedirectParam";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -18,6 +19,7 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const { register, isLoading } = useAuth();
   const router = useRouter();
+  const redirectTo = useRedirectParam();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +38,7 @@ export default function SignupPage() {
     const result = await register(name, username, email, password);
 
     if (result.success) {
-      router.push("/feed/following");
+      router.push(redirectTo);
     } else {
       setError(result.error || "Registration failed");
     }
