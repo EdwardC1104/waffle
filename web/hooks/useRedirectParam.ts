@@ -12,11 +12,13 @@ export function useRedirectParam() {
   const [redirectTo, setRedirectTo] = useState(DEFAULT_REDIRECT_URL);
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const redirectParam = urlParams.get("redirect");
-    
-    if (redirectParam && isValidRedirectUrl(redirectParam)) {
-      setRedirectTo(redirectParam);
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectParam = urlParams.get("redirect");
+      
+      if (redirectParam && isValidRedirectUrl(redirectParam)) {
+        setRedirectTo(redirectParam);
+      }
     }
   }, []);
 

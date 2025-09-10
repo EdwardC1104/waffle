@@ -29,7 +29,7 @@ export default function useLike({ post, onPostUpdate }: UseLikeProps) {
 
     if (!isAuthenticated) {
       const redirectUrl = `/login?redirect=${encodeURIComponent(`/post/${post.id}`)}`;
-      router.replace(redirectUrl);
+      router.push(redirectUrl);
       return;
     }
 
