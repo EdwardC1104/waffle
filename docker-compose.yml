@@ -1,0 +1,173 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: waffle-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - waffle-network
+
+  # Database Backup Service
+  db-backup:
+    image: prodrigestivill/postgres-backup-local:16-alpine
+    container_name: waffle-db-backup
+    restart: unless-stopped
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: waffle_prod,waffle_staging
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      SCHEDULE: "@daily" # Runs at midnight
+      BACKUP_KEEP_DAYS: 14
+      BACKUP_KEEP_WEEKS: 4
+      BACKUP_KEEP_MONTHS: 12
+      HEALTHCHECK_PORT: 8080
+    volumes:
+      - /var/backups/postgres:/backups
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - waffle-network
+
+  # Production API
+  api-prod:
+    image: ghcr.io/edwardc1104/waffle-api:main
+    container_name: waffle-api-prod
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      HOST: postgres
+      DB_PORT: 5432
+      DATABASE: waffle_prod
+      USERNAME: ${DB_USER}
+      PASSWORD: ${DB_PASSWORD}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+      MEDIATR_LICENSE_KEY: ${MEDIATR_LICENSE_KEY}
+    ports:
+      - "127.0.0.1:5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - waffle-network
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  # Staging API
+  api-staging:
+    image: ghcr.io/edwardc1104/waffle-api:develop
+    container_name: waffle-api-staging
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      HOST: postgres
+      DB_PORT: 5432
+      DATABASE: waffle_staging
+      USERNAME: ${DB_USER}
+      PASSWORD: ${DB_PASSWORD}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID_STAGING}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET_STAGING}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
+      AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME_STAGING}
+      MEDIATR_LICENSE_KEY: ${MEDIATR_LICENSE_KEY}
+    ports:
+      - "127.0.0.1:5001:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - waffle-network
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  # Production Web
+  web-prod:
+    image: ghcr.io/edwardc1104/waffle-web:main
+    container_name: waffle-web-prod
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      NODE_ENV: production
+      API_URL: http://api-prod:5000
+    depends_on:
+      - api-prod
+    networks:
+      - waffle-network
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  # Staging Web
+  web-staging:
+    image: ghcr.io/edwardc1104/waffle-web:develop
+    container_name: waffle-web-staging
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3001:3000"
+    environment:
+      NODE_ENV: production
+      API_URL: http://api-staging:5000
+    depends_on:
+      - api-staging
+    networks:
+      - waffle-network
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  # Cloudflare Tunnel
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: waffle-cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - waffle-network
+
+  # Watchtower - Auto-update containers
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: waffle-watchtower
+    restart: unless-stopped
+    environment:
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_POLL_INTERVAL: 300
+      WATCHTOWER_ROLLING_RESTART: "true"
+      REPO_USER: ${GITHUB_USERNAME}
+      REPO_PASS: ${GHCR_TOKEN}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - waffle-network
+
+networks:
+  waffle-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
