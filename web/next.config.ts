@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   images: {
     remotePatterns: [
       {
@@ -22,7 +23,7 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "waffle-images.s3.amazonaws.com",
-      }
+      },
     ],
   },
 };
