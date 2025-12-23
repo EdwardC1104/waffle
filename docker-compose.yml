@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   # PostgreSQL Database
   postgres:
@@ -146,10 +144,13 @@ services:
       TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
     networks:
       - waffle-network
+    depends_on:
+      - web-prod
+      - web-staging
 
   # Watchtower - Auto-update containers
   watchtower:
-    image: containrrr/watchtower:latest
+    image: ghcr.io/nicholas-fedor/watchtower:latest
     container_name: waffle-watchtower
     restart: unless-stopped
     environment:

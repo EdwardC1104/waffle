@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 
-source .env
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../.env"
 
 echo "[$(date)] Starting database sync from production to staging..."
 
@@ -18,6 +19,7 @@ docker exec waffle-postgres pg_dump -U $DB_USER waffle_prod | \
 
 echo "[$(date)] Data copied successfully"
 
-docker exec waffle-api-staging dotnet ef database update
+echo "[$(date)] Restarting staging API to apply migrations..."
+docker compose restart api-staging
 
-echo "[$(date)] Staging migrations applied - sync complete"
+echo "[$(date)] Staging database sync complete"
