@@ -14,7 +14,46 @@ public class S3Service
     {
         _s3Client = s3Client;
         _configuration = configuration;
-        _bucketName = _configuration["AWS_S3_BUCKET_NAME"] ?? throw new InvalidOperationException("AWS_S3_BUCKET_NAME is not configured");
+        _bucketName = _configuration["MINIO_BUCKET_NAME"] ?? throw new InvalidOperationException("MINIO_BUCKET_NAME is not configured");
+        
+        EnsureBucketExistsAsync().GetAwaiter().GetResult();
+    }
+
+    private async Task EnsureBucketExistsAsync()
+    {
+        try
+        {
+            try
+            {
+                await _s3Client.GetBucketLocationAsync(_bucketName);
+            }
+            catch (AmazonS3Exception ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                await _s3Client.PutBucketAsync(_bucketName);
+                
+                var policy = $@"{{
+                    ""Version"": ""2012-10-17"",
+                    ""Statement"": [
+                        {{
+                            ""Effect"": ""Allow"",
+                            ""Principal"": {{""AWS"": [""*""]}},
+                            ""Action"": [""s3:GetObject""],
+                            ""Resource"": [""arn:aws:s3:::{_bucketName}/*""]
+                        }}
+                    ]
+                }}";
+                
+                await _s3Client.PutBucketPolicyAsync(new PutBucketPolicyRequest
+                {
+                    BucketName = _bucketName,
+                    Policy = policy
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error ensuring bucket exists: {ex.Message}", ex);
+        }
     }
 
     public async Task<string> UploadImageAsync(IFormFile file)
@@ -56,23 +95,22 @@ public class S3Service
                 BucketName = _bucketName,
                 Key = uniqueFileName,
                 InputStream = fileStream,
-                ContentType = contentType,
-                CannedACL = S3CannedACL.PublicRead // Make the file publicly accessible
+                ContentType = contentType
             };
 
             var response = await _s3Client.PutObjectAsync(request);
 
             if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
             {
-                // Return the public URL of the uploaded file
-                return $"https://{_bucketName}.s3.amazonaws.com/{uniqueFileName}";
+                // Return a path that will be proxied by the frontend to MinIO
+                return $"/minio/{_bucketName}/{uniqueFileName}";
             }
 
             throw new Exception($"Failed to upload file. Status code: {response.HttpStatusCode}");
         }
         catch (Exception ex)
         {
-            throw new Exception($"Error uploading file to S3: {ex.Message}", ex);
+            throw new Exception($"Error uploading file to MinIO: {ex.Message}", ex);
         }
     }
 
@@ -91,7 +129,7 @@ public class S3Service
         }
         catch (Exception ex)
         {
-            throw new Exception($"Error deleting file from S3: {ex.Message}", ex);
+            throw new Exception($"Error deleting file from MinIO: {ex.Message}", ex);
         }
     }
 }
