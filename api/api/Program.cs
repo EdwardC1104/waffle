@@ -12,8 +12,21 @@ Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
-builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.AddSingleton<IAmazonS3>(sp =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    var s3Config = new Amazon.S3.AmazonS3Config
+    {
+        ServiceURL = config["MINIO_ENDPOINT"],
+        ForcePathStyle = true // Required for MinIO
+    };
+    
+    return new AmazonS3Client(
+        config["MINIO_ACCESS_KEY"],
+        config["MINIO_SECRET_KEY"],
+        s3Config
+    );
+});
 
 builder.Services.AddAuthentication()
     .AddCookie()
