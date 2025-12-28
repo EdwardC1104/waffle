@@ -64,6 +64,24 @@ services:
     networks:
       - waffle-network
 
+  # Image Backup
+  minio-backup:
+    image: alpine:latest
+    container_name: waffle-minio-backup
+    restart: unless-stopped
+    command: >
+      sh -c "apk add --no-cache rsync dcron &&
+             echo '0 2 * * 0 rsync -a --delete /source/ /backup/' > /etc/crontabs/root &&
+             crond -f -l 2"
+    volumes:
+      - minio_data:/source:ro
+      - /var/backups/images:/backup
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - waffle-network
+
   # Production API
   api-prod:
     build:
