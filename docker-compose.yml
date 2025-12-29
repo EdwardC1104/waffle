@@ -70,9 +70,12 @@ services:
     container_name: waffle-minio-backup
     restart: unless-stopped
     command: >
-      sh -c "apk add --no-cache rsync dcron &&
-             echo '0 2 * * 0 rsync -a --delete /source/ /backup/' > /etc/crontabs/root &&
-             crond -f -l 2"
+      sh -c "apk add --no-cache rsync &&
+             mkdir -p /etc/periodic/weekly &&
+             echo '#!/bin/sh' > /etc/periodic/weekly/backup &&
+             echo 'rsync -a --delete /source/ /backup/' >> /etc/periodic/weekly/backup &&
+             chmod +x /etc/periodic/weekly/backup &&
+             while true; do /etc/periodic/weekly/backup && sleep 604800; done"
     volumes:
       - minio_data:/source:ro
       - /var/backups/images:/backup
@@ -84,9 +87,7 @@ services:
 
   # Production API
   api-prod:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
+    image: ghcr.io/edwardc1104/waffle-api:main
     container_name: waffle-api-prod
     restart: unless-stopped
     environment:
@@ -117,9 +118,7 @@ services:
 
   # Staging API
   api-staging:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
+    image: ghcr.io/edwardc1104/waffle-api:develop
     container_name: waffle-api-staging
     restart: unless-stopped
     environment:
@@ -150,9 +149,7 @@ services:
 
   # Production Web
   web-prod:
-    build:
-      context: ./web
-      dockerfile: Dockerfile
+    image: ghcr.io/edwardc1104/waffle-web:main
     container_name: waffle-web-prod
     restart: unless-stopped
     ports:
@@ -170,9 +167,7 @@ services:
 
   # Staging Web
   web-staging:
-    build:
-      context: ./web
-      dockerfile: Dockerfile
+    image: ghcr.io/edwardc1104/waffle-web:develop
     container_name: waffle-web-staging
     restart: unless-stopped
     ports:
@@ -211,7 +206,6 @@ services:
       WATCHTOWER_CLEANUP: "true"
       WATCHTOWER_LABEL_ENABLE: "true"
       WATCHTOWER_POLL_INTERVAL: 300
-      WATCHTOWER_ROLLING_RESTART: "true"
       REPO_USER: ${GITHUB_USERNAME}
       REPO_PASS: ${GHCR_TOKEN}
     volumes:
