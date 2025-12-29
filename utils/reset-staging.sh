@@ -23,6 +23,10 @@ echo "[$(date)] Syncing MinIO images from production to staging..."
 docker exec waffle-minio mc alias set local http://localhost:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD > /dev/null 2>&1 || true
 docker exec waffle-minio mc mb local/$MINIO_BUCKET_NAME --ignore-existing > /dev/null 2>&1 || true
 docker exec waffle-minio mc mb local/$MINIO_BUCKET_NAME_STAGING --ignore-existing > /dev/null 2>&1 || true
+
+echo "[$(date)] Setting public read access on staging bucket..."
+docker exec waffle-minio mc anonymous set download local/$MINIO_BUCKET_NAME_STAGING
+
 docker exec waffle-minio mc mirror --overwrite --remove local/$MINIO_BUCKET_NAME local/$MINIO_BUCKET_NAME_STAGING
 
 echo "[$(date)] Images synced successfully"
