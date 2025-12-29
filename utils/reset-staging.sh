@@ -19,7 +19,15 @@ docker exec waffle-postgres pg_dump -U $DB_USER waffle_prod | \
 
 echo "[$(date)] Data copied successfully"
 
+echo "[$(date)] Syncing MinIO images from production to staging..."
+docker exec waffle-minio mc alias set local http://localhost:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD > /dev/null 2>&1 || true
+docker exec waffle-minio mc mb local/$MINIO_BUCKET_NAME --ignore-existing > /dev/null 2>&1 || true
+docker exec waffle-minio mc mb local/$MINIO_BUCKET_NAME_STAGING --ignore-existing > /dev/null 2>&1 || true
+docker exec waffle-minio mc mirror --overwrite --remove local/$MINIO_BUCKET_NAME local/$MINIO_BUCKET_NAME_STAGING
+
+echo "[$(date)] Images synced successfully"
+
 echo "[$(date)] Restarting staging API to apply migrations..."
 docker compose restart api-staging
 
-echo "[$(date)] Staging database sync complete"
+echo "[$(date)] Staging database and images sync complete"
