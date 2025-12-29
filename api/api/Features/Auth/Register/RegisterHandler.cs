@@ -36,7 +36,7 @@ public class RegisterHandler : IRequestHandler<RegisterCommand, UserDto>
             throw new ApiException(400, string.Join(" ", result.Errors.Select(e => e.Description)));
         }
 
-        await _signInManager.SignInAsync(newUser, isPersistent: false);
+        await _signInManager.SignInAsync(newUser, isPersistent: true);
 
         return await newUser.ToDtoAsync(_dbContext);
     }

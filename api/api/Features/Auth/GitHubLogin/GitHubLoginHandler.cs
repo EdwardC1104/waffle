@@ -29,7 +29,7 @@ public class GitHubLoginHandler : IRequestHandler<GitHubLoginCommand, UserDto?>
         
         if (existingUser != null)
         {
-            await _signInManager.SignInAsync(existingUser, isPersistent: false);
+            await _signInManager.SignInAsync(existingUser, isPersistent: true);
             return await existingUser.ToDtoAsync(_dbContext);
         }
 
@@ -47,7 +47,7 @@ public class GitHubLoginHandler : IRequestHandler<GitHubLoginCommand, UserDto?>
         if (result.Succeeded)
         {
             await _userManager.AddLoginAsync(newUser, new UserLoginInfo("GitHub", request.GitHubId, "GitHub"));
-            await _signInManager.SignInAsync(newUser, isPersistent: false);
+            await _signInManager.SignInAsync(newUser, isPersistent: true);
             return await newUser.ToDtoAsync(_dbContext);
         }
 

@@ -104,6 +104,8 @@ services:
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
       MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME}
       MEDIATR_LICENSE_KEY: ${MEDIATR_LICENSE_KEY}
+    volumes:
+      - api_keys_prod:/app/keys
     ports:
       - "127.0.0.1:5000:5000"
     depends_on:
@@ -135,6 +137,8 @@ services:
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
       MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME_STAGING}
       MEDIATR_LICENSE_KEY: ${MEDIATR_LICENSE_KEY}
+    volumes:
+      - api_keys_staging:/app/keys
     ports:
       - "127.0.0.1:5001:5000"
     depends_on:
@@ -221,4 +225,8 @@ volumes:
   postgres_data:
     driver: local
   minio_data:
+    driver: local
+  api_keys_prod:
+    driver: local
+  api_keys_staging:
     driver: local
