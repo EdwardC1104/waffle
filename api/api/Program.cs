@@ -72,6 +72,12 @@ builder.Services.AddIdentity<User, IdentityRole>()
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    
     options.Events.OnRedirectToLogin = ctx =>
     {
         ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;

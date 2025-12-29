@@ -21,7 +21,7 @@ public class LoginHandler : IRequestHandler<LoginCommand, UserDto>
 
     public async Task<UserDto> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var result = await _signInManager.PasswordSignInAsync(request.Username, request.Password, false, false);
+        var result = await _signInManager.PasswordSignInAsync(request.Username, request.Password, true, false);
         
         if (!result.Succeeded)
         {
